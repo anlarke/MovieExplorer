@@ -1,0 +1,77 @@
+IDS;English;Dutch
+IDS_LANGUAGENAME;English;Nederlands
+IDS_ALL;All;Alles
+IDS_SEARCH;Search;Zoeken
+IDS_GENRES;Genre;Genre
+IDS_COUNTRIES;Country;Land
+IDS_RUNTIME;Runtime;Speelduur
+IDS_CATEGORY;Category;Categorie
+IDS_DIRECTORS;Director;Regisseur
+IDS_WRITERS;Writer;Schrijver
+IDS_STARS;Stars;Cast
+IDS_FILE;File;Bestand
+IDS_ENTRY;Entry;Vermelding
+ID_TOOLS_ZOOMIN;Zoom in\tCtrl + ScrlUp;Zoom in\tCtrl + ScrlUp
+ID_TOOLS_ZOOMOUT;Zoom out\tCtrl + ScrlDn;Zoom uit\tCtrl + ScrlDn
+ID_TOOLS_ZOOMRESET;Zoom reset\tCtrl + 0;Zoom herstel\tCtrl + 0
+ID_TOOLS_STATUSBAR;Status bar\tCtrl + S;Statusbalk\tCtrl + S
+ID_TOOLS_LOG;Log\tCtrl + L;Log\tCtrl + L
+ID_TOOLS_OPTIONS;Options...\tCtrl + O;Opties...\tCtrl + O
+ID_TOOLS_EXIT;Exit\tAlt + F4;Sluiten\tAlt + F4
+IDS_UPDATEINPROGRESS;Please wait, movie information is being retrieved...;Een ogenblik geduld, filminformatie wordt opgehaald...
+IDS_MOVIEUNKNOWN;Failed to find movie in the %SERVICENAME% database, please specify ID manually.;De film werd niet gevonden in de %SERVICENAME% database, u dient de ID handmatig op te geven.
+IDS_CONNECTIONERROR;Unfortunately a connection error occurred while retrieving movie information.;Er is helaas een verbindingsfout opgetreden bij het ophalen van de filminformatie.
+IDS_SCRAPEERROR;An error occured while scraping movie data.;Er is een error opgetreden bij het lezen van de film data.
+IDS_AND;and;en
+IDS_VOTES;votes;stemmen
+IDS_OK;OK;OK
+IDS_CANCEL;Cancel;Annuleren
+IDS_APPLY;Apply;Toepassen
+IDS_OPTIONS;Options;Opties
+IDS_GENERAL;General;Algemeen
+IDS_INTERFACE;Interface;Interface
+IDS_LANGUAGE;Language;Taal
+IDS_THEME;Theme;Thema
+IDS_SEARCHINSTANTLY;Instantly start searching when typing in the search box;Direct zoeken tijdens het typen in het invoervak
+IDS_SEARCHLITERALLY;Search literally for input;Zoek letterlijk naar invoer
+IDS_SEARCHSTORYLINE;Include movie storyline in search;Doorzoek ook het plot van de film
+IDS_NORMALIZERATINGS;Normalize ratings to scale from 1 to 10;Normaliseer beoordelingen naar schaal van 1 tot 10
+IDS_DATABASE;Database;Database
+IDS_INDEXEXTENSIONS;Index files with the following extensions;Indexeer bestanden met de volgende extensies
+IDS_INDEXDIRECTORIES;Include directories in list;Voeg mappen ook toe aan lijst
+IDS_ONLYUSE;Only use;Gebruik alleen
+IDS_MAXINFOAGE;Maximum movie information age (weeks);Maximale filminformatie leeftijd (weken)
+IDS_INFOSERVICE;Information service;Informatie service
+IDS_TITLE;Title;Titel
+IDS_YEAR;Year;Jaar
+IDS_STORYLINE;Storyline;Plot
+IDS_POSTER;Poster;Poster
+IDS_RATING;Rating;Beoordeling
+IDS_COMBINED;Combined;Gecombineerd
+IDS_NONE;None;Geen
+IDS_CATEGORIES;Categories;Categorieën
+IDS_DIRECTORIES;Directories;Mappen
+IDS_FOLDERORFILE;Folder/File;Map/Bestand
+IDS_ONLYAVAILABLEON;Only available on;Alleen beschikbaar op
+IDS_YOUCANUSETXT;Tip: You can also specify plain text files (*.txt) containing a list of movies separated by line breaks.;Tip: U kunt ook platte tekstbestanden (*.txt) met daarin een lijst van films gescheiden door regeleinden opgeven.
+IDS_EDITMOVIE;Edit Movie;Wijzig Film
+IDS_IDENTIFICATION;Identification;Identificatie
+IDS_INFORMATION;Information;Informatie
+IDS_FILENAME;File name;Bestandsnaam
+IDS_FILESIZE;File size;Bestandsgrootte
+IDS_OPTIONALPROP;Optional properties;Optionele eigenschappen
+IDS_SEENMOVIE;I have seen this movie;Ik heb deze film gezien
+IDS_HIDEMOVIE;Hide this movie;Verberg deze film 
+IDS_SURETOHIDE;Are you sure you want to hide this movie?;Weet u zeker dat u deze film wilt verbergen?
+IDS_READY;Ready;Klaar
+IDS_LOADINGDATABASE;Loading database;Laden van database
+IDS_UPDATINGDATABASE;Collecting and updating movie information;Bezig met opzoeken en updaten van film informatie
+IDS_SYNCINGDATABASE;Synchronizing with files on disk;Synchroniseren met de bestanden op de schijf
+ID_SORT_TITLEASC;Title;Titel
+ID_SORT_TITLEDES;Title (descending);Titel (aflopend)
+ID_SORT_YEARASC;Year;Jaar
+ID_SORT_YEARDES;Year (descending);Jaar (aflopend)
+ID_SORT_RATINGASC;Rating;Beoordeling
+ID_SORT_RATINGDES;Rating (descending);Beoordeling (aflopend)
+ID_SORT_FILETIMEASC;File time;Bestandstijd
+ID_SORT_FILETIMEDES;File time (descending);Bestandstijd (aflopend)

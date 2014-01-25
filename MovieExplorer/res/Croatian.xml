@@ -1,0 +1,84 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<LanguageFile applicationID="MOVIEEXPLORER083">
+	<EnglishName>Croatian</EnglishName>
+	<Name>Hrvatski</Name>
+	<Author>Borghia</Author>
+	<Strings>
+		<S0001>Hrvatski</S0001>
+		<S0002>Sve</S0002>
+		<S0003>Traži</S0003>
+		<S0004>Žanr</S0004>
+		<S0005>Zemlja</S0005>
+		<S0006>Trajanje</S0006>
+		<S0007>Kategorija</S0007>
+		<S0008>Režiser</S0008>
+		<S0009>Pisac</S0009>
+		<S0010>Glumci</S0010>
+		<S0011>Datoteka</S0011>
+		<S0012>Unos</S0012>
+		<S0013>Povećaj	Ctrl + ScrlUp</S0013>
+		<S0014>Smanji	Ctrl + ScrlDn</S0014>
+		<S0015>Zadano	Ctrl + 0</S0015>
+		<S0016>Statusna traka	Ctrl + S</S0016>
+		<S0017>Prikaži-Sakrij log	Ctrl + L</S0017>
+		<S0018>Opcije...	Ctrl + O</S0018>
+		<S0019>Izlaz	Alt + F4</S0019>
+		<S0020>Molim sačekajte, informacije o filmovima se prikupljaju...</S0020>
+		<S0021>Film nije pronađen u  %SERVICENAME% bazi podataka, molim specificirajte ID ručno.</S0021>
+		<S0022>Nažalost došlo je do prekida ili greške u vezi prilikom prikupljanja informacija o filmovima.</S0022>
+		<S0023>Greška kod bilježenja filmskih podataka.</S0023>
+		<S0024>i</S0024>
+		<S0025>glasova</S0025>
+		<S0026>U redu</S0026>
+		<S0027>Odustani</S0027>
+		<S0028>Primjeni</S0028>
+		<S0029>Opcije</S0029>
+		<S0030>Glavno</S0030>
+		<S0031>Sučelje</S0031>
+		<S0032>Jezik</S0032>
+		<S0033>Tema</S0033>
+		<S0034>Pretraga počinje odmah dok pišete u okviru za pretraživanje</S0034>
+		<S0035>Traži unos doslovno</S0035>
+		<S0036>uključi opis filma u pretragu</S0036>
+		<S0037>Normaliziraj ocjene kao skalu od 1 do 10</S0037>
+		<S0038>Baza podataka</S0038>
+		<S0039>Indeksiraj datoteke sa slijedećim ekstenzijama</S0039>
+		<S0040>Uključi mape-foldere u listu</S0040>
+		<S0041>Koristi samo</S0041>
+		<S0042>Maksimalna dob trajanja filmske informacije (tjedana)</S0042>
+		<S0043>Informativni servis</S0043>
+		<S0044>Naslov</S0044>
+		<S0045>Godina</S0045>
+		<S0046>Sadržaj</S0046>
+		<S0047>Poster</S0047>
+		<S0048>Ocjena</S0048>
+		<S0049>Kombinirano</S0049>
+		<S0050>Ništa</S0050>
+		<S0051>Kategorije</S0051>
+		<S0052>Mape/Folderi</S0052>
+		<S0053>Folder/Datoteka</S0053>
+		<S0054>Dostupno samo na</S0054>
+		<S0055>Savjet: Možete specificirati običnu tekst datoteku (*.txt) koja sadrži listu filmova odvojenih sa prekidom linije.</S0055>
+		<S0056>Obradi film</S0056>
+		<S0057>Identifikacija</S0057>
+		<S0058>Informacija</S0058>
+		<S0059>Ime datoteke</S0059>
+		<S0060>Veličina datoteke</S0060>
+		<S0061>Optional properties</S0061>
+		<S0062>Gledao sam ovaj film</S0062>
+		<S0063>Sakrij ovaj film</S0063>
+		<S0064>Jesi li siguran da želiš sakriti ovaj film?</S0064>
+		<S0065>Spreman</S0065>
+		<S0066>Učitavanje baze podataka</S0066>
+		<S0067>Sakupljanje i nadogradnja podataka o filmovima</S0067>
+		<S0068>Sinkroniziranje sa datotekama na disku</S0068>
+		<S0069>Title</S0069>
+		<S0070>Title (descending)</S0070>
+		<S0071>Year</S0071>
+		<S0072>Year (descending)</S0072>
+		<S0073>Rating</S0073>
+		<S0074>Rating (descending)</S0074>
+		<S0075>File time</S0075>
+		<S0076>File time (descending)</S0076>
+	</Strings>
+</LanguageFile>

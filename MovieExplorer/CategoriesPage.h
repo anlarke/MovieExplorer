@@ -1,0 +1,26 @@
+#pragma once
+#include "ToolBarTreeView.h"
+
+class CCategoriesPage : public RPropertyPage
+{
+	friend class RWindow;
+	friend class COptionsDlg;
+
+public:
+	CCategoriesPage();
+	~CCategoriesPage();
+	virtual void ApplyChanges();
+
+protected:
+	void OnCommand(WORD id, WORD notifyCode, HWND hWndControl);
+	bool OnCreate(CREATESTRUCT *pCS);
+	LRESULT OnNotify(UINT_PTR id, NMHDR *pNMH);
+	void OnSize(DWORD type, WORD cx, WORD cy);
+	void OnPrefChanged();
+
+	RStatic m_stcCats, m_stcDirs, m_stcOnlyAvailableOn, m_stcYouCanUseTxt;
+	CToolBarTreeView m_tbtvCats, m_tbtvDirs;
+	REdit m_eComputerName;
+	RMemoryDC m_mdcAdd, m_mdcDelete, m_mdcMoveUp, m_mdcMoveDown;
+	RObArray<DBCATEGORY> m_categories;
+};

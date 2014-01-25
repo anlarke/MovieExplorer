@@ -1,0 +1,84 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<LanguageFile applicationID="MOVIEEXPLORER083">
+	<EnglishName>Italian</EnglishName>
+	<Name>Italiano</Name>
+	<Author>Lil_James</Author>
+	<Strings>
+		<S0001>Italiano</S0001>
+		<S0002>Tutti</S0002>
+		<S0003>Cerca</S0003>
+		<S0004>Genere</S0004>
+		<S0005>Paese</S0005>
+		<S0006>Durata</S0006>
+		<S0007>Categoria</S0007>
+		<S0008>Regista</S0008>
+		<S0009>Sceneggiatori</S0009>
+		<S0010>Cast</S0010>
+		<S0011>File</S0011>
+		<S0012>Entrata</S0012>
+		<S0013>Aumenta zoom	Ctrl + ScrlUp</S0013>
+		<S0014>Diminuisci zoom	Ctrl + ScrlDn</S0014>
+		<S0015>Reset zoom	Ctrl + 0</S0015>
+		<S0016>Barra di stato	Ctrl + S</S0016>
+		<S0017>Log	Ctrl + L</S0017>
+		<S0018>Opzioni...	Ctrl + O</S0018>
+		<S0019>Esci	Alt + F4</S0019>
+		<S0020>Per favore attendi, sto recuperando le informazioni sul film...</S0020>
+		<S0021>Non riesco a trovare il film nel database di %SERVICENAME%, per favore inserisci l&apos;ID manualmente.</S0021>
+		<S0022>Sfortunatamente si è verificato un errore di connessione.</S0022>
+		<S0023>Si è verificato un errore mentre raccoglievo informazioni sul film.</S0023>
+		<S0024>e</S0024>
+		<S0025>voti</S0025>
+		<S0026>OK</S0026>
+		<S0027>Cancella</S0027>
+		<S0028>Applica</S0028>
+		<S0029>Opzioni</S0029>
+		<S0030>Generali</S0030>
+		<S0031>Interfaccia</S0031>
+		<S0032>Lingua</S0032>
+		<S0033>Tema</S0033>
+		<S0034>Avvia immediatamente la ricerca quando si inizia a scrivere</S0034>
+		<S0035>Cerca letteralmente</S0035>
+		<S0036>Includi la trama nella ricerca</S0036>
+		<S0037>Normalizza il voto su una scala da 1 a 10</S0037>
+		<S0038>Database</S0038>
+		<S0039>Indicizza i file con le seguenti estenzioni</S0039>
+		<S0040>Includi le seguenti directory nella lista</S0040>
+		<S0041>Usa solamente</S0041>
+		<S0042>Età massima informazioni film (settimane)</S0042>
+		<S0043>Raccolta informazioni</S0043>
+		<S0044>Titolo</S0044>
+		<S0045>Anno</S0045>
+		<S0046>Trama</S0046>
+		<S0047>Copertina</S0047>
+		<S0048>Voto</S0048>
+		<S0049>Combinato</S0049>
+		<S0050>Niente</S0050>
+		<S0051>Categorie</S0051>
+		<S0052>Cartelle</S0052>
+		<S0053>Cartella/File</S0053>
+		<S0054>Disponibile solamente su</S0054>
+		<S0055>Suggerimento: È possibile selezionare un file di testo (*.txt) contenente un elenco di film, separati da una riga.</S0055>
+		<S0056>Modifica Informazioni Film</S0056>
+		<S0057>ID film</S0057>
+		<S0058>Informazioni</S0058>
+		<S0059>Nome file</S0059>
+		<S0060>Dimensioni file</S0060>
+		<S0061>Opzioni aggiuntive</S0061>
+		<S0062>Ho visto questo film</S0062>
+		<S0063>Nascondi film</S0063>
+		<S0064>Sei sicuro di voler nascondere questo film?</S0064>
+		<S0065>Pronto</S0065>
+		<S0066>Carico database</S0066>
+		<S0067>Raccolgo e aggiorno le infomazioni sui film</S0067>
+		<S0068>Sincronizzo i file sul disco</S0068>
+		<S0069>Title</S0069>
+		<S0070>Title (descending)</S0070>
+		<S0071>Year</S0071>
+		<S0072>Year (descending)</S0072>
+		<S0073>Rating</S0073>
+		<S0074>Rating (descending)</S0074>
+		<S0075>File time</S0075>
+		<S0076>File time (descending)</S0076>
+	</Strings>
+</LanguageFile>

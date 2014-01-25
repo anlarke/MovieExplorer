@@ -1,0 +1,8 @@
+#pragma once
+
+#define WM_PREFCHANGED	(WM_USER+101)
+#define WM_SCALECHANGED	(WM_USER+102)
+#define WM_ENDMODAL		(WM_USER+103)
+#define WM_SHOWMENU		(WM_USER+104)
+#define WM_DRAWBACKGR	(WM_USER+105)
+#define WM_CAPTUREM		(WM_USER+106)
