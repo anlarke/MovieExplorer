@@ -37,15 +37,9 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 		else
 			strURL += pInfo->strID;
 		
-		//if (!client.SendRequest(strURL, _T("GET"), 
-		//		_T("User-Agent: Mozilla/5.0 (Windows NT 6.1; rv:6.0) Gecko/20100101 Firefox/6.0\r\n")
-		//		_T("Accept-Language: en-US\r\n") 
-		//		_T("Content-Length: 0\r\n"), (const BYTE*)"\r\n", 2))
-		//	return DBI_STATUS_CONNERROR;
-		//
-		//str = FixLineEnds(HTMLEntitiesDecode(DataToString(client.GetData())));
-
 		str = FixLineEnds(HTMLEntitiesDecode(URLToString(strURL)));
+		if (str.IsEmpty())
+			return DBI_STATUS_CONNERROR;
 
 		if (!GetFirstMatch(str, _T("<a href=\"http://www\\.imdb\\.com/title/(tt\\d+?)/\"[^>]+>(.+?)</a>"),
 				&pInfo->strID, &strTemp, NULL))
@@ -56,14 +50,9 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 		if (!GetFirstMatch(strTemp, _T("(.+?) \\(.*?(\\d+).*?\\)"), &pInfo->strTitle, &pInfo->strYear, NULL))
 			return DBI_STATUS_SCRAPEERROR;
 
-		//if (!client.SendRequest(_T("http://www.imdb.com/title/") + pInfo->strID + _T("/"), _T("GET"), 
-		//		_T("User-Agent: Mozilla/5.0 (Windows NT 6.1; rv:6.0) Gecko/20100101 Firefox/6.0\r\n")
-		//		_T("Accept-Language: en-US")))
-		//	return DBI_STATUS_CONNERROR;
-		//
-		//str = FixLineEnds(HTMLEntitiesDecode(DataToString(client.GetData(), CHARSET_UTF8)));
-
 		str = FixLineEnds(HTMLEntitiesDecode(URLToString(_T("http://www.imdb.com/title/") + pInfo->strID + _T("/"))));
+		if (str.IsEmpty())
+			return DBI_STATUS_CONNERROR;
 	}
 	else
 	{
@@ -73,14 +62,9 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 			if (!pInfo->strSearchYear.IsEmpty())
 				strURL += _T("+%28") + pInfo->strSearchYear + _T("%29");
 
-			//if (!client.SendRequest(strURL, _T("GET"), 
-			//		_T("User-Agent: Mozilla/5.0 (Windows NT 6.1; rv:6.0) Gecko/20100101 Firefox/6.0\r\n")
-			//		_T("Accept-Language: en-US")))
-			//	return DBI_STATUS_CONNERROR;
-			//
-			//str = FixLineEnds(HTMLEntitiesDecode(DataToString(client.GetData())));
-
 			str = FixLineEnds(HTMLEntitiesDecode(URLToString(strURL)));
+			if (str.IsEmpty())
+				return DBI_STATUS_CONNERROR;
 
 			if (!GetFirstMatch(str, _T("<title>([^<]+)</title>"), &strTemp, NULL))
 				return DBI_STATUS_SCRAPEERROR;
@@ -131,14 +115,9 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 						return DBI_STATUS_UNKNOWN;
 				}
 
-				//if (!client.SendRequest(_T("http://www.imdb.com/title/") + pInfo->strID + _T("/"), _T("GET"), 
-				//		_T("User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/27.0.1453.94 Safari/537.36\r\n")
-				//		_T("Accept-Language: en-US")))
-				//	return DBI_STATUS_CONNERROR;
-				//
-				//str = FixLineEnds(HTMLEntitiesDecode(DataToString(client.GetData(), CHARSET_UTF8)));
-
 				str = FixLineEnds(HTMLEntitiesDecode(URLToString(_T("http://www.imdb.com/title/") + pInfo->strID + _T("/"))));
+				if (str.IsEmpty())
+					return DBI_STATUS_CONNERROR;
 			}
 			else // redirected to movie immediately
 			{
@@ -148,14 +127,9 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 		}
 		else // id is already provided, just go to the right page
 		{
-			//if (!client.SendRequest(_T("http://www.imdb.com/title/") + pInfo->strID + _T("/"), _T("GET"), 
-			//		_T("User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/27.0.1453.94 Safari/537.36\r\n")
-			//		_T("Accept-Language: en-US")))
-			//	return DBI_STATUS_CONNERROR;
-			//
-			//str = FixLineEnds(HTMLEntitiesDecode(DataToString(client.GetData(), CHARSET_UTF8)));
-
 			str = FixLineEnds(HTMLEntitiesDecode(URLToString(_T("http://www.imdb.com/title/") + pInfo->strID + _T("/"))));
+			if (str.IsEmpty())
+				return DBI_STATUS_CONNERROR;
 		}
 	}
 
@@ -167,11 +141,6 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 				&strTemp, &strTemp2, NULL))
 		{
 			strTemp = strTemp + _T("_V1._SX200_.") + strTemp2; // let server resize to width of 200px for us
-			//if (client.SendRequest(strTemp, _T("GET"), 
-			//		_T("User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/27.0.1453.94 Safari/537.36\r\n")
-			//		_T("Content-Length: 0\r\n"), (const BYTE*)"\r\n", 2))
-			//	pInfo->posterData = client.GetData();
-
 			URLToData(strTemp, pInfo->posterData);
 		}
 	}
@@ -235,18 +204,6 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 	}
 
 	// Get actors
-
-	//if (GetFirstMatch(str, _T("<table class=\"cast_list\">(.*?)</table>"), &strTemp, NULL))
-	//{
-	//	VERIFY(regex.Create(_T("<td class=\"name\"[^>]*>(.*?)</td>")));
-	//	VERIFY(regex2.Create(_T("name/(nm\\d+).*?>\\s*(.*?)\\s*<")));
-	//	p = strTemp; pEnd = strTemp + strTemp.GetLength();
-	//	while (p < pEnd && regex.Search(p, pEnd, NULL, &p) && 
-	//			regex.GetMatch(1, &strTemp2) && regex2.Search(strTemp2))
-	//		if (pInfo->strStars.Find(regex2.GetMatch(2)) == -1)
-	//			pInfo->strStars += regex2.GetMatch(2) + _T("|");
-	//	pInfo->strStars.Trim(_T("|"));
-	//}
 
 	if (GetFirstMatch(str, _T("\\.  With (.*?)\\."), &pInfo->strStars, NULL))
 		pInfo->strStars.Replace(_T(", "), _T("|"));
