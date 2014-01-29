@@ -46,17 +46,64 @@ void CListView::OnCommand(WORD id, WORD notifyCode, HWND hWndControl)
 	if (hWndControl == m_btnPlay)
 	{
 		RString strFilePath = CorrectPath(dir.strPath + _T("\\") + mov.strFileName, true);
-		if (dir.strComputerName == GetComputerName() && 
-				(FileExists(strFilePath) || DirectoryExists(strFilePath)))
-			ShellExecute(NULL, NULL, strFilePath, NULL, NULL, SW_SHOW);
+		if (dir.strComputerName == GetComputerName())
+		{
+			//if its a file open it. if a directory open the first video file  inside
+			//with a valid extension not containing "sample". 
+			//otherwise open the directory so user can choose the file manually.
+			if (FileExists(strFilePath))
+				ShellExecute(HWND_DESKTOP, _T("open"), strFilePath, NULL, NULL, SW_SHOW);
+			else if (DirectoryExists(strFilePath))
+			{
+
+				// Create easy to search list of extensions
+				RString strIndexExtensions = GETPREFSTR(_T("Database"), _T("IndexExtensions"));
+				strIndexExtensions = _T("|") + strIndexExtensions + _T("|");
+
+
+				bool bIndexDirs = GETPREFBOOL(_T("Database"), _T("IndexDirectories"));
+				RString strPath = CorrectPath(strFilePath);
+				RObArray<FILEINFO> fileInfos = EnumFiles(strPath, _T("*"), bIndexDirs);
+
+				bool fileFound = false;
+				foreach(fileInfos, fi)
+				{
+					//see if extension is in the list of valid ones.
+					if (!fi.bDirectory && strIndexExtensions.FindNoCase(_T("|") +
+						GetFileExt(fi.strName) + _T("|")) == -1)
+						continue;
+					//make sure its not the 'sample' video.
+					if (fi.strName.FindNoCase(_T("sample")) >= 0)
+						continue;
+
+					RString moviePath = CorrectPath(strFilePath + _T("\\") + fi.strName, true);
+					if (FileExists(moviePath))
+					{
+						ShellExecute(HWND_DESKTOP, _T("open"), moviePath, NULL, NULL, SW_SHOW);
+						fileFound = true;
+					}
+				}
+				
+				//we didn't find the movie in the directory so just open it.
+				if (!fileFound)
+					ShellExecute(HWND_DESKTOP, _T("open"), strFilePath, NULL, NULL, SW_SHOW);
+			}
+		}
 		SetFocus(m_hWnd);
 	}
 	else if (hWndControl == m_btnDir)
 	{
 		RString strDirPath = CorrectPath(dir.strPath, true);
-		if (dir.strComputerName == GetComputerName() && 
-				(DirectoryExists(dir.strPath) || FileExists(dir.strPath)))
-			ShellExecute(NULL, NULL, strDirPath, NULL, NULL, SW_SHOW);
+		if (dir.strComputerName == GetComputerName())
+		{
+			RString strFilePath = CorrectPath(dir.strPath + _T("\\") + mov.strFileName, true);
+
+			if (DirectoryExists(strFilePath))
+				ShellExecute(HWND_DESKTOP, _T("open"), strFilePath, NULL, NULL, SW_SHOW);
+			else if (DirectoryExists(strDirPath))
+				ShellExecute(HWND_DESKTOP, _T("open"), strDirPath, NULL, NULL, SW_SHOW);
+				
+		}
 		SetFocus(m_hWnd);
 	}
 	else if (hWndControl == m_btnSeen)
