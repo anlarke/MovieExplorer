@@ -81,6 +81,7 @@ void CListView::OnCommand(WORD id, WORD notifyCode, HWND hWndControl)
 					{
 						ShellExecute(HWND_DESKTOP, _T("open"), moviePath, NULL, NULL, SW_SHOW);
 						fileFound = true;
+						break;
 					}
 				}
 				
