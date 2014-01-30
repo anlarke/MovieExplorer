@@ -48,45 +48,51 @@ void CListView::OnCommand(WORD id, WORD notifyCode, HWND hWndControl)
 		RString strFilePath = CorrectPath(dir.strPath + _T("\\") + mov.strFileName, true);
 		if (dir.strComputerName == GetComputerName())
 		{
-			//if its a file open it. if a directory open the first video file  inside
-			//with a valid extension not containing "sample". 
-			//otherwise open the directory so user can choose the file manually.
+
+			/*if its a file open it. if a directory open the first video file  inside
+			with a valid extension not containing "sample". 
+			otherwise open the directory so user can choose the file manually.*/
+
 			if (FileExists(strFilePath))
 				ShellExecute(HWND_DESKTOP, _T("open"), strFilePath, NULL, NULL, SW_SHOW);
 			else if (DirectoryExists(strFilePath))
 			{
 
 				// Create easy to search list of extensions
+
 				RString strIndexExtensions = GETPREFSTR(_T("Database"), _T("IndexExtensions"));
 				strIndexExtensions = _T("|") + strIndexExtensions + _T("|");
 
-
-				bool bIndexDirs = GETPREFBOOL(_T("Database"), _T("IndexDirectories"));
 				RString strPath = CorrectPath(strFilePath);
-				RObArray<FILEINFO> fileInfos = EnumFiles(strPath, _T("*"), bIndexDirs);
+				RObArray<FILEINFO> fileInfos = EnumFiles(strPath, _T("*"));
 
-				bool fileFound = false;
+				bool bFileFound = false;
 				foreach(fileInfos, fi)
 				{
+
 					//see if extension is in the list of valid ones.
+
 					if (!fi.bDirectory && strIndexExtensions.FindNoCase(_T("|") +
 						GetFileExt(fi.strName) + _T("|")) == -1)
 						continue;
+
 					//make sure its not the 'sample' video.
+
 					if (fi.strName.FindNoCase(_T("sample")) >= 0)
 						continue;
 
-					RString moviePath = CorrectPath(strFilePath + _T("\\") + fi.strName, true);
-					if (FileExists(moviePath))
+					RString strMoviePath = CorrectPath(strFilePath + _T("\\") + fi.strName, true);
+					if (FileExists(strMoviePath))
 					{
-						ShellExecute(HWND_DESKTOP, _T("open"), moviePath, NULL, NULL, SW_SHOW);
-						fileFound = true;
+						ShellExecute(HWND_DESKTOP, _T("open"), strMoviePath, NULL, NULL, SW_SHOW);
+						bFileFound = true;
 						break;
 					}
 				}
 				
 				//we didn't find the movie in the directory so just open it.
-				if (!fileFound)
+
+				if (!bFileFound)
 					ShellExecute(HWND_DESKTOP, _T("open"), strFilePath, NULL, NULL, SW_SHOW);
 			}
 		}
