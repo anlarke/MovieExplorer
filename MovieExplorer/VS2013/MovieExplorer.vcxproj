@@ -20,7 +20,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals" />
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{03E431CC-F6C5-42B1-BA8D-EFC761883593}</ProjectGuid>
+    <ProjectGuid>{6F300169-6F19-43D3-B791-AD930AB132B2}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>MovieExplorer</RootNamespace>
   </PropertyGroup>
