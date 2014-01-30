@@ -48,7 +48,6 @@ void CListView::OnCommand(WORD id, WORD notifyCode, HWND hWndControl)
 		RString strFilePath = CorrectPath(dir.strPath + _T("\\") + mov.strFileName, true);
 		if (dir.strComputerName == GetComputerName())
 		{
-
 			/*if its a file open it. if a directory open the first video file  inside
 			with a valid extension not containing "sample". 
 			otherwise open the directory so user can choose the file manually.*/
@@ -57,7 +56,6 @@ void CListView::OnCommand(WORD id, WORD notifyCode, HWND hWndControl)
 				ShellExecute(HWND_DESKTOP, _T("open"), strFilePath, NULL, NULL, SW_SHOW);
 			else if (DirectoryExists(strFilePath))
 			{
-
 				// Create easy to search list of extensions
 
 				RString strIndexExtensions = GETPREFSTR(_T("Database"), _T("IndexExtensions"));
@@ -69,7 +67,6 @@ void CListView::OnCommand(WORD id, WORD notifyCode, HWND hWndControl)
 				bool bFileFound = false;
 				foreach(fileInfos, fi)
 				{
-
 					//see if extension is in the list of valid ones.
 
 					if (!fi.bDirectory && strIndexExtensions.FindNoCase(_T("|") +
