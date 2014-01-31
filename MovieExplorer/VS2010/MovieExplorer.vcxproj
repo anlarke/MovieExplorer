@@ -172,7 +172,6 @@
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\DynamicDll\UxThemeDll.h" />
     <ClInclude Include="..\..\RClasses\capturem.h" />
     <ClInclude Include="..\..\RClasses\convert.h" />
     <ClInclude Include="..\..\RClasses\debug.h" />
@@ -244,7 +243,6 @@
     <ClInclude Include="..\UpdateThread.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\DynamicDll\UxThemeDll.cpp" />
     <ClCompile Include="..\..\RClasses\capturem.cpp" />
     <ClCompile Include="..\..\RClasses\scale.cpp" />
     <ClCompile Include="..\..\RClasses\wcsistr.cpp" />

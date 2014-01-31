@@ -48,9 +48,9 @@ void CListView::OnCommand(WORD id, WORD notifyCode, HWND hWndControl)
 		RString strFilePath = CorrectPath(dir.strPath + _T("\\") + mov.strFileName, true);
 		if (dir.strComputerName == GetComputerName())
 		{
-			/*if its a file open it. if a directory open the first video file  inside
-			with a valid extension not containing "sample". 
-			otherwise open the directory so user can choose the file manually.*/
+			// If it's a file open it. If it's a directory open the first video file inside
+			// with a valid extension not containing 'sample'. Otherwise open the directory
+			// so user can choose the file manually.
 
 			if (FileExists(strFilePath))
 				ShellExecute(HWND_DESKTOP, _T("open"), strFilePath, NULL, NULL, SW_SHOW);
@@ -65,20 +65,19 @@ void CListView::OnCommand(WORD id, WORD notifyCode, HWND hWndControl)
 				RObArray<FILEINFO> fileInfos = EnumFiles(strPath, _T("*"));
 
 				bool bFileFound = false;
-				foreach(fileInfos, fi)
+				foreach (fileInfos, fi)
 				{
-					//see if extension is in the list of valid ones.
+					// See if extension is in the list of valid ones
 
-					if (!fi.bDirectory && strIndexExtensions.FindNoCase(_T("|") +
-						GetFileExt(fi.strName) + _T("|")) == -1)
+					if (strIndexExtensions.FindNoCase(_T("|") + GetFileExt(fi.strName) + _T("|")) == -1)
 						continue;
 
-					//make sure its not the 'sample' video.
+					// Make sure its not the 'sample' video
 
 					if (fi.strName.FindNoCase(_T("sample")) >= 0)
 						continue;
 
-					RString strMoviePath = CorrectPath(strFilePath + _T("\\") + fi.strName, true);
+					RString strMoviePath = CorrectPath(strFilePath + _T("\\") + fi.strName);
 					if (FileExists(strMoviePath))
 					{
 						ShellExecute(HWND_DESKTOP, _T("open"), strMoviePath, NULL, NULL, SW_SHOW);
@@ -87,7 +86,7 @@ void CListView::OnCommand(WORD id, WORD notifyCode, HWND hWndControl)
 					}
 				}
 				
-				//we didn't find the movie in the directory so just open it.
+				// We didn't find the movie in the directory so just open it
 
 				if (!bFileFound)
 					ShellExecute(HWND_DESKTOP, _T("open"), strFilePath, NULL, NULL, SW_SHOW);
@@ -97,16 +96,18 @@ void CListView::OnCommand(WORD id, WORD notifyCode, HWND hWndControl)
 	}
 	else if (hWndControl == m_btnDir)
 	{
-		RString strDirPath = CorrectPath(dir.strPath, true);
 		if (dir.strComputerName == GetComputerName())
 		{
-			RString strFilePath = CorrectPath(dir.strPath + _T("\\") + mov.strFileName, true);
+			// If mov.strFileName points to a directory, open that directory. If it's really 
+			// a file, open the directory the file is in.
+
+			RString strDirPath = CorrectPath(dir.strPath);
+			RString strFilePath = CorrectPath(dir.strPath + _T("\\") + mov.strFileName);
 
 			if (DirectoryExists(strFilePath))
 				ShellExecute(HWND_DESKTOP, _T("open"), strFilePath, NULL, NULL, SW_SHOW);
 			else if (DirectoryExists(strDirPath))
 				ShellExecute(HWND_DESKTOP, _T("open"), strDirPath, NULL, NULL, SW_SHOW);
-				
 		}
 		SetFocus(m_hWnd);
 	}

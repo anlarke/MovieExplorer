@@ -4,9 +4,6 @@
     <Filter Include="Project Files">
       <UniqueIdentifier>{9494f1dc-5c13-4834-aa28-b82a619c43db}</UniqueIdentifier>
     </Filter>
-    <Filter Include="DynamicDll">
-      <UniqueIdentifier>{0a08c9cc-ad8d-430d-9bdd-242be94c0861}</UniqueIdentifier>
-    </Filter>
     <Filter Include="RClasses">
       <UniqueIdentifier>{442752b6-0d8e-4cc6-8a98-009c4ff43d4a}</UniqueIdentifier>
     </Filter>
@@ -62,9 +59,6 @@
     </ClInclude>
     <ClInclude Include="..\..\RClasses\messages.h">
       <Filter>RClasses</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\DynamicDll\UxThemeDll.h">
-      <Filter>DynamicDll</Filter>
     </ClInclude>
     <ClInclude Include="..\MainWnd.h">
       <Filter>Project Files</Filter>
@@ -238,9 +232,6 @@
     </ClCompile>
     <ClCompile Include="..\..\RClasses\scale.cpp">
       <Filter>RClasses</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\DynamicDll\UxThemeDll.cpp">
-      <Filter>DynamicDll</Filter>
     </ClCompile>
     <ClCompile Include="..\..\RClasses\wcsistr.cpp">
       <Filter>RClasses</Filter>

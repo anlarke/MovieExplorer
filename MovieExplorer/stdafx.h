@@ -20,7 +20,7 @@
 #include <new>
 #include <wincodec.h>
 #include <cmath>
-#include "..\DynamicDll\UxThemeDll.h"//#include <uxtheme.h>
+#include <uxtheme.h>
 #include <vsstyle.h>
 #include <olectl.h>
 #include <process.h>

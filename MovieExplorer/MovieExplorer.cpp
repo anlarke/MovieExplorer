@@ -7,6 +7,7 @@
 #pragma comment(lib, "windowscodecs")
 #pragma comment(lib, "ws2_32")
 #pragma comment(lib, "winhttp")
+#pragma comment(lib, "uxtheme")
 
 bool CorrectPreferences();
 bool CorrectThemes();
@@ -167,8 +168,8 @@ void Run()
 
 	// Update log and status
 
-    LOG(_T("Movie Explorer - version 0.83e\n"));
-    LOG(_T("built January 25, 2014\n"));
+    LOG(_T("Movie Explorer - version 0.83f\n"));
+    LOG(_T("built January 31, 2014\n"));
 	STATUS(_T("Ready"));
 
 	SendMessage(mainWnd, WM_PAINT);
