@@ -19,7 +19,7 @@
 #include <locale.h>
 #include <new>
 #include <wincodec.h>
-#include <math.h>
+#include <cmath>
 #include "..\DynamicDll\UxThemeDll.h"//#include <uxtheme.h>
 #include <vsstyle.h>
 #include <olectl.h>

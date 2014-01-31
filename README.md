@@ -18,7 +18,12 @@ The following steps will lead to a successful build (assuming you're working on 
 
 1. Download/fork the source
 2. Install boost from the provided subdirectory
-   - Copy the headers from `boost\boost_1_47_0.7z\boost_1_47_0\boost` to `C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\boost`
-   - Copy the libs from `boost\VS2010` to `C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\lib`
-3. Open `MovieExplorer\VS2010\MovieExplorer.sln`
+	VS2010:
+		- Copy the headers from `boost\boost_1_47_0.7z\boost_1_47_0\boost` to `C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\boost`
+		- Copy the libs from `boost\VS2010` to `C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\lib`
+	VS2013:
+		- Copy the headers from `boost\boost_1_55_0.7z\boost_1_55_0\boost` to `C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\boost`
+		- Copy the libs from `boost\VS2013` to `C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\lib`
+		
+3. Open `MovieExplorer\VS2010\MovieExplorer.sln` or 'MovieExplorer\VS2013\MovieExplorer.sln' depending on your Visual Studio version.
 4. Hit build

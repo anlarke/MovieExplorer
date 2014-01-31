@@ -1,0 +1,292 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals" />
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{6F300169-6F19-43D3-B791-AD930AB132B2}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>MovieExplorer</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\masm.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <GenerateManifest>false</GenerateManifest>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <GenerateManifest>false</GenerateManifest>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <GenerateManifest>false</GenerateManifest>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <GenerateManifest>false</GenerateManifest>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <MultiProcessorCompilation>
+      </MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <MinimumRequiredVersion>5.0</MinimumRequiredVersion>
+    </Link>
+    <PreBuildEvent>
+      <Command>"$(ProjectDir)..\..\strings\VS2010\Release\strings.exe" "$(ProjectDir)..\strings.csv"</Command>
+    </PreBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
+      <MultiProcessorCompilation>
+      </MultiProcessorCompilation>
+      <MinimalRebuild>true</MinimalRebuild>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <PreBuildEvent>
+      <Command>"$(ProjectDir)..\..\strings\VS2010\Release\strings.exe" "$(ProjectDir)..\strings.csv"</Command>
+    </PreBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <MultiProcessorCompilation>
+      </MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <MinimumRequiredVersion>5.0</MinimumRequiredVersion>
+    </Link>
+    <PreBuildEvent>
+      <Command>"$(ProjectDir)..\..\strings\VS2010\Release\strings.exe" "$(ProjectDir)..\strings.csv"</Command>
+    </PreBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
+      <MultiProcessorCompilation>
+      </MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+    <PreBuildEvent>
+      <Command>"$(ProjectDir)..\..\strings\VS2010\Release\strings.exe" "$(ProjectDir)..\strings.csv"</Command>
+    </PreBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\DynamicDll\UxThemeDll.h" />
+    <ClInclude Include="..\..\RClasses\capturem.h" />
+    <ClInclude Include="..\..\RClasses\convert.h" />
+    <ClInclude Include="..\..\RClasses\debug.h" />
+    <ClInclude Include="..\..\RClasses\draw.h" />
+    <ClInclude Include="..\..\RClasses\foreach.h" />
+    <ClInclude Include="..\..\RClasses\general.h" />
+    <ClInclude Include="..\..\RClasses\httphelp.h" />
+    <ClInclude Include="..\..\RClasses\messages.h" />
+    <ClInclude Include="..\..\RClasses\mltextout.h" />
+    <ClInclude Include="..\..\RClasses\RArray.h" />
+    <ClInclude Include="..\..\RClasses\RButton.h" />
+    <ClInclude Include="..\..\RClasses\RComboBox.h" />
+    <ClInclude Include="..\..\RClasses\RComPtr.h" />
+    <ClInclude Include="..\..\RClasses\RControl.h" />
+    <ClInclude Include="..\..\RClasses\RCriticalSection.h" />
+    <ClInclude Include="..\..\RClasses\RCustomToolBar.h" />
+    <ClInclude Include="..\..\RClasses\RCustomToolBarButton.h" />
+    <ClInclude Include="..\..\RClasses\RDialog.h" />
+    <ClInclude Include="..\..\RClasses\REdit.h" />
+    <ClInclude Include="..\..\RClasses\RFont.h" />
+    <ClInclude Include="..\..\RClasses\RHintEdit.h" />
+    <ClInclude Include="..\..\RClasses\RLanguageMgr.h" />
+    <ClInclude Include="..\..\RClasses\RMemoryDC.h" />
+    <ClInclude Include="..\..\RClasses\RPreferencesMgr2.h" />
+    <ClInclude Include="..\..\RClasses\RPropertySheet.h" />
+    <ClInclude Include="..\..\RClasses\RRect.h" />
+    <ClInclude Include="..\..\RClasses\RRegEx_boost.h" />
+    <ClInclude Include="..\..\RClasses\RSaveDC.h" />
+    <ClInclude Include="..\..\RClasses\RScrollBar.h" />
+    <ClInclude Include="..\..\RClasses\RSocket.h" />
+    <ClInclude Include="..\..\RClasses\RSprite.h" />
+    <ClInclude Include="..\..\RClasses\RStatic.h" />
+    <ClInclude Include="..\..\RClasses\RString.h" />
+    <ClInclude Include="..\..\RClasses\RTabControl.h" />
+    <ClInclude Include="..\..\RClasses\RThemeMgr2.h" />
+    <ClInclude Include="..\..\RClasses\RThreadPool.h" />
+    <ClInclude Include="..\..\RClasses\RTreeView.h" />
+    <ClInclude Include="..\..\RClasses\RWindow.h" />
+    <ClInclude Include="..\..\RClasses\RXML.h" />
+    <ClInclude Include="..\..\RClasses\RXML2.h" />
+    <ClInclude Include="..\..\RClasses\scale.h" />
+    <ClInclude Include="..\..\RClasses\time.h" />
+    <ClInclude Include="..\..\RClasses\wcsistr.h" />
+    <ClInclude Include="..\CategoriesPage.h" />
+    <ClInclude Include="..\CategoryBar.h" />
+    <ClInclude Include="..\Database.h" />
+    <ClInclude Include="..\DatabasePage.h" />
+    <ClInclude Include="..\EditDlg.h" />
+    <ClInclude Include="..\EditListBox.h" />
+    <ClInclude Include="..\GeneralPage.h" />
+    <ClInclude Include="..\GenreBar.h" />
+    <ClInclude Include="..\ListView.h" />
+    <ClInclude Include="..\LogWnd.h" />
+    <ClInclude Include="..\MainWnd.h" />
+    <ClInclude Include="..\messages.h" />
+    <ClInclude Include="..\MovieExplorer.h" />
+    <ClInclude Include="..\OptionsDlg.h" />
+    <ClInclude Include="..\ParseFileName.h" />
+    <ClInclude Include="..\ReBar.h" />
+    <ClInclude Include="..\resource.h" />
+    <ClInclude Include="..\ScrapeIMDb.h" />
+    <ClInclude Include="..\ScrapeMovieMeter.h" />
+    <ClInclude Include="..\ScrollBar.h" />
+    <ClInclude Include="..\StatusBar.h" />
+    <ClInclude Include="..\stdafx.h" />
+    <ClInclude Include="..\strings.h" />
+    <ClInclude Include="..\ToolBarButton.h" />
+    <ClInclude Include="..\ToolBarTreeView.h" />
+    <ClInclude Include="..\UpdateThread.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\DynamicDll\UxThemeDll.cpp" />
+    <ClCompile Include="..\..\RClasses\capturem.cpp" />
+    <ClCompile Include="..\..\RClasses\scale.cpp" />
+    <ClCompile Include="..\..\RClasses\wcsistr.cpp" />
+    <ClCompile Include="..\CategoriesPage.cpp" />
+    <ClCompile Include="..\CategoryBar.cpp" />
+    <ClCompile Include="..\CorrectPreferences.cpp" />
+    <ClCompile Include="..\CorrectThemes.cpp" />
+    <ClCompile Include="..\Database.cpp" />
+    <ClCompile Include="..\DatabasePage.cpp" />
+    <ClCompile Include="..\EditDlg.cpp" />
+    <ClCompile Include="..\EditListBox.cpp" />
+    <ClCompile Include="..\GeneralPage.cpp" />
+    <ClCompile Include="..\ListView.cpp" />
+    <ClCompile Include="..\LogWnd.cpp" />
+    <ClCompile Include="..\MainWnd.cpp" />
+    <ClCompile Include="..\MovieExplorer.cpp" />
+    <ClCompile Include="..\OptionsDlg.cpp" />
+    <ClCompile Include="..\ParseFileName.cpp" />
+    <ClCompile Include="..\ReBar.cpp" />
+    <ClCompile Include="..\ScrapeIMDb.cpp" />
+    <ClCompile Include="..\ScrapeMovieMeter.cpp" />
+    <ClCompile Include="..\ScrollBar.cpp" />
+    <ClCompile Include="..\StatusBar.cpp" />
+    <ClCompile Include="..\stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\ToolBarTreeView.cpp" />
+    <ClCompile Include="..\UpdateThread.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\MovieExplorer.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\strings.csv" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\masm.targets" />
+  </ImportGroup>
+</Project>

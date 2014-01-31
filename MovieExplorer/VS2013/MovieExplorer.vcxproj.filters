@@ -1,0 +1,325 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Project Files">
+      <UniqueIdentifier>{9494f1dc-5c13-4834-aa28-b82a619c43db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DynamicDll">
+      <UniqueIdentifier>{0a08c9cc-ad8d-430d-9bdd-242be94c0861}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RClasses">
+      <UniqueIdentifier>{442752b6-0d8e-4cc6-8a98-009c4ff43d4a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Options Dialog">
+      <UniqueIdentifier>{23022834-1857-410d-8dd0-e5ba9416dbc7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Database">
+      <UniqueIdentifier>{08fac39d-ed32-4877-9b93-c2bfa4dae947}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\MovieExplorer.h">
+      <Filter>Project Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\resource.h">
+      <Filter>Project Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\stdafx.h">
+      <Filter>Project Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\RClasses\debug.h">
+      <Filter>RClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\RClasses\scale.h">
+      <Filter>RClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\RClasses\RArray.h">
+      <Filter>RClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\RClasses\RString.h">
+      <Filter>RClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\RClasses\RMemoryDC.h">
+      <Filter>RClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\RClasses\RLanguageMgr.h">
+      <Filter>RClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\RClasses\RWindow.h">
+      <Filter>RClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\RClasses\RFont.h">
+      <Filter>RClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\RClasses\RXML.h">
+      <Filter>RClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\RClasses\draw.h">
+      <Filter>RClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\RClasses\general.h">
+      <Filter>RClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\RClasses\messages.h">
+      <Filter>RClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\DynamicDll\UxThemeDll.h">
+      <Filter>DynamicDll</Filter>
+    </ClInclude>
+    <ClInclude Include="..\MainWnd.h">
+      <Filter>Project Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\strings.h">
+      <Filter>Project Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\RClasses\RCriticalSection.h">
+      <Filter>RClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\RClasses\wcsistr.h">
+      <Filter>RClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ReBar.h">
+      <Filter>Project Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ListView.h">
+      <Filter>Project Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\StatusBar.h">
+      <Filter>Project Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\RClasses\RSprite.h">
+      <Filter>RClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\RClasses\RComPtr.h">
+      <Filter>RClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CategoryBar.h">
+      <Filter>Project Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\RClasses\RCustomToolBarButton.h">
+      <Filter>RClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ToolBarButton.h">
+      <Filter>Project Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\RClasses\RHintEdit.h">
+      <Filter>RClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\RClasses\RRect.h">
+      <Filter>RClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\RClasses\RThreadPool.h">
+      <Filter>RClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\LogWnd.h">
+      <Filter>Project Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\RClasses\REdit.h">
+      <Filter>RClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ScrollBar.h">
+      <Filter>Project Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\RClasses\RScrollBar.h">
+      <Filter>RClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\messages.h">
+      <Filter>Project Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\RClasses\time.h">
+      <Filter>RClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\RClasses\RSocket.h">
+      <Filter>RClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\RClasses\RControl.h">
+      <Filter>RClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\GenreBar.h">
+      <Filter>Project Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\RClasses\mltextout.h">
+      <Filter>RClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\RClasses\RSaveDC.h">
+      <Filter>RClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\RClasses\RDialog.h">
+      <Filter>RClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\EditDlg.h">
+      <Filter>Project Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\RClasses\RStatic.h">
+      <Filter>RClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\RClasses\RButton.h">
+      <Filter>RClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\RClasses\RTabControl.h">
+      <Filter>RClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\RClasses\RComboBox.h">
+      <Filter>RClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\OptionsDlg.h">
+      <Filter>Options Dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CategoriesPage.h">
+      <Filter>Options Dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="..\GeneralPage.h">
+      <Filter>Options Dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="..\DatabasePage.h">
+      <Filter>Options Dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ToolBarTreeView.h">
+      <Filter>Options Dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\RClasses\RTreeView.h">
+      <Filter>RClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\RClasses\RCustomToolBar.h">
+      <Filter>RClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ParseFileName.h">
+      <Filter>Database</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ScrapeIMDb.h">
+      <Filter>Database</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ScrapeMovieMeter.h">
+      <Filter>Database</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Database.h">
+      <Filter>Database</Filter>
+    </ClInclude>
+    <ClInclude Include="..\UpdateThread.h">
+      <Filter>Database</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\RClasses\RRegEx_boost.h">
+      <Filter>RClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\RClasses\capturem.h">
+      <Filter>RClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\EditListBox.h">
+      <Filter>Options Dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\RClasses\RPropertySheet.h">
+      <Filter>RClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\RClasses\RPreferencesMgr2.h">
+      <Filter>RClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\RClasses\RThemeMgr2.h">
+      <Filter>RClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\RClasses\RXML2.h">
+      <Filter>RClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\RClasses\foreach.h">
+      <Filter>RClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\RClasses\convert.h">
+      <Filter>RClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\RClasses\httphelp.h">
+      <Filter>RClasses</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\stdafx.cpp">
+      <Filter>Project Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\MovieExplorer.cpp">
+      <Filter>Project Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\RClasses\scale.cpp">
+      <Filter>RClasses</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\DynamicDll\UxThemeDll.cpp">
+      <Filter>DynamicDll</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\RClasses\wcsistr.cpp">
+      <Filter>RClasses</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CategoryBar.cpp">
+      <Filter>Project Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CorrectPreferences.cpp">
+      <Filter>Project Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CorrectThemes.cpp">
+      <Filter>Project Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\StatusBar.cpp">
+      <Filter>Project Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\LogWnd.cpp">
+      <Filter>Project Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\MainWnd.cpp">
+      <Filter>Project Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ListView.cpp">
+      <Filter>Project Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ScrollBar.cpp">
+      <Filter>Project Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\EditDlg.cpp">
+      <Filter>Project Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ReBar.cpp">
+      <Filter>Project Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\DatabasePage.cpp">
+      <Filter>Options Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CategoriesPage.cpp">
+      <Filter>Options Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ScrapeIMDb.cpp">
+      <Filter>Database</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ScrapeMovieMeter.cpp">
+      <Filter>Database</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ParseFileName.cpp">
+      <Filter>Database</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeneralPage.cpp">
+      <Filter>Options Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="..\OptionsDlg.cpp">
+      <Filter>Options Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ToolBarTreeView.cpp">
+      <Filter>Options Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Database.cpp">
+      <Filter>Database</Filter>
+    </ClCompile>
+    <ClCompile Include="..\UpdateThread.cpp">
+      <Filter>Database</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\RClasses\capturem.cpp">
+      <Filter>RClasses</Filter>
+    </ClCompile>
+    <ClCompile Include="..\EditListBox.cpp">
+      <Filter>Options Dialog</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\MovieExplorer.rc">
+      <Filter>Project Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\strings.csv">
+      <Filter>Project Files</Filter>
+    </None>
+  </ItemGroup>
+</Project>
