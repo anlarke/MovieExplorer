@@ -16,6 +16,7 @@ void ClearInfo(DBINFO *pInfo)
 	pInfo->fRatingMax = 0.0f;
 	pInfo->fIMDbRating = 0.0f;
 	pInfo->fIMDbRatingMax = 0.0f;
+	pInfo->nMetascore = -1;
 	pInfo->nVotes = 0;
 	pInfo->nIMDbVotes = 0;
 	pInfo->posterData.SetSize(0);
@@ -51,6 +52,7 @@ void ClearMovie(DBMOVIE *pMovie)
 	pMovie->fRating = 0.0f;
 	pMovie->fRatingMax = 0.0f;
 	pMovie->nIMDbVotes = 0;
+	pMovie->nMetascore = -1;
 	pMovie->nVotes = 0;
 	pMovie->nYear = 0;
 	pMovie->pDirectory = NULL;
@@ -86,6 +88,7 @@ void TagToInfo(RXMLTag *pTag, DBINFO *pInfo)
 	pInfo->fRating = StringToFloat(pTag->GetChildContent(_T("Rating")));
 	pInfo->fRatingMax = StringToFloat(pTag->GetChildContent(_T("RatingMax")));
 	pInfo->nVotes = StringToNumber(pTag->GetChildContent(_T("Votes")));
+	pInfo->nMetascore = StringToNumber(pTag->GetChildContent(_T("Metascore")));
 	if (pTag->GetChild(_T("IMDbID")))
 	{
 		pInfo->strIMDbID = pTag->GetChildContent(_T("IMDbID"));
@@ -113,6 +116,7 @@ void InfoToTag(DBINFO *pInfo, RXMLTag *pTag)
 	pTag->AddChild(_T("Rating"))->SetContent(FloatToString(pInfo->fRating));
 	pTag->AddChild(_T("RatingMax"))->SetContent(FloatToString(pInfo->fRatingMax));
 	pTag->AddChild(_T("Votes"))->SetContent(NumberToString(pInfo->nVotes));
+	pTag->AddChild(_T("Metascore"))->SetContent(NumberToString(pInfo->nMetascore));
 	if (!pInfo->strIMDbID.IsEmpty())
 	{
 		pTag->AddChild(_T("IMDbID"))->SetContent(pInfo->strIMDbID);

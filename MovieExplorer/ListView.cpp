@@ -811,6 +811,26 @@ void CListView::Draw()
 			TextOut(m_mdc, pLink->rc.x, pLink->rc.y, pLink->strText);
 			SelectObject(m_mdc, hPrevFont);
 
+			// Draw metascore if IMDB is the active service
+
+			if (mov.nMetascore >= 0 && m_strRatingServ == _T("imdb.com"))
+			{
+				
+				LINK *pMetascoreLink = m_links.AddNew();
+				pMetascoreLink->strText = _T("Metascore: ") + NumberToString(mov.nMetascore) + _T("/100");
+				pMetascoreLink->strURL = _T("http://www.imdb.com/title/") + mov.strIMDbID + _T("/criticreviews");
+				hPrevFont = (HFONT)SelectObject(m_mdc, m_fntText);
+				GetTextExtentPoint32(m_mdc, pMetascoreLink->strText, &sz);
+				pMetascoreLink->rc.x = cx - sz.cx - SCX(15);
+				pMetascoreLink->rc.cx = sz.cx;
+				pMetascoreLink->rc.y = y + SCY(66);
+				pMetascoreLink->rc.cy = sz.cy;
+				pMetascoreLink->state = (PtInRect(&pMetascoreLink->rc, pt) ? LINKSTATE_HOVER : LINKSTATE_NORMAL);
+				SetTextColor(m_mdc, (pMetascoreLink->state == LINKSTATE_HOVER ? m_clrLink : m_clrText));
+				TextOut(m_mdc, pMetascoreLink->rc.x, pMetascoreLink->rc.y, pMetascoreLink->strText);
+				SelectObject(m_mdc, hPrevFont);
+			}
+
 			// draw IMDb rating if active service is not IMDb
 
 			if (mov.fIMDbRating != 0.0f && m_strRatingServ != _T("imdb.com"))

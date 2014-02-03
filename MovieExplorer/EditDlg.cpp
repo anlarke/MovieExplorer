@@ -107,6 +107,7 @@ void CEditDlg::OnOK()
 	{
 		m_pMov->fIMDbRating = m_pMov->fIMDbRatingMax = 0.0f;
 		m_pMov->fRating = m_pMov->fRatingMax = 0.0f;
+		m_pMov->nMetascore = -1;
 		m_pMov->nIMDbVotes = m_pMov->nVotes = 0;
 		m_pMov->strTitle.Empty(); m_pMov->strYear.Empty(); m_pMov->strCountries.Empty(); 
 		m_pMov->strGenres.Empty(); m_pMov->strRuntime.Empty(); m_pMov->strStoryline.Empty();

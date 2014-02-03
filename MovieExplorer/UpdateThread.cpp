@@ -204,6 +204,7 @@ UINT CALLBACK UpdateThread(void *pParam)
 				{
 					mov.fRating = info.fRating;
 					mov.fRatingMax = info.fRatingMax;
+					mov.nMetascore = info.nMetascore;
 					mov.nVotes = info.nVotes;
 				}
 				if (mov.fIMDbRating == 0.0f && info.fIMDbRating != 0.0f)

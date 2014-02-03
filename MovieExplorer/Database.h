@@ -50,7 +50,7 @@ struct DBMOVIE
 	RString strFileName, strIMDbID, strMovieMeterID, strTitle, strYear, strCountries, strGenres, 
 			strRuntime, strStoryline, strDirectors, strWriters, strStars;
 	float fRating, fRatingMax, fIMDbRating, fIMDbRatingMax;
-	INT_PTR nVotes, nIMDbVotes, nYear;
+	INT_PTR nVotes, nIMDbVotes, nYear, nMetascore;
 	RArray<BYTE> posterData;
 	UINT64 fileSize, fileTime;
 	bool bSeen, bHide, bUpdated; // would be great to eliminate bUpdated...
@@ -63,7 +63,7 @@ struct DBINFO
 			strStoryline, strDirectors, strWriters, strStars, strSearchTitle, strSearchYear, 
 			strFileName;
 	float fRating, fRatingMax, fIMDbRating, fIMDbRatingMax;
-	INT_PTR nVotes, nIMDbVotes;
+	INT_PTR nVotes, nIMDbVotes, nMetascore;
 	RArray<BYTE> posterData;
 	DWORD status;
 	UINT64 timestamp;

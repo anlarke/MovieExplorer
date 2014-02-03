@@ -21,6 +21,7 @@ DWORD ScrapeMovieMeter(DBINFO *pInfo)
 			pInfo->strStars = (const TCHAR*)NULL;
 	pInfo->fRating = pInfo->fRatingMax = 0.0f;
 	pInfo->nVotes = 0;
+	pInfo->nMetascore = -1;
 	pInfo->posterData.SetSize(0);
 	//pInfo->status = DBI_STATUS_NONE;
 	//pInfo->timestamp = 0;
@@ -120,6 +121,7 @@ DWORD ScrapeMovieMeter(DBINFO *pInfo)
 	pInfo->strIMDbID.Empty();
 	pInfo->fIMDbRating = 0.0f;
 	pInfo->fIMDbRatingMax = 0.0f;
+	pInfo->nMetascore = -1;
 	pInfo->nIMDbVotes = 0;
 
 	if (GetFirstMatch(str, _T("imdb\\.com/title/(tt\\d+)/\" >IMDb \\((.+?) / (\\d+)\\)"),
