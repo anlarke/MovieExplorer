@@ -811,7 +811,7 @@ void CListView::Draw()
 			TextOut(m_mdc, pLink->rc.x, pLink->rc.y, pLink->strText);
 			SelectObject(m_mdc, hPrevFont);
 
-			// Draw metascore if IMDB is the active service
+			// Draw metascore if active service is IMDB
 
 			if (mov.nMetascore >= 0 && m_strRatingServ == _T("imdb.com"))
 			{
@@ -829,11 +829,10 @@ void CListView::Draw()
 				TextOut(m_mdc, pMetascoreLink->rc.x, pMetascoreLink->rc.y, pMetascoreLink->strText);
 				SelectObject(m_mdc, hPrevFont);
 			}
-
-			// draw IMDb rating if active service is not IMDb
-
-			if (mov.fIMDbRating != 0.0f && m_strRatingServ != _T("imdb.com"))
+			else if (mov.fIMDbRating != 0.0f && m_strRatingServ != _T("imdb.com"))
 			{
+				// Draw IMDb rating if active service is not IMDb
+
 				RString str = _T(" (") + NumberToString(mov.nIMDbVotes) + _T(" ") + 
 						GETSTR(IDS_VOTES) + _T(")");
 				hPrevFont = (HFONT)SelectObject(m_mdc, m_fntText);
