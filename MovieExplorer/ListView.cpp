@@ -815,7 +815,6 @@ void CListView::Draw()
 
 			if (mov.nMetascore >= 0 && m_strRatingServ == _T("imdb.com"))
 			{
-				
 				LINK *pMetascoreLink = m_links.AddNew();
 				pMetascoreLink->strText = _T("Metascore: ") + NumberToString(mov.nMetascore) + _T("/100");
 				pMetascoreLink->strURL = _T("http://www.imdb.com/title/") + mov.strIMDbID + _T("/criticreviews");
