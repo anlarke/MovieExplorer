@@ -121,7 +121,6 @@ DWORD ScrapeMovieMeter(DBINFO *pInfo)
 	pInfo->strIMDbID.Empty();
 	pInfo->fIMDbRating = 0.0f;
 	pInfo->fIMDbRatingMax = 0.0f;
-	pInfo->nMetascore = -1;
 	pInfo->nIMDbVotes = 0;
 
 	if (GetFirstMatch(str, _T("imdb\\.com/title/(tt\\d+)/\" >IMDb \\((.+?) / (\\d+)\\)"),
