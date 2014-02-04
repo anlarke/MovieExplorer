@@ -215,7 +215,7 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 
 	// Get storyline
 
-	if (GetFirstMatch(str, _T("<h2>Storyline</h2>.*?<p>(.*?) *<em class=\"nobr\">"), &strTemp, NULL))
+	if (GetFirstMatch(str, _T("<h2>Storyline</h2>.*?<p>(.*?) *(?:<em class=\"nobr\">|</p>)"), &strTemp, NULL))
 	{
 		VERIFY(regex.Create(_T("<[^>]+>")));
 		pInfo->strStoryline = regex.Replace(strTemp, _T(""));
