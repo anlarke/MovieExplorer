@@ -21,6 +21,7 @@ DWORD ScrapeMovieMeter(DBINFO *pInfo)
 			pInfo->strStars = (const TCHAR*)NULL;
 	pInfo->fRating = pInfo->fRatingMax = 0.0f;
 	pInfo->nVotes = 0;
+	pInfo->nMetascore = -1;
 	pInfo->posterData.SetSize(0);
 	//pInfo->status = DBI_STATUS_NONE;
 	//pInfo->timestamp = 0;

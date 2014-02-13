@@ -152,6 +152,11 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 
 	pInfo->fRatingMax = 10.0f;
 
+	// Get Metacritic rating
+
+	if (GetFirstMatch(str, _T("Metascore[ \\t]*:[ \\t]*<[^>]+>[ \\t]*(1?\\d?\\d)/100"), &strTemp, NULL))
+		pInfo->nMetascore = StringToNumber(strTemp);
+
 	// Get votes
 
 	if (GetFirstMatch(str, _T("<span itemprop=\"ratingCount\">([^<]+)</span>"), &strTemp, NULL))
@@ -210,7 +215,7 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 
 	// Get storyline
 
-	if (GetFirstMatch(str, _T("<h2>Storyline</h2>.*?<p>(.*?) *<em class=\"nobr\">"), &strTemp, NULL))
+	if (GetFirstMatch(str, _T("<h2>Storyline</h2>.*?<p>(.*?) *(?:<em class=\"nobr\">|</p>)"), &strTemp, NULL))
 	{
 		VERIFY(regex.Create(_T("<[^>]+>")));
 		pInfo->strStoryline = regex.Replace(strTemp, _T(""));
