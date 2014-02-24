@@ -525,7 +525,7 @@ void CListView::Draw()
 	// Draw the movies
 
 	HFONT hPrevFont;
-	RString str;
+	RString str, strTitle;
 
 	for (INT_PTR i = nStart; i < GetDB()->m_movies && y < cy; ++i, y += SCY(LV_DETAILS_HEIGHT))
 	{
@@ -559,13 +559,34 @@ void CListView::Draw()
 		}
 
 		// draw title and year
+		
 
-		hPrevFont = (HFONT)SelectObject(m_mdc, m_fntTitle);
-		SetTextColor(m_mdc, m_clrTitle);
-		str = (mov.strTitle.IsEmpty() ? mov.strFileName : (mov.strTitle + 
+			hPrevFont = (HFONT)SelectObject(m_mdc, m_fntTitle);
+			SetTextColor(m_mdc, m_clrTitle);
+		
+		if (mov.nSeason < 0)
+		{
+			strTitle = (mov.strTitle.IsEmpty() ? mov.strFileName : (mov.strTitle +
 				(mov.strYear.IsEmpty() ? _T("") : _T(" (") + mov.strYear + _T(")"))));
-		TextOut(m_mdc, SCX(200) + SCX(35), y + SCY(14), str);
-		SelectObject(m_mdc, hPrevFont);
+			TextOut(m_mdc, SCX(200) + SCX(35), y + SCY(14), strTitle);
+			SelectObject(m_mdc, hPrevFont);
+		}
+		else
+		{
+			strTitle = mov.strTitle.IsEmpty() ? mov.strFileName : mov.strTitle;
+			str = (mov.strEpisodeName.IsEmpty() ? mov.strTitle : (mov.strEpisodeName +
+				(mov.strYear.IsEmpty() ? _T("") : _T(" (") + mov.strYear + _T(")"))));
+
+			TextOut(m_mdc, SCX(200) + SCX(35), y + SCY(14), str);
+			SelectObject(m_mdc, hPrevFont);
+		
+		
+			hPrevFont = (HFONT)SelectObject(m_mdc, m_fntTextBold);
+			SetTextColor(m_mdc, m_clrTitle);
+			str = strTitle + _T(":  Season ") + NumberToString(mov.nSeason) + _T(" Episode ") + NumberToString(mov.nEpisode);
+			TextOut(m_mdc, SCX(200) + SCX(35), y + SCY(40), str);
+			SelectObject(m_mdc, hPrevFont);
+		}
 
 		// draw genres, countries and runtime
 
@@ -575,7 +596,8 @@ void CListView::Draw()
 		
 		hPrevFont = (HFONT)SelectObject(m_mdc, m_fntText);
 		SetTextColor(m_mdc, m_clrText);
-		TextOut(m_mdc, SCX(200) + SCX(35), y + SCY(48), mov.strCountries);
+		if (mov.nSeason < 0)
+			TextOut(m_mdc, SCX(200) + SCX(35), y + SCY(48), mov.strCountries);
 		TextOut(m_mdc, SCX(200) + SCX(35), y + SCY(66), mov.strGenres);
 		TextOut(m_mdc, SCX(200) + SCX(35), y + SCY(84), mov.strRuntime);
 		SelectObject(m_mdc, hPrevFont);

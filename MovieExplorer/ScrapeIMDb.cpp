@@ -17,10 +17,12 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 	bool bUseOriginalTitle = GETPREFBOOL(_T("IMDbUseOriginalTitle"));
 
 	if (!pInfo || pInfo->strSearchTitle.IsEmpty() || pInfo->strServiceName != _T("imdb.com"))
-		{ASSERT(false); return DBI_STATUS_SCRAPEERROR;}
+	{
+		ASSERT(false); return DBI_STATUS_SCRAPEERROR;
+	}
 
 	RRegEx regex, regex2;
-	RString str, strTemp, strTemp2;
+	RString str, str2, str3, strTemp, strTemp2;
 	const TCHAR *p, *pEnd;
 
 	// Find movie ID when it is not provided
@@ -36,13 +38,13 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 		}
 		else
 			strURL += pInfo->strID;
-		
+
 		str = FixLineEnds(HTMLEntitiesDecode(URLToString(strURL)));
 		if (str.IsEmpty())
 			return DBI_STATUS_CONNERROR;
 
 		if (!GetFirstMatch(str, _T("<a href=\"http://www\\.imdb\\.com/title/(tt\\d+?)/\"[^>]+>(.+?)</a>"),
-				&pInfo->strID, &strTemp, NULL))
+			&pInfo->strID, &strTemp, NULL))
 			return DBI_STATUS_UNKNOWN;
 
 		strTemp = StripTags(strTemp);
@@ -77,11 +79,11 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 					// 2. Try to match title partly
 					// 3. Just take the first one
 
-					if (!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/';\">") + pInfo->strSearchTitle + 
-								_T("</a> \\("), &pInfo->strID, NULL) &&
-							!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/';\">[^<]*?") + pInfo->strSearchTitle + 
-								_T("[^<]*?</a> \\("), &pInfo->strID, NULL) &&
-							!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)"), &pInfo->strID, NULL))
+					if (!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/';\">") + pInfo->strSearchTitle +
+						_T("</a> \\("), &pInfo->strID, NULL) &&
+						!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/';\">[^<]*?") + pInfo->strSearchTitle +
+						_T("[^<]*?</a> \\("), &pInfo->strID, NULL) &&
+						!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)"), &pInfo->strID, NULL))
 						return DBI_STATUS_UNKNOWN;
 				}
 				else
@@ -99,19 +101,19 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 					RString strYearMinusOne = NumberToString(StringToNumber(pInfo->strSearchYear) - 1);
 					RString strYearPlusOne = NumberToString(StringToNumber(pInfo->strSearchYear) + 1);
 
-					if (!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/';\">") + pInfo->strSearchTitle + _T("</a> \\(") + 
-								pInfo->strSearchYear, &pInfo->strID, NULL) &&
-							!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/';\">") + pInfo->strSearchTitle + _T("</a> \\(") + 
-								strYearMinusOne, &pInfo->strID, NULL) &&
-							!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/';\">") + pInfo->strSearchTitle + _T("</a> \\(") + 
-								strYearPlusOne, &pInfo->strID, NULL) && 
-							!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/';\">[^<]+</a> \\(") + 
-								pInfo->strSearchYear, &pInfo->strID, NULL) &&
-							!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/';\">") + pInfo->strSearchTitle + 
-								_T("</a> \\("), &pInfo->strID, NULL) &&
-							!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/';\">[^<]*?") + pInfo->strSearchTitle + 
-								_T("[^<]*?</a> \\("), &pInfo->strID, NULL) &&
-							!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)"), &pInfo->strID, NULL))
+					if (!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/';\">") + pInfo->strSearchTitle + _T("</a> \\(") +
+						pInfo->strSearchYear, &pInfo->strID, NULL) &&
+						!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/';\">") + pInfo->strSearchTitle + _T("</a> \\(") +
+						strYearMinusOne, &pInfo->strID, NULL) &&
+						!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/';\">") + pInfo->strSearchTitle + _T("</a> \\(") +
+						strYearPlusOne, &pInfo->strID, NULL) &&
+						!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/';\">[^<]+</a> \\(") +
+						pInfo->strSearchYear, &pInfo->strID, NULL) &&
+						!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/';\">") + pInfo->strSearchTitle +
+						_T("</a> \\("), &pInfo->strID, NULL) &&
+						!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/';\">[^<]*?") + pInfo->strSearchTitle +
+						_T("[^<]*?</a> \\("), &pInfo->strID, NULL) &&
+						!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)"), &pInfo->strID, NULL))
 						return DBI_STATUS_UNKNOWN;
 				}
 
@@ -133,14 +135,43 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 		}
 	}
 
+	// If its a TV show get the episodes page for the proper season.
+	// Search for new name and id based on season and episode number.
+	// If it exists use it. otherwise use the tv shows main name and id.
+	if (pInfo->nSeason >= 0)
+	{
+
+	//	LOG(pInfo->strSearchTitle + _T(": season ") + NumberToString(pInfo->nSeason) +
+	//		_T(", episode ") + NumberToString(pInfo->nEpisode) + _T("\n"));
+		str2 = FixLineEnds(HTMLEntitiesDecode(URLToString(_T("http://www.imdb.com/title/") + pInfo->strID 
+			+ _T("/episodes?season=") + NumberToString(pInfo->nSeason))));
+		if (!str2.IsEmpty())
+		{
+	//		LOG(NumberToString(pInfo->nSeason) + _T(": Found Season Page\n"));
+			RString strTmpID;
+			if (GetFirstMatch(str2, _T("<div>S") + NumberToString(pInfo->nSeason) + _T(", Ep") +
+				NumberToString(pInfo->nEpisode) + _T("</div>[\\s\\S]*?/title/(tt\\d+)"), &strTmpID, NULL))
+			{
+		//		LOG(_T("Updated to season/episode id:") + strTmpID + _T("\n"));
+				str3 = FixLineEnds(HTMLEntitiesDecode(URLToString(_T("http://www.imdb.com/title/") + strTmpID + _T("/"))));
+				if (!str3.IsEmpty())
+				{
+					str = str3;
+					pInfo->strID = strTmpID;
+		//			LOG(_T("New strID: " + pInfo->strID + _T("\n")));
+				}
+			}
+		}
+	}
+
 	// Get poster
 
 	if (_tcsicmp(GETPREFSTR(_T("InfoService"), _T("Poster")), _T("imdb.com")) == 0)
 	{
-		if (GetFirstMatch(str, _T("(http://ia\\.media-imdb\\.com/images/M/.+?)_V1_.*?\\.(.+?)\""), 
-				&strTemp, &strTemp2, NULL))
+		if (GetFirstMatch(str, _T("Poster\"[\\s\\S]*?(http://ia\\.media-imdb\\.com/images/M/.+?_V1\\.?_.*?)\\.(.+?)\""),
+			&strTemp, &strTemp2, NULL))
 		{
-			strTemp = strTemp + _T("_V1._SX200_.") + strTemp2; // let server resize to width of 200px for us
+			strTemp = strTemp + _T(".") + strTemp2; // take the server's default cropping and resizing
 			URLToData(strTemp, pInfo->posterData);
 		}
 	}
@@ -167,8 +198,13 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 
 	// Get title and year
 
-	if (pInfo->strTitle.IsEmpty() && !GetFirstMatch(str, _T("<title>(.+?) \\(\\D*(\\d+)\\D*\\) - IMDb</title>"), 
-			&pInfo->strTitle, &pInfo->strYear, NULL))
+	if (pInfo->strTitle.IsEmpty() && !GetFirstMatch(str, _T("<title>(.+?) \\(\\D*(\\d+)\\D*\\) - IMDb</title>"),
+		&pInfo->strTitle, &pInfo->strYear, NULL))
+		return DBI_STATUS_SCRAPEERROR;
+
+	// For TV try to get the episode release date and episode title
+	if (pInfo->nSeason >= 0 && !GetFirstMatch(str, _T("<title>\".+?\"[ \t]*(.+?)[ \t]*\\(TV Episode \\D*(\\d+)\\D*\\) - IMDb</title>"), 
+		&pInfo->strEpisodeName, &pInfo->strYear, NULL))
 		return DBI_STATUS_SCRAPEERROR;
 
 	if (bUseOriginalTitle)
@@ -210,7 +246,7 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 
 	// Get actors
 
-	if (GetFirstMatch(str, _T("\\.  With (.*?)\\."), &pInfo->strStars, NULL))
+	if (GetFirstMatch(str, _T("\\.  With (.*?)\\w\\w\\w\\."), &pInfo->strStars, NULL))
 		pInfo->strStars.Replace(_T(", "), _T("|"));
 
 	// Get storyline

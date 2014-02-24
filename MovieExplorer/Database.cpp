@@ -17,6 +17,9 @@ void ClearInfo(DBINFO *pInfo)
 	pInfo->fIMDbRating = 0.0f;
 	pInfo->fIMDbRatingMax = 0.0f;
 	pInfo->nMetascore = -1;
+	pInfo->nSeason = -1;
+	pInfo->nEpisode = -1;
+	pInfo->strEpisodeName.Empty();
 	pInfo->nVotes = 0;
 	pInfo->nIMDbVotes = 0;
 	pInfo->posterData.SetSize(0);
@@ -53,6 +56,9 @@ void ClearMovie(DBMOVIE *pMovie)
 	pMovie->fRatingMax = 0.0f;
 	pMovie->nIMDbVotes = 0;
 	pMovie->nMetascore = -1;
+	pMovie->nSeason = -1;
+	pMovie->nEpisode = -1;
+	pMovie->strEpisodeName.Empty();
 	pMovie->nVotes = 0;
 	pMovie->nYear = 0;
 	pMovie->pDirectory = NULL;
@@ -89,6 +95,9 @@ void TagToInfo(RXMLTag *pTag, DBINFO *pInfo)
 	pInfo->fRatingMax = StringToFloat(pTag->GetChildContent(_T("RatingMax")));
 	pInfo->nVotes = StringToNumber(pTag->GetChildContent(_T("Votes")));
 	pInfo->nMetascore = StringToNumber(pTag->GetChildContent(_T("Metascore")));
+	pInfo->nSeason = StringToNumber(pTag->GetChildContent(_T("Season")));
+	pInfo->nEpisode = StringToNumber(pTag->GetChildContent(_T("Episode")));
+	pInfo->strEpisodeName = pTag->GetChildContent(_T("EpisodeName"));
 	if (pTag->GetChild(_T("IMDbID")))
 	{
 		pInfo->strIMDbID = pTag->GetChildContent(_T("IMDbID"));
@@ -117,6 +126,9 @@ void InfoToTag(DBINFO *pInfo, RXMLTag *pTag)
 	pTag->AddChild(_T("RatingMax"))->SetContent(FloatToString(pInfo->fRatingMax));
 	pTag->AddChild(_T("Votes"))->SetContent(NumberToString(pInfo->nVotes));
 	pTag->AddChild(_T("Metascore"))->SetContent(NumberToString(pInfo->nMetascore));
+	pTag->AddChild(_T("Episode"))->SetContent(NumberToString(pInfo->nEpisode));
+	pTag->AddChild(_T("Season"))->SetContent(NumberToString(pInfo->nSeason));
+	pTag->AddChild(_T("EpisodeName"))->SetContent(pInfo->strEpisodeName);
 	if (!pInfo->strIMDbID.IsEmpty())
 	{
 		pTag->AddChild(_T("IMDbID"))->SetContent(pInfo->strIMDbID);
@@ -721,7 +733,7 @@ void CDatabase::Filter()
 
 				if (m_filterKeywords)
 				{
-					// Find significant match (file name, title and year)
+					// Find significant match (file name, title, episode title, and year)
 
 					pAddTo = NULL;
 
@@ -729,6 +741,7 @@ void CDatabase::Filter()
 					{
 						if (mov.strFileName.FindNoCase(strKeyword) != -1 ||
 								mov.strTitle.FindNoCase(strKeyword) != -1 ||
+								mov.strEpisodeName.FindNoCase(strKeyword) != -1 ||
 								mov.strYear.FindNoCase(strKeyword) != -1)
 							{pAddTo = &m_movies; break;}
 					}
