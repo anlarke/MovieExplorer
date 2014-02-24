@@ -22,7 +22,7 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 	}
 
 	RRegEx regex, regex2;
-	RString str, str2, str3, strTemp, strTemp2;
+	RString str, strSeasonPage, strEpisodePage, strTemp, strTemp2;
 	const TCHAR *p, *pEnd;
 
 	// Find movie ID when it is not provided
@@ -141,24 +141,24 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 	if (pInfo->nSeason >= 0)
 	{
 
-	//	LOG(pInfo->strSearchTitle + _T(": season ") + NumberToString(pInfo->nSeason) +
-	//		_T(", episode ") + NumberToString(pInfo->nEpisode) + _T("\n"));
-		str2 = FixLineEnds(HTMLEntitiesDecode(URLToString(_T("http://www.imdb.com/title/") + pInfo->strID 
+		// LOG(pInfo->strSearchTitle + _T(": season ") + NumberToString(pInfo->nSeason) +
+		//	_T(", episode ") + NumberToString(pInfo->nEpisode) + _T("\n"));
+		strSeasonPage = FixLineEnds(HTMLEntitiesDecode(URLToString(_T("http://www.imdb.com/title/") + pInfo->strID 
 			+ _T("/episodes?season=") + NumberToString(pInfo->nSeason))));
-		if (!str2.IsEmpty())
+		if (!strSeasonPage.IsEmpty())
 		{
-	//		LOG(NumberToString(pInfo->nSeason) + _T(": Found Season Page\n"));
+			// LOG(NumberToString(pInfo->nSeason) + _T(": Found Season Page\n"));
 			RString strTmpID;
-			if (GetFirstMatch(str2, _T("<div>S") + NumberToString(pInfo->nSeason) + _T(", Ep") +
+			if (GetFirstMatch(strSeasonPage, _T("<div>S") + NumberToString(pInfo->nSeason) + _T(", Ep") +
 				NumberToString(pInfo->nEpisode) + _T("</div>[\\s\\S]*?/title/(tt\\d+)"), &strTmpID, NULL))
 			{
-		//		LOG(_T("Updated to season/episode id:") + strTmpID + _T("\n"));
-				str3 = FixLineEnds(HTMLEntitiesDecode(URLToString(_T("http://www.imdb.com/title/") + strTmpID + _T("/"))));
-				if (!str3.IsEmpty())
+				// LOG(_T("Updated to season/episode id:") + strTmpID + _T("\n"));
+				strEpisodePage = FixLineEnds(HTMLEntitiesDecode(URLToString(_T("http://www.imdb.com/title/") + strTmpID + _T("/"))));
+				if (!strEpisodePage.IsEmpty())
 				{
-					str = str3;
+					str = strEpisodePage;
 					pInfo->strID = strTmpID;
-		//			LOG(_T("New strID: " + pInfo->strID + _T("\n")));
+					//LOG(_T("New strID: " + pInfo->strID + _T("\n")));
 				}
 			}
 		}
