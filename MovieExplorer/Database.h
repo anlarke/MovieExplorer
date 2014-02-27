@@ -48,7 +48,7 @@ struct DBDIRECTORY
 struct DBMOVIE
 {
 	RString strFileName, strIMDbID, strMovieMeterID, strTitle, strYear, strCountries, strGenres, 
-			strRuntime, strStoryline, strDirectors, strWriters, strStars, strEpisodeName;
+			strRuntime, strStoryline, strDirectors, strWriters, strStars, strEpisodeName, strAirDate;
 	float fRating, fRatingMax, fIMDbRating, fIMDbRatingMax;
 	INT_PTR nVotes, nIMDbVotes, nYear, nMetascore, nSeason, nEpisode;
 	RArray<BYTE> posterData;
@@ -61,7 +61,7 @@ struct DBINFO
 {
 	RString strServiceName, strID, strIMDbID, strTitle, strYear, strGenres, strCountries, strRuntime, 
 			strStoryline, strDirectors, strWriters, strStars, strSearchTitle, strSearchYear, 
-			strFileName, strEpisodeName;
+			strFileName, strEpisodeName, strAirDate;
 	float fRating, fRatingMax, fIMDbRating, fIMDbRatingMax;
 	INT_PTR nVotes, nIMDbVotes, nMetascore, nSeason, nEpisode;
 	RArray<BYTE> posterData;

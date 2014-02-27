@@ -1,10 +1,11 @@
 #include "stdafx.h"
 #include "MovieExplorer.h"
 
-void ParseFileName(RString_ strFileName, RString &strTitle, RString &strYear, INT_PTR &nSeason, INT_PTR &nEpisode)
+void ParseFileName(RString_ strFileName, RString &strTitle, RString &strYear, INT_PTR &nSeason, INT_PTR &nEpisode, RString &strAirDate)
 {
 	INT_PTR m, n;
 	RString strTemp, strSeason, strEpisode;
+	RString strYearTmp, strMonthTmp, strDayTmp;
 
 	strTitle = strFileName;
 	strYear.Empty();
@@ -88,6 +89,16 @@ void ParseFileName(RString_ strFileName, RString &strTitle, RString &strYear, IN
 		
 		if (m >= 0)
 			strTitle = strTitle.Left(m);
+	}
+
+	// for TV shows by date and parse date aired
+
+	if (GetFirstMatch(strTitle, _T("(\\d\\d\\d\\d) (\\d?\\d) (\\d?\\d)"), &strYearTmp, &strMonthTmp, &strDayTmp, NULL))
+	{
+		const RString Month[12] = { _T("Jan"), _T("Feb"), _T("Mar"), _T("Apr")
+			_T("May"), _T("Jun"), _T("Jul"), _T("Aug"), _T("Sep"), _T("Oct"), _T("Nov"), _T("Dec") };
+
+		strAirDate = strDayTmp + _T(" ") + Month[StringToNumber(strMonthTmp) - 1] + _T(". ") + strYearTmp;
 	}
 
 	// find year not in (), but not as first word, strip anything following it

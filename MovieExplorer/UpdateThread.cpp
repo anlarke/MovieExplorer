@@ -65,7 +65,7 @@ UINT CALLBACK UpdateThread(void *pParam)
 	DBMOVIE mov;
 	DBMOVIE *pOrigMov;
 	DBINFO info;
-	RString strSearchTitle, strSearchYear, strID;
+	RString strSearchTitle, strSearchYear, strID, strAirDate;
 	RXMLFile xmlFile;
 	RXMLTag *pInfoTag;
 	INT_PTR nUpdatedFromWeb = 0;
@@ -74,8 +74,8 @@ UINT CALLBACK UpdateThread(void *pParam)
 
 	while (SendMessage(hDatabaseWnd, DBM_GETMOVIEUPDATE, (WPARAM)&mov, (LPARAM)&pOrigMov))
 	{
-		nSeason = -1; nEpisode = -1;
-		ParseFileName(mov.strFileName, strSearchTitle, strSearchYear, nSeason, nEpisode);
+		nSeason = -1; nEpisode = -1; strAirDate.Empty();
+		ParseFileName(mov.strFileName, strSearchTitle, strSearchYear, nSeason, nEpisode, strAirDate);
 
 		foreach (servicesInUse, strServ)
 		{
@@ -128,6 +128,7 @@ UINT CALLBACK UpdateThread(void *pParam)
 				info.strSearchYear = strSearchYear;
 				info.nSeason = nSeason;
 				info.nEpisode = nEpisode;
+				info.strAirDate = strAirDate;
 				info.strID = strID;
 
 				if (strServ == _T("imdb.com"))
@@ -225,10 +226,15 @@ UINT CALLBACK UpdateThread(void *pParam)
 					}
 				}
 
-				//set season and episode regardless of strServ
-				mov.nSeason = info.nSeason;
-				mov.nEpisode = info.nEpisode;
-				mov.strEpisodeName = info.strEpisodeName;
+				// Set season and episode for "imdb.com"
+
+				if (strServ == _T("imdb.com"))
+				{
+					mov.nSeason = info.nSeason;
+					mov.nEpisode = info.nEpisode;
+					mov.strEpisodeName = info.strEpisodeName;
+					mov.strAirDate = info.strAirDate;
+				}
 			}
 
 			// Save to the right ID

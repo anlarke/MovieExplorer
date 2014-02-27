@@ -23,6 +23,7 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 
 	RRegEx regex, regex2;
 	RString str, strSeasonPage, strEpisodePage, strTemp, strTemp2;
+	RString strSeasonTmp, strEpisodeTmp;
 	const TCHAR *p, *pEnd;
 
 	// Find movie ID when it is not provided
@@ -140,25 +141,40 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 	// If it exists use it. otherwise use the tv shows main name and id.
 	if (pInfo->nSeason >= 0)
 	{
-
-		// LOG(pInfo->strSearchTitle + _T(": season ") + NumberToString(pInfo->nSeason) +
-		//	_T(", episode ") + NumberToString(pInfo->nEpisode) + _T("\n"));
 		strSeasonPage = FixLineEnds(HTMLEntitiesDecode(URLToString(_T("http://www.imdb.com/title/") + pInfo->strID 
 			+ _T("/episodes?season=") + NumberToString(pInfo->nSeason))));
 		if (!strSeasonPage.IsEmpty())
 		{
-			// LOG(NumberToString(pInfo->nSeason) + _T(": Found Season Page\n"));
 			RString strTmpID;
 			if (GetFirstMatch(strSeasonPage, _T("<div>S") + NumberToString(pInfo->nSeason) + _T(", Ep") +
 				NumberToString(pInfo->nEpisode) + _T("</div>[\\s\\S]*?/title/(tt\\d+)"), &strTmpID, NULL))
 			{
-				// LOG(_T("Updated to season/episode id:") + strTmpID + _T("\n"));
 				strEpisodePage = FixLineEnds(HTMLEntitiesDecode(URLToString(_T("http://www.imdb.com/title/") + strTmpID + _T("/"))));
 				if (!strEpisodePage.IsEmpty())
 				{
 					str = strEpisodePage;
 					pInfo->strID = strTmpID;
-					//LOG(_T("New strID: " + pInfo->strID + _T("\n")));
+				}
+			}
+		}
+	}
+	else if (!pInfo->strAirDate.IsEmpty())
+	{
+		// TV show based on date. Go to year page and look for id
+
+		RString strAirYear = pInfo->strAirDate.Right(4);  // Get year in from air date
+		RString strYearPage = FixLineEnds(HTMLEntitiesDecode(URLToString(_T("http://www.imdb.com/title/") + pInfo->strID
+			+ _T("/episodes?year=") + strAirYear)));
+		if (!strYearPage.IsEmpty())
+		{
+			RString strTmpID;
+			if (GetFirstMatch(strYearPage, pInfo->strAirDate + _T("[\\s\\S]*?/title/(tt\\d+)"), &strTmpID, NULL))
+			{
+				strEpisodePage = FixLineEnds(HTMLEntitiesDecode(URLToString(_T("http://www.imdb.com/title/") + strTmpID + _T("/"))));
+				if (!strEpisodePage.IsEmpty())
+				{
+					str = strEpisodePage;
+					pInfo->strID = strTmpID;
 				}
 			}
 		}
@@ -203,9 +219,21 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 		return DBI_STATUS_SCRAPEERROR;
 
 	// For TV try to get the episode release date and episode title
-	if (pInfo->nSeason >= 0 && !GetFirstMatch(str, _T("<title>\".+?\"[ \t]*(.+?)[ \t]*\\(TV Episode \\D*(\\d+)\\D*\\) - IMDb</title>"), 
-		&pInfo->strEpisodeName, &pInfo->strYear, NULL))
-		return DBI_STATUS_SCRAPEERROR;
+
+	if ((pInfo->nSeason >= 0 || !pInfo->strAirDate.IsEmpty()))
+		GetFirstMatch(str, _T("<title>\".+?\"[ \t]*(.+?)[ \t]*\\(TV Episode \\D*(\\d+)\\D*\\) - IMDb</title>"),
+		&pInfo->strEpisodeName, &pInfo->strYear, NULL);
+
+	// Get season and episode number for TV shows if its not already in parsed from filename.
+
+	if (pInfo->nSeason < 0 && !pInfo->strAirDate.IsEmpty())
+	{
+		if (GetFirstMatch(str, _T("Season (\\d+), Episode (\\d+)"), &strSeasonTmp, &strEpisodeTmp, NULL))
+		{
+			pInfo->nSeason = StringToNumber(strSeasonTmp);
+			pInfo->nEpisode = StringToNumber(strEpisodeTmp);
+		}
+	}		
 
 	if (bUseOriginalTitle)
 		GetFirstMatch(str, _T(">[^<]*?\"([^<]*?)\"[^<]*?<i>\\(original title\\)</i>"), 

@@ -525,7 +525,7 @@ void CListView::Draw()
 	// Draw the movies
 
 	HFONT hPrevFont;
-	RString str, strTitle;
+	RString str, strTitle, strDate;
 
 	for (INT_PTR i = nStart; i < GetDB()->m_movies && y < cy; ++i, y += SCY(LV_DETAILS_HEIGHT))
 	{
@@ -561,13 +561,19 @@ void CListView::Draw()
 		// draw title and year
 		
 
-			hPrevFont = (HFONT)SelectObject(m_mdc, m_fntTitle);
-			SetTextColor(m_mdc, m_clrTitle);
+		hPrevFont = (HFONT)SelectObject(m_mdc, m_fntTitle);
+		SetTextColor(m_mdc, m_clrTitle);
+
+		strDate.Empty();
+		if (!mov.strAirDate.IsEmpty())
+			strDate = mov.strAirDate;
+		else if (!mov.strYear.IsEmpty())
+			strDate = mov.strYear;
 		
-		if (mov.nSeason < 0)
+		if (mov.strEpisodeName.IsEmpty())
 		{
 			strTitle = (mov.strTitle.IsEmpty() ? mov.strFileName : (mov.strTitle +
-				(mov.strYear.IsEmpty() ? _T("") : _T(" (") + mov.strYear + _T(")"))));
+				(strDate.IsEmpty() ? _T("") : _T(" (") + strDate + _T(")"))));
 			TextOut(m_mdc, SCX(200) + SCX(35), y + SCY(14), strTitle);
 			SelectObject(m_mdc, hPrevFont);
 		}
@@ -575,17 +581,22 @@ void CListView::Draw()
 		{
 			strTitle = mov.strTitle.IsEmpty() ? mov.strFileName : mov.strTitle;
 			str = (mov.strEpisodeName.IsEmpty() ? mov.strTitle : (mov.strEpisodeName +
-				(mov.strYear.IsEmpty() ? _T("") : _T(" (") + mov.strYear + _T(")"))));
+				(strDate.IsEmpty() ? _T("") : _T(" (") + strDate + _T(")"))));
 
 			TextOut(m_mdc, SCX(200) + SCX(35), y + SCY(14), str);
 			SelectObject(m_mdc, hPrevFont);
-		
-		
+
+			
 			hPrevFont = (HFONT)SelectObject(m_mdc, m_fntTextBold);
 			SetTextColor(m_mdc, m_clrTitle);
-			str = strTitle + _T(":  Season ") + NumberToString(mov.nSeason) + _T(" Episode ") + NumberToString(mov.nEpisode);
+			str = strTitle;
+			if (mov.nSeason >= 0)
+				str = str + _T(": Season ") + NumberToString(mov.nSeason);
+			if(mov.nEpisode >= 0)
+				str = str + _T(" Episode ") + NumberToString(mov.nEpisode);
 			TextOut(m_mdc, SCX(200) + SCX(35), y + SCY(40), str);
 			SelectObject(m_mdc, hPrevFont);
+			
 		}
 
 		// draw genres, countries and runtime
