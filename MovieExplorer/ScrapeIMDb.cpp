@@ -81,9 +81,9 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 					// 3. Just take the first one
 
 					if (!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/';\">") + pInfo->strSearchTitle +
-						_T("</a> \\("), &pInfo->strID, NULL) &&
+							_T("</a> \\("), &pInfo->strID, NULL) &&
 						!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/';\">[^<]*?") + pInfo->strSearchTitle +
-						_T("[^<]*?</a> \\("), &pInfo->strID, NULL) &&
+							_T("[^<]*?</a> \\("), &pInfo->strID, NULL) &&
 						!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)"), &pInfo->strID, NULL))
 						return DBI_STATUS_UNKNOWN;
 				}
@@ -103,17 +103,17 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 					RString strYearPlusOne = NumberToString(StringToNumber(pInfo->strSearchYear) + 1);
 
 					if (!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/';\">") + pInfo->strSearchTitle + _T("</a> \\(") +
-						pInfo->strSearchYear, &pInfo->strID, NULL) &&
+							pInfo->strSearchYear, &pInfo->strID, NULL) &&
 						!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/';\">") + pInfo->strSearchTitle + _T("</a> \\(") +
-						strYearMinusOne, &pInfo->strID, NULL) &&
+							strYearMinusOne, &pInfo->strID, NULL) &&
 						!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/';\">") + pInfo->strSearchTitle + _T("</a> \\(") +
-						strYearPlusOne, &pInfo->strID, NULL) &&
+							strYearPlusOne, &pInfo->strID, NULL) &&
 						!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/';\">[^<]+</a> \\(") +
-						pInfo->strSearchYear, &pInfo->strID, NULL) &&
+							pInfo->strSearchYear, &pInfo->strID, NULL) &&
 						!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/';\">") + pInfo->strSearchTitle +
-						_T("</a> \\("), &pInfo->strID, NULL) &&
+							_T("</a> \\("), &pInfo->strID, NULL) &&
 						!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/';\">[^<]*?") + pInfo->strSearchTitle +
-						_T("[^<]*?</a> \\("), &pInfo->strID, NULL) &&
+							_T("[^<]*?</a> \\("), &pInfo->strID, NULL) &&
 						!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)"), &pInfo->strID, NULL))
 						return DBI_STATUS_UNKNOWN;
 				}
@@ -185,7 +185,7 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 	if (_tcsicmp(GETPREFSTR(_T("InfoService"), _T("Poster")), _T("imdb.com")) == 0)
 	{
 		if (GetFirstMatch(str, _T("Poster\"[\\s\\S]*?(http://ia\\.media-imdb\\.com/images/M/.+?_V1\\.?_.*?)\\.(.+?)\""),
-			&strTemp, &strTemp2, NULL))
+					&strTemp, &strTemp2, NULL))
 		{
 			strTemp = strTemp + _T(".") + strTemp2; // take the server's default cropping and resizing
 			URLToData(strTemp, pInfo->posterData);
@@ -215,14 +215,14 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 	// Get title and year
 
 	if (pInfo->strTitle.IsEmpty() && !GetFirstMatch(str, _T("<title>(.+?) \\(\\D*(\\d+)\\D*\\) - IMDb</title>"),
-		&pInfo->strTitle, &pInfo->strYear, NULL))
+			&pInfo->strTitle, &pInfo->strYear, NULL))
 		return DBI_STATUS_SCRAPEERROR;
 
 	// For TV try to get the episode release date and episode title
 
 	if ((pInfo->nSeason >= 0 || !pInfo->strAirDate.IsEmpty()))
 		GetFirstMatch(str, _T("<title>\".+?\"[ \t]*(.+?)[ \t]*\\(TV Episode \\D*(\\d+)\\D*\\) - IMDb</title>"),
-		&pInfo->strEpisodeName, &pInfo->strYear, NULL);
+			&pInfo->strEpisodeName, &pInfo->strYear, NULL);
 
 	// Get season and episode number for TV shows if its not already in parsed from filename.
 
