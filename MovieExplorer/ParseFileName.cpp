@@ -58,7 +58,7 @@ void ParseFileName(RString_ strFileName, RString &strTitle, RString &strYear, IN
 
 	for (n = 0; (n = strTitle.Find(_T('('), n)) != -1; n++)
 	{
-		if (n + 5 < strTitle.GetLength() && strTitle[n + 5] == _T(')'))
+		if (n+5 < strTitle.GetLength() && strTitle[n+5] == _T(')'))
 		{
 			strTemp = strTitle.Mid(n + 1, 4);
 			if (StringToNumber(strTemp) > 1900)
@@ -73,8 +73,8 @@ void ParseFileName(RString_ strFileName, RString &strTitle, RString &strYear, IN
 	// remove anything between ()
 
 	for (m = 0, n = 0; (m = strTitle.Find(_T('('), n)) != -1 &&
-		(n = strTitle.Find(_T(')'), m)) != -1; m = 0, n = 0)
-		strTitle = strTitle.Left(m) + strTitle.Mid(n + 1);
+			(n = strTitle.Find(_T(')'), m)) != -1; m = 0, n = 0)
+		strTitle = strTitle.Left(m) + strTitle.Mid(n+1);
 
 	// for TV shows. Find the season and episode and remove everything following it
 
