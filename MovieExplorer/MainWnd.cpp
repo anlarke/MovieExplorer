@@ -71,6 +71,15 @@ LRESULT CMainWnd::WndProc(UINT Msg, WPARAM wParam, LPARAM lParam)
 	return RWindow::WndProc(Msg, wParam, lParam);
 }
 
+void CMainWnd::OnActivateApp(BOOL bActive, DWORD dwThreadID)
+{
+	if (bActive && GetDB())
+	{
+		LOG(_T("Refreshing Database...\n"));
+		GetDB()->SyncAndUpdate();
+	}
+}
+
 void CMainWnd::OnActivate(WORD state, bool bMinimized, HWND hWndOther)
 {
 	if (state == WA_INACTIVE)

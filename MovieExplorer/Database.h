@@ -48,9 +48,9 @@ struct DBDIRECTORY
 struct DBMOVIE
 {
 	RString strFileName, strIMDbID, strMovieMeterID, strTitle, strYear, strCountries, strGenres, 
-			strRuntime, strStoryline, strDirectors, strWriters, strStars;
+			strRuntime, strStoryline, strDirectors, strWriters, strStars, strEpisodeName, strAirDate;
 	float fRating, fRatingMax, fIMDbRating, fIMDbRatingMax;
-	INT_PTR nVotes, nIMDbVotes, nYear, nMetascore;
+	INT_PTR nVotes, nIMDbVotes, nYear, nMetascore, nSeason, nEpisode;
 	RArray<BYTE> posterData;
 	UINT64 fileSize, fileTime;
 	bool bSeen, bHide, bUpdated; // would be great to eliminate bUpdated...
@@ -61,9 +61,9 @@ struct DBINFO
 {
 	RString strServiceName, strID, strIMDbID, strTitle, strYear, strGenres, strCountries, strRuntime, 
 			strStoryline, strDirectors, strWriters, strStars, strSearchTitle, strSearchYear, 
-			strFileName;
+			strFileName, strEpisodeName, strAirDate;
 	float fRating, fRatingMax, fIMDbRating, fIMDbRatingMax;
-	INT_PTR nVotes, nIMDbVotes, nMetascore;
+	INT_PTR nVotes, nIMDbVotes, nMetascore, nSeason, nEpisode;
 	RArray<BYTE> posterData;
 	DWORD status;
 	UINT64 timestamp;

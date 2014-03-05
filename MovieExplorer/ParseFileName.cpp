@@ -1,10 +1,11 @@
 #include "stdafx.h"
 #include "MovieExplorer.h"
 
-void ParseFileName(RString_ strFileName, RString &strTitle, RString &strYear)
+void ParseFileName(RString_ strFileName, RString &strTitle, RString &strYear, INT_PTR &nSeason, INT_PTR &nEpisode, RString &strAirDate)
 {
 	INT_PTR m, n;
-	RString strTemp;
+	RString strTemp, strSeason, strEpisode;
+	RString strYearTmp, strMonthTmp, strDayTmp;
 
 	strTitle = strFileName;
 	strYear.Empty();
@@ -33,14 +34,14 @@ void ParseFileName(RString_ strFileName, RString &strTitle, RString &strYear)
 	// replace anything not ,()0-9a-zA-Z by a space
 
 	for (int i = 0; i < strTitle.GetLength(); i++)
-		if (!(strTitle[i] == _T(',')) &&
-			!(strTitle[i] == _T('\'')) &&
-			!(strTitle[i] == _T('(')) &&
-			!(strTitle[i] == _T(')')) &&
-			!(strTitle[i] >= _T('0') && strTitle[i] <= _T('9')) &&
-			!(strTitle[i] >= _T('A') && strTitle[i] <= _T('Z')) &&
-			!(strTitle[i] >= _T('a') && strTitle[i] <= _T('z')))
-			*((LPTSTR)(LPCTSTR)strTitle + i) = _T(' ');
+	if (!(strTitle[i] == _T(',')) &&
+	!(strTitle[i] == _T('\'')) &&
+	!(strTitle[i] == _T('(')) &&
+	!(strTitle[i] == _T(')')) &&
+	!(strTitle[i] >= _T('0') && strTitle[i] <= _T('9')) &&
+	!(strTitle[i] >= _T('A') && strTitle[i] <= _T('Z')) &&
+	!(strTitle[i] >= _T('a') && strTitle[i] <= _T('z')))
+	*((LPTSTR)(LPCTSTR)strTitle + i) = _T(' ');
 	*/
 
 	// replace ._ by a space
@@ -59,7 +60,7 @@ void ParseFileName(RString_ strFileName, RString &strTitle, RString &strYear)
 	{
 		if (n+5 < strTitle.GetLength() && strTitle[n+5] == _T(')'))
 		{
-			strTemp = strTitle.Mid(n+1, 4);
+			strTemp = strTitle.Mid(n + 1, 4);
 			if (StringToNumber(strTemp) > 1900)
 			{
 				strYear = strTemp;
@@ -74,6 +75,31 @@ void ParseFileName(RString_ strFileName, RString &strTitle, RString &strYear)
 	for (m = 0, n = 0; (m = strTitle.Find(_T('('), n)) != -1 &&
 			(n = strTitle.Find(_T(')'), m)) != -1; m = 0, n = 0)
 		strTitle = strTitle.Left(m) + strTitle.Mid(n+1);
+
+	// for TV shows. Find the season and episode and remove everything following it
+
+	if (GetFirstMatch(strTitle, _T("([Ss]\\d?\\d[Ee]\\d?\\d)"), &strTemp, NULL))
+	{
+		m = strTitle.Find(strTemp, 0);
+		if (GetFirstMatch(strTemp, _T("[Ss](\\d?\\d)[Ee](\\d?\\d)"), &strSeason, &strEpisode, NULL))
+		{
+			nSeason = StringToNumber(strSeason);
+			nEpisode = StringToNumber(strEpisode);
+		}
+		
+		if (m >= 0)
+			strTitle = strTitle.Left(m);
+	}
+
+	// for TV shows by date and parse date aired
+
+	if (GetFirstMatch(strTitle, _T("(\\d\\d\\d\\d) (\\d?\\d) (\\d?\\d)"), &strYearTmp, &strMonthTmp, &strDayTmp, NULL))
+	{
+		const RString Month[12] = { _T("Jan"), _T("Feb"), _T("Mar"), _T("Apr")
+			_T("May"), _T("Jun"), _T("Jul"), _T("Aug"), _T("Sep"), _T("Oct"), _T("Nov"), _T("Dec") };
+
+		strAirDate = strDayTmp + _T(" ") + Month[StringToNumber(strMonthTmp) - 1] + _T(". ") + strYearTmp;
+	}
 
 	// find year not in (), but not as first word, strip anything following it
 

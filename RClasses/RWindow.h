@@ -171,6 +171,9 @@ protected:
 
 		switch (Msg)
 		{
+		case WM_ACTIVATEAPP:
+			pWnd->OnActivateApp((bool)wParam,(DWORD)lParam);
+			return 0;
 		case WM_ACTIVATE:
 			pWnd->OnActivate(LOWORD(wParam), (bool)HIWORD(wParam), (HWND)lParam);
 			return 0;
@@ -299,6 +302,10 @@ protected:
 	}
 
 	void OnActivate(WORD state, bool bMinimized, HWND hWndOther)
+	{
+	}
+
+	void OnActivateApp(bool bActive, DWORD dThreadID)
 	{
 	}
 

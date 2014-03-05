@@ -17,10 +17,13 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 	bool bUseOriginalTitle = GETPREFBOOL(_T("IMDbUseOriginalTitle"));
 
 	if (!pInfo || pInfo->strSearchTitle.IsEmpty() || pInfo->strServiceName != _T("imdb.com"))
-		{ASSERT(false); return DBI_STATUS_SCRAPEERROR;}
+	{
+		ASSERT(false); return DBI_STATUS_SCRAPEERROR;
+	}
 
 	RRegEx regex, regex2;
-	RString str, strTemp, strTemp2;
+	RString str, strSeasonPage, strEpisodePage, strTemp, strTemp2;
+	RString strSeasonTmp, strEpisodeTmp;
 	const TCHAR *p, *pEnd;
 
 	// Find movie ID when it is not provided
@@ -36,7 +39,7 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 		}
 		else
 			strURL += pInfo->strID;
-		
+
 		str = FixLineEnds(HTMLEntitiesDecode(URLToString(strURL)));
 		if (str.IsEmpty())
 			return DBI_STATUS_CONNERROR;
@@ -133,14 +136,58 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 		}
 	}
 
+	// If its a TV show get the episodes page for the proper season.
+	// Search for new name and id based on season and episode number.
+	// If it exists use it. otherwise use the tv shows main name and id.
+	if (pInfo->nSeason >= 0)
+	{
+		strSeasonPage = FixLineEnds(HTMLEntitiesDecode(URLToString(_T("http://www.imdb.com/title/") + pInfo->strID 
+			+ _T("/episodes?season=") + NumberToString(pInfo->nSeason))));
+		if (!strSeasonPage.IsEmpty())
+		{
+			RString strTmpID;
+			if (GetFirstMatch(strSeasonPage, _T("<div>S") + NumberToString(pInfo->nSeason) + _T(", Ep") +
+				NumberToString(pInfo->nEpisode) + _T("</div>[\\s\\S]*?/title/(tt\\d+)"), &strTmpID, NULL))
+			{
+				strEpisodePage = FixLineEnds(HTMLEntitiesDecode(URLToString(_T("http://www.imdb.com/title/") + strTmpID + _T("/"))));
+				if (!strEpisodePage.IsEmpty())
+				{
+					str = strEpisodePage;
+					pInfo->strID = strTmpID;
+				}
+			}
+		}
+	}
+	else if (!pInfo->strAirDate.IsEmpty())
+	{
+		// TV show based on date. Go to year page and look for id
+
+		RString strAirYear = pInfo->strAirDate.Right(4);  // Get year in from air date
+		RString strYearPage = FixLineEnds(HTMLEntitiesDecode(URLToString(_T("http://www.imdb.com/title/") + pInfo->strID
+			+ _T("/episodes?year=") + strAirYear)));
+		if (!strYearPage.IsEmpty())
+		{
+			RString strTmpID;
+			if (GetFirstMatch(strYearPage, pInfo->strAirDate + _T("[\\s\\S]*?/title/(tt\\d+)"), &strTmpID, NULL))
+			{
+				strEpisodePage = FixLineEnds(HTMLEntitiesDecode(URLToString(_T("http://www.imdb.com/title/") + strTmpID + _T("/"))));
+				if (!strEpisodePage.IsEmpty())
+				{
+					str = strEpisodePage;
+					pInfo->strID = strTmpID;
+				}
+			}
+		}
+	}
+
 	// Get poster
 
 	if (_tcsicmp(GETPREFSTR(_T("InfoService"), _T("Poster")), _T("imdb.com")) == 0)
 	{
-		if (GetFirstMatch(str, _T("(http://ia\\.media-imdb\\.com/images/M/.+?)_V1_.*?\\.(.+?)\""), 
+		if (GetFirstMatch(str, _T("Poster\"[\\s\\S]*?(http://ia\\.media-imdb\\.com/images/M/.+?_V1\\.?_.*?)\\.(.+?)\""),
 				&strTemp, &strTemp2, NULL))
 		{
-			strTemp = strTemp + _T("_V1._SX200_.") + strTemp2; // let server resize to width of 200px for us
+			strTemp = strTemp + _T(".") + strTemp2; // take the server's default cropping and resizing
 			URLToData(strTemp, pInfo->posterData);
 		}
 	}
@@ -170,6 +217,23 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 	if (pInfo->strTitle.IsEmpty() && !GetFirstMatch(str, _T("<title>(.+?) \\(\\D*(\\d+)\\D*\\) - IMDb</title>"), 
 			&pInfo->strTitle, &pInfo->strYear, NULL))
 		return DBI_STATUS_SCRAPEERROR;
+
+	// For TV try to get the episode release date and episode title
+
+	if ((pInfo->nSeason >= 0 || !pInfo->strAirDate.IsEmpty()))
+		GetFirstMatch(str, _T("<title>\".+?\"[ \t]*(.+?)[ \t]*\\(TV Episode \\D*(\\d+)\\D*\\) - IMDb</title>"),
+			&pInfo->strEpisodeName, &pInfo->strYear, NULL);
+
+	// Get season and episode number for TV shows if its not already in parsed from filename.
+
+	if (pInfo->nSeason < 0 && !pInfo->strAirDate.IsEmpty())
+	{
+		if (GetFirstMatch(str, _T("Season (\\d+), Episode (\\d+)"), &strSeasonTmp, &strEpisodeTmp, NULL))
+		{
+			pInfo->nSeason = StringToNumber(strSeasonTmp);
+			pInfo->nEpisode = StringToNumber(strEpisodeTmp);
+		}
+	}		
 
 	if (bUseOriginalTitle)
 		GetFirstMatch(str, _T(">[^<]*?\"([^<]*?)\"[^<]*?<i>\\(original title\\)</i>"), 
@@ -210,7 +274,7 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 
 	// Get actors
 
-	if (GetFirstMatch(str, _T("\\.  With (.*?)\\."), &pInfo->strStars, NULL))
+	if (GetFirstMatch(str, _T("\\.  With (.*?)\\w\\w\\w\\."), &pInfo->strStars, NULL))
 		pInfo->strStars.Replace(_T(", "), _T("|"));
 
 	// Get storyline

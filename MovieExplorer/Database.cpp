@@ -17,6 +17,10 @@ void ClearInfo(DBINFO *pInfo)
 	pInfo->fIMDbRating = 0.0f;
 	pInfo->fIMDbRatingMax = 0.0f;
 	pInfo->nMetascore = -1;
+	pInfo->nSeason = -1;
+	pInfo->nEpisode = -1;
+	pInfo->strEpisodeName.Empty();
+	pInfo->strAirDate.Empty();
 	pInfo->nVotes = 0;
 	pInfo->nIMDbVotes = 0;
 	pInfo->posterData.SetSize(0);
@@ -53,6 +57,10 @@ void ClearMovie(DBMOVIE *pMovie)
 	pMovie->fRatingMax = 0.0f;
 	pMovie->nIMDbVotes = 0;
 	pMovie->nMetascore = -1;
+	pMovie->nSeason = -1;
+	pMovie->nEpisode = -1;
+	pMovie->strEpisodeName.Empty();
+	pMovie->strAirDate.Empty();
 	pMovie->nVotes = 0;
 	pMovie->nYear = 0;
 	pMovie->pDirectory = NULL;
@@ -89,6 +97,10 @@ void TagToInfo(RXMLTag *pTag, DBINFO *pInfo)
 	pInfo->fRatingMax = StringToFloat(pTag->GetChildContent(_T("RatingMax")));
 	pInfo->nVotes = StringToNumber(pTag->GetChildContent(_T("Votes")));
 	pInfo->nMetascore = StringToNumber(pTag->GetChildContent(_T("Metascore")));
+	pInfo->nSeason = StringToNumber(pTag->GetChildContent(_T("Season")));
+	pInfo->nEpisode = StringToNumber(pTag->GetChildContent(_T("Episode")));
+	pInfo->strEpisodeName = pTag->GetChildContent(_T("EpisodeName"));
+	pInfo->strAirDate = pTag->GetChildContent(_T("AirDate"));
 	if (pTag->GetChild(_T("IMDbID")))
 	{
 		pInfo->strIMDbID = pTag->GetChildContent(_T("IMDbID"));
@@ -117,6 +129,10 @@ void InfoToTag(DBINFO *pInfo, RXMLTag *pTag)
 	pTag->AddChild(_T("RatingMax"))->SetContent(FloatToString(pInfo->fRatingMax));
 	pTag->AddChild(_T("Votes"))->SetContent(NumberToString(pInfo->nVotes));
 	pTag->AddChild(_T("Metascore"))->SetContent(NumberToString(pInfo->nMetascore));
+	pTag->AddChild(_T("Episode"))->SetContent(NumberToString(pInfo->nEpisode));
+	pTag->AddChild(_T("Season"))->SetContent(NumberToString(pInfo->nSeason));
+	pTag->AddChild(_T("EpisodeName"))->SetContent(pInfo->strEpisodeName);
+	pTag->AddChild(_T("AirDate"))->SetContent(pInfo->strAirDate);
 	if (!pInfo->strIMDbID.IsEmpty())
 	{
 		pTag->AddChild(_T("IMDbID"))->SetContent(pInfo->strIMDbID);
@@ -700,8 +716,10 @@ void CDatabase::Filter()
 	m_movies.SetSize(0);
 
 	RArray<DBMOVIE*> movies2;	// to be filled with less significant results
+	RArray<DBMOVIE*> movies3;	// to be filled with the least significant results
 	RArray<DBMOVIE*> *pAddTo;
 	RString str1, str2;
+	RString strKeywordPeriod, strKeywordUnderscore;
 	bool bInserted;
 
 	foreach (m_categories, cat, i)
@@ -721,16 +739,51 @@ void CDatabase::Filter()
 
 				if (m_filterKeywords)
 				{
-					// Find significant match (file name, title and year)
 
 					pAddTo = NULL;
 
-					foreach (m_filterKeywords, strKeyword)
+					// Find exact match (for multiple word phrase matches) in any field
+
+					foreach(m_filterKeywords, strKeyword)
 					{
+						if (strKeyword.Find(_T(' ')) == -1)
+							continue;
+
+						strKeywordPeriod = strKeyword;
+						strKeywordPeriod.Replace(_T(' '), _T('.'));
+						strKeywordUnderscore = strKeyword;
+						strKeywordUnderscore.Replace(_T(' '), _T('_'));
+
 						if (mov.strFileName.FindNoCase(strKeyword) != -1 ||
+								mov.strFileName.FindNoCase(strKeywordPeriod) != -1 ||
+								mov.strFileName.FindNoCase(strKeywordUnderscore) != -1 ||
 								mov.strTitle.FindNoCase(strKeyword) != -1 ||
-								mov.strYear.FindNoCase(strKeyword) != -1)
+								mov.strEpisodeName.FindNoCase(strKeyword) != -1 ||
+								mov.strYear.FindNoCase(strKeyword) != -1 ||
+								mov.strGenres.FindNoCase(strKeyword) != -1 ||
+								mov.strCountries.FindNoCase(strKeyword) != -1 ||
+								mov.strDirectors.FindNoCase(strKeyword) != -1 ||
+								mov.strWriters.FindNoCase(strKeyword) != -1 ||
+								mov.strStars.FindNoCase(strKeyword) != -1 ||
+								(m_bSearchStoryline && mov.strStoryline.FindNoCase(strKeyword) != -1))
 							{pAddTo = &m_movies; break;}
+						
+
+					}
+
+					// Find significant match (file name, title, episode title, and year)
+
+					if (!pAddTo)
+					{
+
+						foreach(m_filterKeywords, strKeyword)
+						{
+							if (mov.strFileName.FindNoCase(strKeyword) != -1 ||
+									mov.strTitle.FindNoCase(strKeyword) != -1 ||
+									mov.strEpisodeName.FindNoCase(strKeyword) != -1 ||
+									mov.strYear.FindNoCase(strKeyword) != -1)
+								{pAddTo = &movies2; break;}
+						}
 					}
 
 					// Find less significant match (the rest)
@@ -740,12 +793,13 @@ void CDatabase::Filter()
 						foreach (m_filterKeywords, strKeyword)
 						{
 							if (mov.strGenres.FindNoCase(strKeyword) != -1 ||
+									mov.strAirDate.FindNoCase(strKeyword) != -1 ||
 									mov.strCountries.FindNoCase(strKeyword) != -1 ||
 									mov.strDirectors.FindNoCase(strKeyword) != -1 ||
 									mov.strWriters.FindNoCase(strKeyword) != -1 ||
 									mov.strStars.FindNoCase(strKeyword) != -1 ||
 									(m_bSearchStoryline && mov.strStoryline.FindNoCase(strKeyword) != -1))
-								{pAddTo = &movies2; break;}
+								{pAddTo = &movies3; break;}
 						}
 					}
 				}
@@ -957,6 +1011,7 @@ void CDatabase::Filter()
 	}
 
 	m_movies.Add((const RArray<DBMOVIE*>&)movies2);
+	m_movies.Add((const RArray<DBMOVIE*>&)movies3);
 
 	MSG msg;
 	if (!PeekMessage(&msg, GetMainWnd(), WM_DBUPDATED, WM_DBUPDATED, PM_NOREMOVE))

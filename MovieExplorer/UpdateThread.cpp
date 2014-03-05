@@ -23,6 +23,8 @@ UINT CALLBACK UpdateThread(void *pParam)
 	RString strPosterServ = GETPREFSTR(_T("InfoService"), _T("Poster"));
 	RString strRatingServ = GETPREFSTR(_T("InfoService"), _T("Rating"));
 
+
+
 	UINT64 nWeeks = (UINT64)GETPREFINT(_T("Database"), _T("MaxInfoAge"));
 	if (nWeeks < 2)
 		nWeeks = 2;
@@ -63,14 +65,17 @@ UINT CALLBACK UpdateThread(void *pParam)
 	DBMOVIE mov;
 	DBMOVIE *pOrigMov;
 	DBINFO info;
-	RString strSearchTitle, strSearchYear, strID;
+	RString strSearchTitle, strSearchYear, strID, strAirDate;
 	RXMLFile xmlFile;
 	RXMLTag *pInfoTag;
 	INT_PTR nUpdatedFromWeb = 0;
+	INT_PTR nSeason = -1;
+	INT_PTR nEpisode = -1;
 
 	while (SendMessage(hDatabaseWnd, DBM_GETMOVIEUPDATE, (WPARAM)&mov, (LPARAM)&pOrigMov))
 	{
-		ParseFileName(mov.strFileName, strSearchTitle, strSearchYear);
+		nSeason = -1; nEpisode = -1; strAirDate.Empty();
+		ParseFileName(mov.strFileName, strSearchTitle, strSearchYear, nSeason, nEpisode, strAirDate);
 
 		foreach (servicesInUse, strServ)
 		{
@@ -121,6 +126,9 @@ UINT CALLBACK UpdateThread(void *pParam)
 				info.strServiceName = strServ;
 				info.strSearchTitle = strSearchTitle;
 				info.strSearchYear = strSearchYear;
+				info.nSeason = nSeason;
+				info.nEpisode = nEpisode;
+				info.strAirDate = strAirDate;
 				info.strID = strID;
 
 				if (strServ == _T("imdb.com"))
@@ -216,6 +224,16 @@ UINT CALLBACK UpdateThread(void *pParam)
 						mov.fIMDbRatingMax = info.fIMDbRatingMax;
 						mov.nIMDbVotes = info.nIMDbVotes;
 					}
+				}
+
+				// Set season and episode for "imdb.com"
+
+				if (strServ == _T("imdb.com"))
+				{
+					mov.nSeason = info.nSeason;
+					mov.nEpisode = info.nEpisode;
+					mov.strEpisodeName = info.strEpisodeName;
+					mov.strAirDate = info.strAirDate;
 				}
 			}
 

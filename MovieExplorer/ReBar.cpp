@@ -131,6 +131,8 @@ void CReBar::OnCommand(WORD id, WORD notifyCode, HWND hWndControl)
 			else
 			{
 				RRegEx re(_T("(?:\"([^\"]+)\")|([^ ]+)"));
+				if (!strText.IsEmpty())
+					keywords.Add(strText);
 				while (re.Search(strText))
 				{
 					RString strMatch;
