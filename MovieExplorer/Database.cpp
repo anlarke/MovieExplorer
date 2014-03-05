@@ -755,17 +755,17 @@ void CDatabase::Filter()
 						strKeywordUnderscore.Replace(_T(' '), _T('_'));
 
 						if (mov.strFileName.FindNoCase(strKeyword) != -1 ||
-							mov.strFileName.FindNoCase(strKeywordPeriod) != -1 ||
-							mov.strFileName.FindNoCase(strKeywordUnderscore) != -1 ||
-							mov.strTitle.FindNoCase(strKeyword) != -1 ||
-							mov.strEpisodeName.FindNoCase(strKeyword) != -1 ||
-							mov.strYear.FindNoCase(strKeyword) != -1 ||
-							mov.strGenres.FindNoCase(strKeyword) != -1 ||
-							mov.strCountries.FindNoCase(strKeyword) != -1 ||
-							mov.strDirectors.FindNoCase(strKeyword) != -1 ||
-							mov.strWriters.FindNoCase(strKeyword) != -1 ||
-							mov.strStars.FindNoCase(strKeyword) != -1 ||
-							(m_bSearchStoryline && mov.strStoryline.FindNoCase(strKeyword) != -1))
+								mov.strFileName.FindNoCase(strKeywordPeriod) != -1 ||
+								mov.strFileName.FindNoCase(strKeywordUnderscore) != -1 ||
+								mov.strTitle.FindNoCase(strKeyword) != -1 ||
+								mov.strEpisodeName.FindNoCase(strKeyword) != -1 ||
+								mov.strYear.FindNoCase(strKeyword) != -1 ||
+								mov.strGenres.FindNoCase(strKeyword) != -1 ||
+								mov.strCountries.FindNoCase(strKeyword) != -1 ||
+								mov.strDirectors.FindNoCase(strKeyword) != -1 ||
+								mov.strWriters.FindNoCase(strKeyword) != -1 ||
+								mov.strStars.FindNoCase(strKeyword) != -1 ||
+								(m_bSearchStoryline && mov.strStoryline.FindNoCase(strKeyword) != -1))
 							{pAddTo = &m_movies; break;}
 						
 
@@ -779,9 +779,9 @@ void CDatabase::Filter()
 						foreach(m_filterKeywords, strKeyword)
 						{
 							if (mov.strFileName.FindNoCase(strKeyword) != -1 ||
-								mov.strTitle.FindNoCase(strKeyword) != -1 ||
-								mov.strEpisodeName.FindNoCase(strKeyword) != -1 ||
-								mov.strYear.FindNoCase(strKeyword) != -1)
+									mov.strTitle.FindNoCase(strKeyword) != -1 ||
+									mov.strEpisodeName.FindNoCase(strKeyword) != -1 ||
+									mov.strYear.FindNoCase(strKeyword) != -1)
 								{pAddTo = &movies2; break;}
 						}
 					}
@@ -793,13 +793,13 @@ void CDatabase::Filter()
 						foreach (m_filterKeywords, strKeyword)
 						{
 							if (mov.strGenres.FindNoCase(strKeyword) != -1 ||
-										mov.strAirDate.FindNoCase(strKeyword) != -1 ||
-										mov.strCountries.FindNoCase(strKeyword) != -1 ||
-										mov.strDirectors.FindNoCase(strKeyword) != -1 ||
-										mov.strWriters.FindNoCase(strKeyword) != -1 ||
-										mov.strStars.FindNoCase(strKeyword) != -1 ||
-										(m_bSearchStoryline && mov.strStoryline.FindNoCase(strKeyword) != -1))
-									{pAddTo = &movies3; break;}
+									mov.strAirDate.FindNoCase(strKeyword) != -1 ||
+									mov.strCountries.FindNoCase(strKeyword) != -1 ||
+									mov.strDirectors.FindNoCase(strKeyword) != -1 ||
+									mov.strWriters.FindNoCase(strKeyword) != -1 ||
+									mov.strStars.FindNoCase(strKeyword) != -1 ||
+									(m_bSearchStoryline && mov.strStoryline.FindNoCase(strKeyword) != -1))
+								{pAddTo = &movies3; break;}
 						}
 					}
 				}
