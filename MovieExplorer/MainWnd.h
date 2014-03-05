@@ -17,6 +17,7 @@ public:
 protected:
 	LRESULT WndProc(UINT Msg, WPARAM wParam, LPARAM lParam);
 	void OnActivate(WORD state, bool bMinimized, HWND hWndOther);
+	void OnActivateApp(BOOL bActive, DWORD dwThreadID);
 	void OnClose();
 	void OnCommand(WORD id, WORD notifyCode, HWND hWndControl);
 	bool OnCreate(CREATESTRUCT *pCS);

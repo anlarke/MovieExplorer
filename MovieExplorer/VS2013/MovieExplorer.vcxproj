@@ -369,7 +369,33 @@
     <ResourceCompile Include="..\MovieExplorer.rc" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\res\alphamap.bin" />
+    <None Include="..\res\ArrowDown.am" />
+    <None Include="..\res\Delete.am" />
+    <None Include="..\res\Dir.am" />
+    <None Include="..\res\Edit.am" />
+    <None Include="..\res\Expand.am" />
+    <None Include="..\res\Hide.am" />
+    <None Include="..\res\Play.am" />
+    <None Include="..\res\SBArrowUp.am" />
+    <None Include="..\res\Seen.am" />
+    <None Include="..\res\Sort.am" />
+    <None Include="..\res\Wrench.am" />
     <None Include="..\strings.csv" />
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="..\res\Croatian.xml" />
+    <Xml Include="..\res\Greek.xml" />
+    <Xml Include="..\res\Italian.xml" />
+    <Xml Include="..\res\Manifest.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\res\Add.ico" />
+    <Image Include="..\res\Delete.ico" />
+    <Image Include="..\res\MoveDown.ico" />
+    <Image Include="..\res\MoveUp.ico" />
+    <Image Include="..\res\MovieExplorer.ico" />
+    <Image Include="..\res\Star.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

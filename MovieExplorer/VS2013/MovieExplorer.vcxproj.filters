@@ -312,5 +312,31 @@
     <None Include="..\strings.csv">
       <Filter>Project Files</Filter>
     </None>
+    <None Include="..\res\alphamap.bin" />
+    <None Include="..\res\ArrowDown.am" />
+    <None Include="..\res\Wrench.am" />
+    <None Include="..\res\Expand.am" />
+    <None Include="..\res\SBArrowUp.am" />
+    <None Include="..\res\Play.am" />
+    <None Include="..\res\Dir.am" />
+    <None Include="..\res\Seen.am" />
+    <None Include="..\res\Sort.am" />
+    <None Include="..\res\Edit.am" />
+    <None Include="..\res\Hide.am" />
+    <None Include="..\res\Delete.am" />
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="..\res\Manifest.xml" />
+    <Xml Include="..\res\Croatian.xml" />
+    <Xml Include="..\res\Italian.xml" />
+    <Xml Include="..\res\Greek.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\res\MovieExplorer.ico" />
+    <Image Include="..\res\Star.ico" />
+    <Image Include="..\res\Add.ico" />
+    <Image Include="..\res\Delete.ico" />
+    <Image Include="..\res\MoveDown.ico" />
+    <Image Include="..\res\MoveUp.ico" />
   </ItemGroup>
 </Project>

@@ -65,18 +65,21 @@
 #define IDS_SEENMOVIE 1061
 #define IDS_HIDEMOVIE 1062
 #define IDS_SURETOHIDE 1063
-#define IDS_READY 1064
-#define IDS_LOADINGDATABASE 1065
-#define IDS_UPDATINGDATABASE 1066
-#define IDS_SYNCINGDATABASE 1067
-#define ID_SORT_TITLEASC 1068
-#define ID_SORT_TITLEDES 1069
-#define ID_SORT_YEARASC 1070
-#define ID_SORT_YEARDES 1071
-#define ID_SORT_RATINGASC 1072
-#define ID_SORT_RATINGDES 1073
-#define ID_SORT_FILETIMEASC 1074
-#define ID_SORT_FILETIMEDES 1075
+#define IDS_SURETODELETEFILE 1064
+#define IDS_SURETODELETEDIRECTORY 1065
+#define IDS_FILENOTFOUND 1066
+#define IDS_READY 1067
+#define IDS_LOADINGDATABASE 1068
+#define IDS_UPDATINGDATABASE 1069
+#define IDS_SYNCINGDATABASE 1070
+#define ID_SORT_TITLEASC 1071
+#define ID_SORT_TITLEDES 1072
+#define ID_SORT_YEARASC 1073
+#define ID_SORT_YEARDES 1074
+#define ID_SORT_RATINGASC 1075
+#define ID_SORT_RATINGDES 1076
+#define ID_SORT_FILETIMEASC 1077
+#define ID_SORT_FILETIMEDES 1078
 
 inline void LoadStrings()
 {
@@ -150,18 +153,21 @@ inline void LoadStrings()
 	GetLangMgr()->SetString(nLanguage, 61, _T("I have seen this movie"), false);
 	GetLangMgr()->SetString(nLanguage, 62, _T("Hide this movie"), false);
 	GetLangMgr()->SetString(nLanguage, 63, _T("Are you sure you want to hide this movie?"), false);
-	GetLangMgr()->SetString(nLanguage, 64, _T("Ready"), false);
-	GetLangMgr()->SetString(nLanguage, 65, _T("Loading database"), false);
-	GetLangMgr()->SetString(nLanguage, 66, _T("Collecting and updating movie information"), false);
-	GetLangMgr()->SetString(nLanguage, 67, _T("Synchronizing with files on disk"), false);
-	GetLangMgr()->SetString(nLanguage, 68, _T("Title"), false);
-	GetLangMgr()->SetString(nLanguage, 69, _T("Title (descending)"), false);
-	GetLangMgr()->SetString(nLanguage, 70, _T("Year"), false);
-	GetLangMgr()->SetString(nLanguage, 71, _T("Year (descending)"), false);
-	GetLangMgr()->SetString(nLanguage, 72, _T("Rating"), false);
-	GetLangMgr()->SetString(nLanguage, 73, _T("Rating (descending)"), false);
-	GetLangMgr()->SetString(nLanguage, 74, _T("File time"), false);
-	GetLangMgr()->SetString(nLanguage, 75, _T("File time (descending)"), false);
+	GetLangMgr()->SetString(nLanguage, 64, _T("Are you sure you want to permanently delete this file from the computer?"), false);
+	GetLangMgr()->SetString(nLanguage, 65, _T("Are you sure you want to permanetly delete this directory from the computer?"), false);
+	GetLangMgr()->SetString(nLanguage, 66, _T("File not found"), false);
+	GetLangMgr()->SetString(nLanguage, 67, _T("Ready"), false);
+	GetLangMgr()->SetString(nLanguage, 68, _T("Loading database"), false);
+	GetLangMgr()->SetString(nLanguage, 69, _T("Collecting and updating movie information"), false);
+	GetLangMgr()->SetString(nLanguage, 70, _T("Synchronizing with files on disk"), false);
+	GetLangMgr()->SetString(nLanguage, 71, _T("Title"), false);
+	GetLangMgr()->SetString(nLanguage, 72, _T("Title (descending)"), false);
+	GetLangMgr()->SetString(nLanguage, 73, _T("Year"), false);
+	GetLangMgr()->SetString(nLanguage, 74, _T("Year (descending)"), false);
+	GetLangMgr()->SetString(nLanguage, 75, _T("Rating"), false);
+	GetLangMgr()->SetString(nLanguage, 76, _T("Rating (descending)"), false);
+	GetLangMgr()->SetString(nLanguage, 77, _T("File time"), false);
+	GetLangMgr()->SetString(nLanguage, 78, _T("File time (descending)"), false);
 
 	nLanguage = GetLangMgr()->GetLanguage(_T("Dutch"));
 	if (nLanguage == -1)
@@ -231,16 +237,19 @@ inline void LoadStrings()
 	GetLangMgr()->SetString(nLanguage, 61, _T("Ik heb deze film gezien"), false);
 	GetLangMgr()->SetString(nLanguage, 62, _T("Verberg deze film "), false);
 	GetLangMgr()->SetString(nLanguage, 63, _T("Weet u zeker dat u deze film wilt verbergen?"), false);
-	GetLangMgr()->SetString(nLanguage, 64, _T("Klaar"), false);
-	GetLangMgr()->SetString(nLanguage, 65, _T("Laden van database"), false);
-	GetLangMgr()->SetString(nLanguage, 66, _T("Bezig met opzoeken en updaten van film informatie"), false);
-	GetLangMgr()->SetString(nLanguage, 67, _T("Synchroniseren met de bestanden op de schijf"), false);
-	GetLangMgr()->SetString(nLanguage, 68, _T("Titel"), false);
-	GetLangMgr()->SetString(nLanguage, 69, _T("Titel (aflopend)"), false);
-	GetLangMgr()->SetString(nLanguage, 70, _T("Jaar"), false);
-	GetLangMgr()->SetString(nLanguage, 71, _T("Jaar (aflopend)"), false);
-	GetLangMgr()->SetString(nLanguage, 72, _T("Beoordeling"), false);
-	GetLangMgr()->SetString(nLanguage, 73, _T("Beoordeling (aflopend)"), false);
-	GetLangMgr()->SetString(nLanguage, 74, _T("Bestandstijd"), false);
-	GetLangMgr()->SetString(nLanguage, 75, _T("Bestandstijd (aflopend)"), false);
+	GetLangMgr()->SetString(nLanguage, 64, _T("Weet u zeker dat u dit bestand van de computer permanent wilt verwijderen?"), false);
+	GetLangMgr()->SetString(nLanguage, 65, _T("Weet u zeker dat u deze map van de computer permanent wilt verwijderen?"), false);
+	GetLangMgr()->SetString(nLanguage, 66, _T("Bestand niet gevonden"), false);
+	GetLangMgr()->SetString(nLanguage, 67, _T("Klaar"), false);
+	GetLangMgr()->SetString(nLanguage, 68, _T("Laden van database"), false);
+	GetLangMgr()->SetString(nLanguage, 69, _T("Bezig met opzoeken en updaten van film informatie"), false);
+	GetLangMgr()->SetString(nLanguage, 70, _T("Synchroniseren met de bestanden op de schijf"), false);
+	GetLangMgr()->SetString(nLanguage, 71, _T("Titel"), false);
+	GetLangMgr()->SetString(nLanguage, 72, _T("Titel (aflopend)"), false);
+	GetLangMgr()->SetString(nLanguage, 73, _T("Jaar"), false);
+	GetLangMgr()->SetString(nLanguage, 74, _T("Jaar (aflopend)"), false);
+	GetLangMgr()->SetString(nLanguage, 75, _T("Beoordeling"), false);
+	GetLangMgr()->SetString(nLanguage, 76, _T("Beoordeling (aflopend)"), false);
+	GetLangMgr()->SetString(nLanguage, 77, _T("Bestandstijd"), false);
+	GetLangMgr()->SetString(nLanguage, 78, _T("Bestandstijd (aflopend)"), false);
 }

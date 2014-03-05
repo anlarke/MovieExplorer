@@ -63,6 +63,9 @@ IDS_OPTIONALPROP;Optional properties;Optionele eigenschappen
 IDS_SEENMOVIE;I have seen this movie;Ik heb deze film gezien
 IDS_HIDEMOVIE;Hide this movie;Verberg deze film 
 IDS_SURETOHIDE;Are you sure you want to hide this movie?;Weet u zeker dat u deze film wilt verbergen?
+IDS_SURETODELETEFILE;Are you sure you want to permanently delete this file from the computer?;Weet u zeker dat u dit bestand van de computer permanent wilt verwijderen?
+IDS_SURETODELETEDIRECTORY;Are you sure you want to permanetly delete this directory from the computer?;Weet u zeker dat u deze map van de computer permanent wilt verwijderen?
+IDS_FILENOTFOUND;File not found;Bestand niet gevonden
 IDS_READY;Ready;Klaar
 IDS_LOADINGDATABASE;Loading database;Laden van database
 IDS_UPDATINGDATABASE;Collecting and updating movie information;Bezig met opzoeken en updaten van film informatie

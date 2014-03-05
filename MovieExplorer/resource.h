@@ -35,6 +35,8 @@
 #define IDA_SORT			207
 #define IDA_EDIT			208
 #define IDA_HIDE			209
+#define IDA_DELETE			210
+#define IDA_VIEW			211
 
 // Toolbar buttons (command IDs, no strings)
 
@@ -46,6 +48,7 @@
 #define ID_DELETE			306
 #define ID_MOVEDOWN			307
 #define ID_MOVEUP			308
+#define ID_VIEW				309
 
 // Translations
 

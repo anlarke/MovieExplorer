@@ -135,6 +135,39 @@ void CListView::OnCommand(WORD id, WORD notifyCode, HWND hWndControl)
 		}
 		SetFocus(m_hWnd);
 	}
+	else if (hWndControl == m_btnDelete)
+	{
+		if (dir.strComputerName == GetComputerName())
+		{
+			RString strDirPath = CorrectPath(dir.strPath);
+			RString strFilePath = CorrectPath(dir.strPath + _T("\\") + mov.strFileName);
+
+			if (FileExists(strFilePath))
+			{
+				if (MessageBox(GetMainWnd(), GETSTR(IDS_SURETODELETEFILE),
+					_T("Movie Explorer"), MB_ICONQUESTION | MB_YESNO) == IDYES)
+				{
+					DeleteFile(strFilePath);
+					LOG(_T("Deleted: ") + mov.strFileName + _T("\n"));
+					GetDB()->SyncAndUpdate();
+				}
+			}
+			else if (DirectoryExists(strFilePath))
+			{
+				if (MessageBox(GetMainWnd(), GETSTR(IDS_SURETODELETEDIRECTORY),
+					_T("Movie Explorer"), MB_ICONQUESTION | MB_YESNO) == IDYES)
+				{
+					RemoveDirectory(strFilePath, true); // Delete directory, all subdirectories, and files.
+					LOG(_T("Deleted Directory: ") + mov.strFileName + _T("\n"));
+					GetDB()->SyncAndUpdate();
+				}
+			}
+			else
+				MessageBox(GetMainWnd(), GETSTR(IDS_FILENOTFOUND), _T("Movie Explorer"), MB_ICONWARNING | MB_OK);
+		}
+
+		SetFocus(m_hWnd);
+	}
 }
 
 bool CListView::OnCreate(CREATESTRUCT *pCS)
@@ -146,7 +179,8 @@ bool CListView::OnCreate(CREATESTRUCT *pCS)
 			!m_btnDir.Create<CToolBarButton>(m_hWnd, 0, &m_mdcDirBtn) ||
 			!m_btnSeen.Create<CToolBarButton>(m_hWnd, 0, &m_mdcSeenBtn) ||
 			!m_btnEdit.Create<CToolBarButton>(m_hWnd, 0, &m_mdcEditBtn) ||
-			!m_btnHide.Create<CToolBarButton>(m_hWnd, 0, &m_mdcHideBtn))
+			!m_btnHide.Create<CToolBarButton>(m_hWnd, 0, &m_mdcHideBtn) ||
+			!m_btnDelete.Create<CToolBarButton>(m_hWnd, 0, &m_mdcDeleteBtn))
 		ASSERTRETURN(false);
 
 	m_mdc.Create(0, 0);
@@ -294,6 +328,11 @@ void CListView::OnPrefChanged()
 	DrawAlphaMap(m_mdcHideBtn, 0, 0, IDA_HIDE, 48, 48, 
 			GETTHEMECOLOR(_T("ToolBarButton"), _T("IconColor")),
 			GETTHEMEALPHA(_T("ToolBarButton"), _T("IconAlpha")));
+
+	m_mdcDeleteBtn.Create(48, 48);
+	DrawAlphaMap(m_mdcDeleteBtn, 0, 0, IDA_DELETE, 48, 48,
+		GETTHEMECOLOR(_T("ToolBarButton"), _T("IconColor")),
+		GETTHEMEALPHA(_T("ToolBarButton"), _T("IconAlpha")));
 
 	// Determine the services that are in use
 
@@ -520,6 +559,7 @@ void CListView::Draw()
 	MoveWindow(m_btnSeen, 0, 0, 0, 0);
 	MoveWindow(m_btnEdit, 0, 0, 0, 0);
 	MoveWindow(m_btnHide, 0, 0, 0, 0);
+	MoveWindow(m_btnDelete, 0, 0, 0, 0);
 	m_nHoverMov = -1;
 
 	// Draw the movies
@@ -927,6 +967,8 @@ void CListView::Draw()
 			rcBtn.cy = SCX(24);
 			rcBtn.y = y + SCY(LV_DETAILS_HEIGHT) - SCY(15) - rcBtn.cy;
 			
+			MoveWindow(m_btnDelete, &rcBtn);
+			rcBtn.x -= rcBtn.cx + SCX(4);
 			MoveWindow(m_btnHide, &rcBtn);
 			rcBtn.x -= rcBtn.cx + SCX(4);
 			MoveWindow(m_btnEdit, &rcBtn);
