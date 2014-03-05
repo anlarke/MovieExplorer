@@ -793,13 +793,13 @@ void CDatabase::Filter()
 						foreach (m_filterKeywords, strKeyword)
 						{
 							if (mov.strGenres.FindNoCase(strKeyword) != -1 ||
-								mov.strAirDate.FindNoCase(strKeyword) != -1 ||
-								mov.strCountries.FindNoCase(strKeyword) != -1 ||
-								mov.strDirectors.FindNoCase(strKeyword) != -1 ||
-								mov.strWriters.FindNoCase(strKeyword) != -1 ||
-								mov.strStars.FindNoCase(strKeyword) != -1 ||
-								(m_bSearchStoryline && mov.strStoryline.FindNoCase(strKeyword) != -1))
-								{pAddTo = &movies3; break;}
+										mov.strAirDate.FindNoCase(strKeyword) != -1 ||
+										mov.strCountries.FindNoCase(strKeyword) != -1 ||
+										mov.strDirectors.FindNoCase(strKeyword) != -1 ||
+										mov.strWriters.FindNoCase(strKeyword) != -1 ||
+										mov.strStars.FindNoCase(strKeyword) != -1 ||
+										(m_bSearchStoryline && mov.strStoryline.FindNoCase(strKeyword) != -1))
+									{pAddTo = &movies3; break;}
 						}
 					}
 				}
