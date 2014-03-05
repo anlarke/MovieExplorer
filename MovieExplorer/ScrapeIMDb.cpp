@@ -80,9 +80,9 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 					// 2. Try to match title partly
 					// 3. Just take the first one
 
-					if (!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/';\">") + pInfo->strSearchTitle +
+					if (!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/';\">") + pInfo->strSearchTitle + 
 								_T("</a> \\("), &pInfo->strID, NULL) &&
-							!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/';\">[^<]*?") + pInfo->strSearchTitle +
+							!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/';\">[^<]*?") + pInfo->strSearchTitle + 
 								_T("[^<]*?</a> \\("), &pInfo->strID, NULL) &&
 							!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)"), &pInfo->strID, NULL))
 						return DBI_STATUS_UNKNOWN;
@@ -107,7 +107,7 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 							!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/';\">") + pInfo->strSearchTitle + _T("</a> \\(") + 
 								strYearMinusOne, &pInfo->strID, NULL) &&
 							!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/';\">") + pInfo->strSearchTitle + _T("</a> \\(") + 
-								strYearPlusOne, &pInfo->strID, NULL) &&
+								strYearPlusOne, &pInfo->strID, NULL) && 
 							!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/';\">[^<]+</a> \\(") + 
 								pInfo->strSearchYear, &pInfo->strID, NULL) &&
 							!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/';\">") + pInfo->strSearchTitle + 
