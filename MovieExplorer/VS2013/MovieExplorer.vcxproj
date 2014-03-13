@@ -363,6 +363,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\ToolBarTreeView.cpp" />
+    <ClCompile Include="..\ToolTip.h" />
     <ClCompile Include="..\UpdateThread.cpp" />
   </ItemGroup>
   <ItemGroup>

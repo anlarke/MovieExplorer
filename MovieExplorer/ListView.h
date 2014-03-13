@@ -24,6 +24,7 @@ protected:
 	bool OnSetCursor(HWND hWnd, WORD hitTest, WORD mouseMsg);
 	void OnSize(DWORD type, WORD cx, WORD cy);
 	void OnVScroll(WORD scrollCode, WORD pos, HWND hWndScrollBar);
+	void OnKeyDown(UINT, WORD, UINT);
 	LRESULT WndProc(UINT Msg, WPARAM wParam, LPARAM lParam);
 
 	void Draw();

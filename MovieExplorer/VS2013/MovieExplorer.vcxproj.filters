@@ -302,6 +302,9 @@
     <ClCompile Include="..\EditListBox.cpp">
       <Filter>Options Dialog</Filter>
     </ClCompile>
+    <ClCompile Include="..\ToolTip.h">
+      <Filter>Project Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\MovieExplorer.rc">

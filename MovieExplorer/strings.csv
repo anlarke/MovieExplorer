@@ -70,6 +70,12 @@ IDS_READY;Ready;Klaar
 IDS_LOADINGDATABASE;Loading database;Laden van database
 IDS_UPDATINGDATABASE;Collecting and updating movie information;Bezig met opzoeken en updaten van film informatie
 IDS_SYNCINGDATABASE;Synchronizing with files on disk;Synchroniseren met de bestanden op de schijf
+IDS_TOOLTIP_PLAY;Play;Speel
+IDS_TOOLTIP_DIR;Directory;Directory
+IDS_TOOLTIP_SEEN;Watched;Keek
+IDS_TOOLTIP_EDIT;Edit;Bewerk
+IDS_TOOLTIP_HIDE;Hide;Verberg
+IDS_TOOLTIP_DELETE;Delete;Verwijder
 ID_SORT_TITLEASC;Title;Titel
 ID_SORT_TITLEDES;Title (descending);Titel (aflopend)
 ID_SORT_YEARASC;Year;Jaar

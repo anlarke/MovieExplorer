@@ -13,12 +13,13 @@ class RCustomToolBarButton : public RWindow
 public:
 	template <class DERIVED_TYPE>
 	bool Create(HWND hWndParent, WORD idCommand, RMemoryDC *pIconOrigMDC, 
-			const TCHAR *lpszText = NULL, bool bCommandOnDown = false)
+			const TCHAR *lpszText = NULL, bool bCommandOnDown = false, HMENU hMenu = NULL)
 	{
 		if (!pIconOrigMDC && !lpszText)
 			ASSERTRETURN(false);
 
-		if (!RWindow::Create<DERIVED_TYPE>(hWndParent))
+		if (!RWindow::Create<DERIVED_TYPE>(hWndParent, WS_CHILD | WS_VISIBLE | WS_CLIPCHILDREN | WS_CLIPSIBLINGS,
+			0, NULL, 0, 0, 0, 0, hMenu, NULL))
 			ASSERTRETURN(false);
 
 		m_idCommand = idCommand;
