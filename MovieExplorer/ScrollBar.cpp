@@ -106,6 +106,12 @@ void CScrollBar::OnLButtonDown(DWORD keys, short x, short y)
 		SetTimer(m_hWnd, SB_LINEUP, 300, NULL);
 		m_bTimer = true;
 	}
+	else if (PtInRect(&m_rcBtnPageUp, x, y))
+	{
+		PostMessage(GetParent(m_hWnd), WM_VSCROLL, MAKEWPARAM(SB_PAGEUP, m_nPos), (LPARAM)m_hWnd);
+		SetTimer(m_hWnd, SB_PAGEUP, 300, NULL);
+		m_bTimer = true;
+	}
 	else if (PtInRect(&m_rcThumb, x, y))
 	{
 		m_bDragging = true;
@@ -114,6 +120,12 @@ void CScrollBar::OnLButtonDown(DWORD keys, short x, short y)
 		m_rcDragging = m_rcThumb;
 		m_nHighlight = -1;
 		m_nPressed = 1;
+	}
+	else if (PtInRect(&m_rcBtnPageDown, x, y))
+	{
+		PostMessage(GetParent(m_hWnd), WM_VSCROLL, MAKEWPARAM(SB_PAGEDOWN, m_nPos), (LPARAM)m_hWnd);
+		SetTimer(m_hWnd, SB_PAGEDOWN, 300, NULL);
+		m_bTimer = true;
 	}
 	else if (PtInRect(&m_rcBtn2, x, y))
 	{
@@ -320,7 +332,14 @@ void CScrollBar::CalcRects(int y /*= 0*/)
 	{
 		m_rcThumb.y = cyBtn + round((double)((m_nPos - m_nRangeMin) * 
 				cyVarRange) / nVarRange);
+
+		// Calculate page up and down rectangles
+
+		m_rcBtnPageUp = RRect(0, cyBtn, cxBtn, m_rcThumb.top);
+		m_rcBtnPageDown = RRect(0, m_rcThumb.bottom, cxBtn, cy - cyBtn);
 	}
+
+	
 }
 
 void CScrollBar::Draw()

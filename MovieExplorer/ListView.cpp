@@ -2,6 +2,7 @@
 #include "MovieExplorer.h"
 #include "ListView.h"
 #include "EditDlg.h"
+#include "ToolTip.h"
 
 #define LV_SMALL_STAR_SIZE		16
 #define LV_LARGE_STAR_SIZE		24
@@ -9,6 +10,16 @@
 
 #define LINKSTATE_NORMAL		0
 #define LINKSTATE_HOVER			1
+
+#define LV_PAGESIZE				300
+#define LV_LINESIZE				30
+
+#define BUTTON_ID_PLAY			1
+#define BUTTON_ID_DIR			2
+#define BUTTON_ID_SEEN			3
+#define BUTTON_ID_EDIT			4
+#define BUTTON_ID_HIDE			5
+#define BUTTON_ID_DELETE		6
 
 RString PrettyList(RString str)
 {
@@ -175,13 +186,23 @@ bool CListView::OnCreate(CREATESTRUCT *pCS)
 	if (!m_sb.Create<CScrollBar>(m_hWnd, false))
 		ASSERTRETURN(false);
 
-	if (!m_btnPlay.Create<CToolBarButton>(m_hWnd, 0, &m_mdcPlayBtn) ||
-			!m_btnDir.Create<CToolBarButton>(m_hWnd, 0, &m_mdcDirBtn) ||
-			!m_btnSeen.Create<CToolBarButton>(m_hWnd, 0, &m_mdcSeenBtn) ||
-			!m_btnEdit.Create<CToolBarButton>(m_hWnd, 0, &m_mdcEditBtn) ||
-			!m_btnHide.Create<CToolBarButton>(m_hWnd, 0, &m_mdcHideBtn) ||
-			!m_btnDelete.Create<CToolBarButton>(m_hWnd, 0, &m_mdcDeleteBtn))
+	if (!m_btnPlay.Create<CToolBarButton>(m_hWnd, 0, &m_mdcPlayBtn,0, false, (HMENU)BUTTON_ID_PLAY) ||
+			!m_btnDir.Create<CToolBarButton>(m_hWnd, 0, &m_mdcDirBtn, 0, false, (HMENU)BUTTON_ID_DIR) ||
+			!m_btnSeen.Create<CToolBarButton>(m_hWnd, 0, &m_mdcSeenBtn, 0, false, (HMENU)BUTTON_ID_SEEN) ||
+			!m_btnEdit.Create<CToolBarButton>(m_hWnd, 0, &m_mdcEditBtn, 0, false, (HMENU)BUTTON_ID_EDIT) ||
+			!m_btnHide.Create<CToolBarButton>(m_hWnd, 0, &m_mdcHideBtn, 0, false, (HMENU)BUTTON_ID_HIDE) ||
+			!m_btnDelete.Create<CToolBarButton>(m_hWnd, 0, &m_mdcDeleteBtn, 0 , false, (HMENU)BUTTON_ID_DELETE))
 		ASSERTRETURN(false);
+
+	// Create tooltip windows for buttons
+
+	HINSTANCE hInst = GetModuleHandle(NULL);
+	CreateToolTip(m_hWnd, BUTTON_ID_PLAY, hInst,GETSTR(IDS_TOOLTIP_PLAY));
+	CreateToolTip(m_hWnd, BUTTON_ID_DIR, hInst, GETSTR(IDS_TOOLTIP_DIR));
+	CreateToolTip(m_hWnd, BUTTON_ID_SEEN, hInst, GETSTR(IDS_TOOLTIP_SEEN));
+	CreateToolTip(m_hWnd, BUTTON_ID_EDIT, hInst, GETSTR(IDS_TOOLTIP_EDIT));
+	CreateToolTip(m_hWnd, BUTTON_ID_HIDE, hInst, GETSTR(IDS_TOOLTIP_HIDE));
+	CreateToolTip(m_hWnd, BUTTON_ID_DELETE, hInst, GETSTR(IDS_TOOLTIP_DELETE));
 
 	m_mdc.Create(0, 0);
 	OnPrefChanged();
@@ -258,7 +279,7 @@ void CListView::OnMouseWheel(WORD keys, short delta, short x, short y)
 	SystemParametersInfo(SPI_GETWHEELSCROLLLINES, 0, &nScrollLines, 0);
 
 	int nPos = m_sb.GetPos();
-	nPos -= round((float)(delta * (int)nScrollLines * SCY(30)) / WHEEL_DELTA);
+	nPos -= round((float)(delta * (int)nScrollLines * SCY(LV_LINESIZE)) / WHEEL_DELTA);
 	m_sb.SetPos(nPos);
 
 	Draw();
@@ -465,11 +486,17 @@ void CListView::OnVScroll(WORD scrollCode, WORD pos, HWND hWndScrollBar)
 {
 	switch (scrollCode)
 	{
+	case SB_PAGEUP:
+		m_sb.SetPos(m_sb.GetPos() - SCY(LV_PAGESIZE));
+		break;
 	case SB_LINEUP:
-		m_sb.SetPos(m_sb.GetPos() - SCY(30));
+		m_sb.SetPos(m_sb.GetPos() - SCY(LV_LINESIZE));
+		break;
+	case SB_PAGEDOWN:
+		m_sb.SetPos(m_sb.GetPos() + SCY(LV_PAGESIZE));
 		break;
 	case SB_LINEDOWN:
-		m_sb.SetPos(m_sb.GetPos() + SCY(30));
+		m_sb.SetPos(m_sb.GetPos() + SCY(LV_LINESIZE));
 		break;
 	case SB_THUMBTRACK:
 		m_sb.SetPos(m_sb.GetTrackPos(), false);
@@ -481,6 +508,26 @@ void CListView::OnVScroll(WORD scrollCode, WORD pos, HWND hWndScrollBar)
 	}
 
 	Draw();
+}
+
+void CListView::OnKeyDown(UINT virtKey, WORD repCount, UINT flags)
+{
+	switch (virtKey)
+	{
+		case VK_UP:
+		case VK_NUMPAD8:
+			// move it up
+			m_sb.SetPos(m_sb.GetPos() - SCY(LV_LINESIZE));
+			break;
+		case VK_DOWN:
+		case VK_NUMPAD2:
+			// move it down
+			m_sb.SetPos(m_sb.GetPos() + SCY(LV_LINESIZE));
+			break;
+	}
+
+	Draw();
+	
 }
 
 LRESULT CListView::WndProc(UINT Msg, WPARAM wParam, LPARAM lParam)

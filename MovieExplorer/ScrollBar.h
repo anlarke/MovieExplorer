@@ -44,7 +44,7 @@ protected:
 	RMemoryDC m_mdc, m_mdcGripper, m_mdcArrowUpActive, m_mdcArrowUpInactive, 
 			m_mdcArrowDownActive, m_mdcArrowDownInactive;
 	RSprite m_sprBackgr, m_sprThumbNormal, m_sprThumbHighlight, m_sprThumbPressed;
-	RRect m_rcThumb, m_rcBtn1, m_rcBtn2, m_rcDragging;
+	RRect m_rcThumb, m_rcBtn1, m_rcBtn2, m_rcBtnPageUp, m_rcBtnPageDown, m_rcDragging;
 	INT_PTR m_nHighlight, m_nPressed;
 	RScrollBar m_sb;
 	POINT m_ptDragging;
