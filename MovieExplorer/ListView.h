@@ -23,6 +23,8 @@ protected:
 	void OnScaleChanged();
 	bool OnSetCursor(HWND hWnd, WORD hitTest, WORD mouseMsg);
 	void OnSize(DWORD type, WORD cx, WORD cy);
+	void OnTouch(WORD nInputs, HTOUCHINPUT hTouchInput);
+	void OnTimer(UINT_PTR nIDEvent);
 	void OnVScroll(WORD scrollCode, WORD pos, HWND hWndScrollBar);
 	void OnKeyDown(UINT, WORD, UINT);
 	LRESULT WndProc(UINT Msg, WPARAM wParam, LPARAM lParam);
@@ -44,4 +46,5 @@ protected:
 	bool m_bScrolling, m_bNormalizeRatings, m_bCaptureM;
 	RString m_strRatingServ;
 	RObArray<RString> m_servicesInUse;
+	double m_dTouchScrollSpeed;
 };

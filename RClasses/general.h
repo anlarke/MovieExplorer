@@ -915,3 +915,17 @@ inline BOOL BitBlt(HDC hDC, int x, int y, int cx, int cy, HDC hSrcDC, int xSrc =
 inline BOOL BitBlt(HDC hDC, const RECT *pRect, HDC hSrcDC, int xSrc = 0, int ySrc = 0)
 	{return BitBlt(hDC, pRect->left, pRect->top, pRect->right - pRect->left, 
 			pRect->bottom - pRect->top, hSrcDC, xSrc, ySrc, SRCCOPY);}
+
+inline INT64 QueryPerformanceFrequency()
+{
+	LARGE_INTEGER li = {0};
+	QueryPerformanceFrequency(&li);
+	return li.QuadPart;
+}
+
+inline INT64 QueryPerformanceCounter()
+{
+	LARGE_INTEGER li = {0};
+	QueryPerformanceCounter(&li);
+	return li.QuadPart;
+}
