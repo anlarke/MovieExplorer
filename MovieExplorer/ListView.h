@@ -47,4 +47,6 @@ protected:
 	RString m_strRatingServ;
 	RObArray<RString> m_servicesInUse;
 	double m_dTouchScrollSpeed;
+	int m_nTouchScrollElapse;
+	double m_dTouchScrollCoeff;
 };

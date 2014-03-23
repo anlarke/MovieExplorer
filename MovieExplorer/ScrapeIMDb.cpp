@@ -17,9 +17,7 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 	bool bUseOriginalTitle = GETPREFBOOL(_T("IMDbUseOriginalTitle"));
 
 	if (!pInfo || pInfo->strSearchTitle.IsEmpty() || pInfo->strServiceName != _T("imdb.com"))
-	{
-		ASSERT(false); return DBI_STATUS_SCRAPEERROR;
-	}
+		{ASSERT(false); return DBI_STATUS_SCRAPEERROR;}
 
 	RRegEx regex, regex2;
 	RString str, strSeasonPage, strEpisodePage, strTemp, strTemp2;
@@ -28,38 +26,25 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 
 	// Find movie ID when it is not provided
 
-	if (bUseBingSearch)
+	if (pInfo->strID.IsEmpty())
 	{
-		RString strURL = _T("http://www.bing.com/search?q=site%3Aimdb.com+");
-		if (pInfo->strID.IsEmpty())
+		if (bUseBingSearch)
 		{
+			RString strURL = _T("http://www.bing.com/search?q=site%3Aimdb.com+");
+
 			strURL += URLEncode(pInfo->strSearchTitle);
 			if (!pInfo->strSearchYear.IsEmpty())
 				strURL += _T("+%28") + pInfo->strSearchYear + _T("%29");
+
+			str = FixLineEnds(HTMLEntitiesDecode(URLToString(strURL)));
+			if (str.IsEmpty())
+				return DBI_STATUS_CONNERROR;
+
+			if (!GetFirstMatch(str, _T("<a href=\"http://www\\.imdb\\.com/title/(tt\\d+)/[^\"]*\"[^>]*>.+?</a>"),
+					&pInfo->strID, NULL))
+				return DBI_STATUS_UNKNOWN;
 		}
 		else
-			strURL += pInfo->strID;
-
-		str = FixLineEnds(HTMLEntitiesDecode(URLToString(strURL)));
-		if (str.IsEmpty())
-			return DBI_STATUS_CONNERROR;
-
-		if (!GetFirstMatch(str, _T("<a href=\"http://www\\.imdb\\.com/title/(tt\\d+?)/\"[^>]+>(.+?)</a>"),
-				&pInfo->strID, &strTemp, NULL))
-			return DBI_STATUS_UNKNOWN;
-
-		strTemp = StripTags(strTemp);
-
-		if (!GetFirstMatch(strTemp, _T("(.+?) \\(.*?(\\d+).*?\\)"), &pInfo->strTitle, &pInfo->strYear, NULL))
-			return DBI_STATUS_SCRAPEERROR;
-
-		str = FixLineEnds(HTMLEntitiesDecode(URLToString(_T("http://www.imdb.com/title/") + pInfo->strID + _T("/"))));
-		if (str.IsEmpty())
-			return DBI_STATUS_CONNERROR;
-	}
-	else
-	{
-		if (pInfo->strID.IsEmpty())
 		{
 			RString strURL = _T("http://www.imdb.com/find?s=tt&q=") + URLEncode(pInfo->strSearchTitle);
 			if (!pInfo->strSearchYear.IsEmpty())
@@ -117,10 +102,6 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 							!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)"), &pInfo->strID, NULL))
 						return DBI_STATUS_UNKNOWN;
 				}
-
-				str = FixLineEnds(HTMLEntitiesDecode(URLToString(_T("http://www.imdb.com/title/") + pInfo->strID + _T("/"))));
-				if (str.IsEmpty())
-					return DBI_STATUS_CONNERROR;
 			}
 			else // redirected to movie immediately
 			{
@@ -128,17 +109,18 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 					return DBI_STATUS_SCRAPEERROR;
 			}
 		}
-		else // id is already provided, just go to the right page
-		{
-			str = FixLineEnds(HTMLEntitiesDecode(URLToString(_T("http://www.imdb.com/title/") + pInfo->strID + _T("/"))));
-			if (str.IsEmpty())
-				return DBI_STATUS_CONNERROR;
-		}
 	}
+
+	// Retrieve movie data
+
+	str = FixLineEnds(HTMLEntitiesDecode(URLToString(_T("http://www.imdb.com/title/") + pInfo->strID + _T("/"))));
+	if (str.IsEmpty())
+		return DBI_STATUS_CONNERROR;
 
 	// If its a TV show get the episodes page for the proper season.
 	// Search for new name and id based on season and episode number.
 	// If it exists use it. otherwise use the tv shows main name and id.
+
 	if (pInfo->nSeason >= 0)
 	{
 		strSeasonPage = FixLineEnds(HTMLEntitiesDecode(URLToString(_T("http://www.imdb.com/title/") + pInfo->strID 

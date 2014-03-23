@@ -22,7 +22,6 @@
 #define BUTTON_ID_DELETE		6
 
 #define TOUCH_SCROLL_TIMER_ID	1
-#define TOUCH_SCROLL_ELAPSE		20
 
 RString PrettyList(RString str)
 {
@@ -389,6 +388,11 @@ void CListView::OnPrefChanged()
 	if (m_servicesInUse.IndexOf(strPosterServ) == -1) m_servicesInUse.Add(strPosterServ);
 	if (m_servicesInUse.IndexOf(strRatingServ) == -1) m_servicesInUse.Add(strRatingServ);
 
+	// Get touch scroll preferences
+
+	m_nTouchScrollElapse = GETPREFINT(_T("TouchScrollElapse"));
+	m_dTouchScrollCoeff = GETPREFFLOAT(_T("TouchScrollCoeff"));
+
 	OnScaleChanged();
 }
 
@@ -533,7 +537,7 @@ void CListView::OnTouch(WORD nInputs, HTOUCHINPUT hTouchInput)
 	else if (ti.dwFlags & TOUCHEVENTF_UP)
 	{
 		if (abs(m_dTouchScrollSpeed) > 80.0)
-			SetTimer(m_hWnd, TOUCH_SCROLL_TIMER_ID, TOUCH_SCROLL_ELAPSE, NULL);
+			SetTimer(m_hWnd, TOUCH_SCROLL_TIMER_ID, m_nTouchScrollElapse, NULL);
 	}
 
 	// Clean up
@@ -547,13 +551,13 @@ void CListView::OnTimer(UINT_PTR nIDEvent)
 
 	// Scroll
 
-	int dy = (int)(m_dTouchScrollSpeed * (TOUCH_SCROLL_ELAPSE / 1000.0));
+	int dy = (int)(m_dTouchScrollSpeed * (m_nTouchScrollElapse / 1000.0));
 	m_sb.SetPos(m_sb.GetPos() - dy);
 	Draw();
 
 	// Decrease speed
 
-	m_dTouchScrollSpeed *= 0.9;
+	m_dTouchScrollSpeed *= m_dTouchScrollCoeff;
 
 	if (abs(m_dTouchScrollSpeed) < 80.0)
 		KillTimer(m_hWnd, TOUCH_SCROLL_TIMER_ID);
