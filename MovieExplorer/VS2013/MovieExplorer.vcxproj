@@ -311,6 +311,7 @@
     <ClInclude Include="..\EditListBox.h" />
     <ClInclude Include="..\GeneralPage.h" />
     <ClInclude Include="..\GenreBar.h" />
+    <ClInclude Include="..\GridView.h" />
     <ClInclude Include="..\ListView.h" />
     <ClInclude Include="..\LogWnd.h" />
     <ClInclude Include="..\MainWnd.h" />
@@ -343,6 +344,7 @@
     <ClCompile Include="..\EditDlg.cpp" />
     <ClCompile Include="..\EditListBox.cpp" />
     <ClCompile Include="..\GeneralPage.cpp" />
+    <ClCompile Include="..\GridView.cpp" />
     <ClCompile Include="..\ListView.cpp" />
     <ClCompile Include="..\LogWnd.cpp" />
     <ClCompile Include="..\MainWnd.cpp" />

@@ -1,6 +1,12 @@
 #include "stdafx.h"
 #include "MovieExplorer.h"
 #include "ReBar.h"
+#include "ToolTip.h"
+
+#define BUTTON_ID_TOOLS			10
+#define BUTTON_ID_SEENMAIN		11
+#define BUTTON_ID_SORT			12
+#define BUTTON_ID_VIEW			13
 
 CReBar::CReBar() : m_hToolsMenu(NULL), m_hSortMenu(NULL)
 {
@@ -20,7 +26,7 @@ void CReBar::OnCommand(WORD id, WORD notifyCode, HWND hWndControl)
 	switch (id)
 	{
 	case ID_TOOLS:
-		{
+	{
 		// If the button is clicked again while menu is shown, we shouldn't show it again
 
 		static bool bIgnoreNext = false;
@@ -59,7 +65,7 @@ void CReBar::OnCommand(WORD id, WORD notifyCode, HWND hWndControl)
 		ScreenToClient(m_btnTools, &pt);
 
 		PostMessage(m_btnTools, WM_LBUTTONUP, 0, MAKELPARAM(pt.x, pt.y));
-		}
+	}
 		break;
 	case ID_TOOLS_STATUSBAR:
 		CheckMenuItem(m_hToolsMenu, ID_TOOLS_STATUSBAR, 
@@ -75,6 +81,12 @@ void CReBar::OnCommand(WORD id, WORD notifyCode, HWND hWndControl)
 		SendMessage(*GetDB(), WM_PREFCHANGED);
 		GetDB()->Filter();
 		break;
+	case ID_VIEW:
+		m_btnView.SetCheck(!m_btnView.GetCheck());
+		SETPREFBOOL(_T("ViewType"), m_btnView.GetCheck());
+		SendMessage(GetMainWnd(), WM_SWITCHVIEW);
+		break;
+
 	case ID_SORT:
 		{
 		// If the button is clicked again while menu is shown, we shouldn't show it again
@@ -166,13 +178,16 @@ void CReBar::OnCommand(WORD id, WORD notifyCode, HWND hWndControl)
 
 bool CReBar::OnCreate(CREATESTRUCT *pCS)
 {
-	if (!m_btnTools.Create<CToolBarButton>(m_hWnd, ID_TOOLS, &m_mdcToolsBtn, NULL, true))
+	if (!m_btnTools.Create<CToolBarButton>(m_hWnd, ID_TOOLS, &m_mdcToolsBtn, NULL, true, (HMENU)BUTTON_ID_TOOLS))
 		ASSERTRETURN(false);
 
-	if (!m_btnSeen.Create<CToolBarButton>(m_hWnd, ID_SEEN, &m_mdcSeenBtn))
+	if (!m_btnSeen.Create<CToolBarButton>(m_hWnd, ID_SEEN, &m_mdcSeenBtn, NULL, false, (HMENU)BUTTON_ID_SEENMAIN))
 		ASSERTRETURN(false);
 
-	if (!m_btnSort.Create<CToolBarButton>(m_hWnd, ID_SORT, &m_mdcSortBtn, NULL, true))
+	if (!m_btnSort.Create<CToolBarButton>(m_hWnd, ID_SORT, &m_mdcSortBtn, NULL, true, (HMENU)BUTTON_ID_SORT))
+		ASSERTRETURN(false);
+
+	if (!m_btnView.Create<CToolBarButton>(m_hWnd, ID_VIEW, &m_mdcViewBtn, NULL, false, (HMENU)BUTTON_ID_VIEW))
 		ASSERTRETURN(false);
 
 	if (!m_eSearch.Create<RHintEdit>(m_hWnd, ES_AUTOHSCROLL, 0, NULL, 0, 0, 0, 0, ID_SEARCH))
@@ -180,6 +195,14 @@ bool CReBar::OnCreate(CREATESTRUCT *pCS)
 
 	if (!m_categoryBar.Create<CCategoryBar>(m_hWnd))
 		ASSERTRETURN(false);
+
+	// Create tooltip windows for buttons
+
+	HINSTANCE hInst = GetModuleHandle(NULL);
+	CreateToolTip(m_hWnd, BUTTON_ID_TOOLS, hInst, GETSTR(IDS_TOOLTIP_TOOLS));
+	CreateToolTip(m_hWnd, BUTTON_ID_SEENMAIN, hInst, GETSTR(IDS_TOOLTIP_SEENMAIN));
+	CreateToolTip(m_hWnd, BUTTON_ID_SORT, hInst, GETSTR(IDS_TOOLTIP_SORT));
+	CreateToolTip(m_hWnd, BUTTON_ID_VIEW, hInst, GETSTR(IDS_TOOLTIP_VIEW));
 
 	m_mdc.Create(0, 0);
 	OnPrefChanged();
@@ -225,6 +248,11 @@ void CReBar::OnPrefChanged()
 	DrawAlphaMap(m_mdcSeenBtn, 0, 0, IDA_SEEN, 48, 48, 
 			GETTHEMECOLOR(_T("ToolBarButton"), _T("IconColor")),
 			GETTHEMEALPHA(_T("ToolBarButton"), _T("IconAlpha")));
+
+	m_mdcViewBtn.Create(48, 48);
+	DrawAlphaMap(m_mdcViewBtn, 0, 0, IDA_WRENCH, 48, 48,
+		GETTHEMECOLOR(_T("ToolBarButton"), _T("IconColor")),
+		GETTHEMEALPHA(_T("ToolBarButton"), _T("IconAlpha")));
 
 	m_mdcSortBtn.Create(48, 48);
 	DrawAlphaMap(m_mdcSortBtn, 0, 0, IDA_SORT, 48, 48, 
@@ -273,9 +301,10 @@ void CReBar::OnPrefChanged()
 	if (GETPREFBOOL(_T("MainWnd"), _T("ShowLog")))
 		CheckMenuItem(m_hToolsMenu, ID_TOOLS_LOG, MF_CHECKED);
 
-	// Check seen button
+	// Check seen button and view button
 
 	m_btnSeen.SetCheck(GETPREFBOOL(_T("ShowSeenMovies")));
+	m_btnView.SetCheck(GETPREFBOOL(_T("ViewType")));
 
 	// Sort menu
 
@@ -324,8 +353,9 @@ void CReBar::OnSize(DWORD type, WORD cx, WORD cy)
 		MoveWindow(m_btnTools, cx - SCX(4) - SCX(24), (cy - SCX(24)) / 2, SCX(24), SCX(24));
 		MoveWindow(m_btnSeen, cx - 2*SCX(4) - 2*SCX(24), (cy - SCX(24)) / 2, SCX(24), SCX(24));
 		MoveWindow(m_btnSort, cx - 3*SCX(4) - 3*SCX(24), (cy - SCX(24)) / 2, SCX(24), SCX(24));
+		MoveWindow(m_btnView, cx - 4 * SCX(4) - 4 * SCX(24), (cy - SCX(24)) / 2, SCX(24), SCX(24));
 		MoveWindow(m_categoryBar, 0, 0, cx - SCX(296), cy);
-		MoveWindow(m_eSearch, cx - SCX(285), SCY(7), SCX(195), SCY(19), TRUE);
+		MoveWindow(m_eSearch, cx - SCX(318), SCY(7), SCX(195), SCY(19), TRUE);
 		//MoveWindow(m_categoryBar, 0, 0, cx - SCX(268), cy);
 		//MoveWindow(m_eSearch, cx - SCX(257), SCY(7), SCX(195), SCY(19), TRUE);
 	}
@@ -364,7 +394,7 @@ void CReBar::Draw()
 
 	// Draw rounded background and border around search box
 
-	m_sprSearchBox.Draw(m_mdc, cx - SCX(287), SCY(4), SCX(199), SCY(23), true);
+	m_sprSearchBox.Draw(m_mdc, cx - SCX(320), SCY(4), SCX(199), SCY(23), true);
 	//m_sprSearchBox.Draw(m_mdc, cx - SCX(259), SCY(4), SCX(199), SCY(23), true);
 
 	Invalidate(m_hWnd);

@@ -66,6 +66,7 @@ bool CorrectPreferences()
 
 	prefMgr.SetBool(_T("NormalizeRatings"), false, false);
 	prefMgr.SetBool(_T("ShowSeenMovies"), false, false);
+	prefMgr.SetBool(_T("ViewType"), false, false);
 	prefMgr.SetBool(_T("ShowHiddenMovies"), false, false);
 	prefMgr.SetInt(_T("SortBy"), 0, false);
 	prefMgr.SetBool(_T("IMDbUseBingSeach"), true, false);

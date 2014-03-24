@@ -2,6 +2,7 @@
 
 #include "ReBar.h"
 #include "ListView.h"
+#include "GridView.h"
 #include "StatusBar.h"
 #include "LogWnd.h"
 
@@ -35,9 +36,10 @@ protected:
 
 	CReBar m_reBar;
 	CListView m_listView;
+	CGridView m_gridView;
 	CStatusBar m_statusBar;
 	CLogWnd m_logWnd;
-	bool m_bShowStatusBar, m_bShowLog, m_bSizingLog;
+	bool m_bShowStatusBar, m_bShowLog, m_bSizingLog, bListView; 
 	int m_nLogHeight;
 	POINT m_ptSizing;
 	RECT m_rcSizing;

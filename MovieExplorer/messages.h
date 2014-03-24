@@ -16,5 +16,7 @@
 
 #define WM_APPLYEDIT			(WM_USER+512)
 #define WM_CANCELEDIT			(WM_USER+513)
+#define WM_SWITCHVIEW			(WM_USER+514)
+
 #define LBN_TEXTCHANGE			10
 #define LBN_BTNCLICKED			11

@@ -76,6 +76,10 @@ IDS_TOOLTIP_SEEN;Watched;Keek
 IDS_TOOLTIP_EDIT;Edit;Bewerk
 IDS_TOOLTIP_HIDE;Hide;Verberg
 IDS_TOOLTIP_DELETE;Delete;Verwijder
+IDS_TOOLTIP_TOOLS;Preferences;Voorkeuren
+IDS_TOOLTIP_SEENMAIN;Show/Hide Watched;Weergeven/Verbergen Bekeken
+IDS_TOOLTIP_SORT;Sort;Sorteer
+IDS_TOOLTIP_VIEW;Switch View;Schakelen Scherm
 ID_SORT_TITLEASC;Title;Titel
 ID_SORT_TITLEDES;Title (descending);Titel (aflopend)
 ID_SORT_YEARASC;Year;Jaar
