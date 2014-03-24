@@ -13,6 +13,9 @@
     <Filter Include="Database">
       <UniqueIdentifier>{08fac39d-ed32-4877-9b93-c2bfa4dae947}</UniqueIdentifier>
     </Filter>
+    <Filter Include="DynamicDll">
+      <UniqueIdentifier>{79721579-ea4d-4a1c-a144-c3525b5f0314}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\MovieExplorer.h">
@@ -222,7 +225,10 @@
     <ClInclude Include="..\..\RClasses\httphelp.h">
       <Filter>RClasses</Filter>
     </ClInclude>
-    <ClInclude Include="..\GridView.h">
+    <ClInclude Include="..\..\DynamicDll\User32Dll.h">
+      <Filter>DynamicDll</Filter>
+    </ClInclude>
+	<ClInclude Include="..\GridView.h">
       <Filter>Project Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -310,6 +316,9 @@
     </ClCompile>
     <ClCompile Include="..\ToolTip.h">
       <Filter>Project Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\DynamicDll\User32Dll.cpp">
+      <Filter>DynamicDll</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

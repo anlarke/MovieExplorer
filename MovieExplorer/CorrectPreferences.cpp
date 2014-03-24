@@ -71,6 +71,9 @@ bool CorrectPreferences()
 	prefMgr.SetInt(_T("SortBy"), 0, false);
 	prefMgr.SetBool(_T("IMDbUseBingSeach"), true, false);
 	prefMgr.SetBool(_T("IMDbUseOriginalTitle"), false, false);
+
+	prefMgr.SetInt(_T("TouchScrollElapse"), 10, false);
+	prefMgr.SetFloat(_T("TouchScrollCoeff"), 0.95f, false);
 	
 	if (!prefMgr.SaveAs(CorrectPath(_T("Preferences.xml"))))
 		ASSERTRETURN(false);

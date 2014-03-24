@@ -21,6 +21,8 @@
 #define BUTTON_ID_HIDE			5
 #define BUTTON_ID_DELETE		6
 
+#define TOUCH_SCROLL_TIMER_ID	1
+
 RString PrettyList(RString str)
 {
 	RString strResult;
@@ -207,6 +209,10 @@ bool CListView::OnCreate(CREATESTRUCT *pCS)
 	m_mdc.Create(0, 0);
 	OnPrefChanged();
 
+	// We'd like to receive WM_TOUCH
+	
+	RegisterTouchWindow(m_hWnd, TWF_WANTPALM);
+
 	return true;
 }
 
@@ -382,6 +388,11 @@ void CListView::OnPrefChanged()
 	if (m_servicesInUse.IndexOf(strPosterServ) == -1) m_servicesInUse.Add(strPosterServ);
 	if (m_servicesInUse.IndexOf(strRatingServ) == -1) m_servicesInUse.Add(strRatingServ);
 
+	// Get touch scroll preferences
+
+	m_nTouchScrollElapse = GETPREFINT(_T("TouchScrollElapse"));
+	m_dTouchScrollCoeff = GETPREFFLOAT(_T("TouchScrollCoeff"));
+
 	OnScaleChanged();
 }
 
@@ -482,6 +493,76 @@ void CListView::OnSize(DWORD type, WORD cx, WORD cy)
 	Draw();
 }
 
+void CListView::OnTouch(WORD nInputs, HTOUCHINPUT hTouchInput)
+{
+	TOUCHINPUT ti;
+	GetTouchInputInfo(hTouchInput, 1, &ti, sizeof(TOUCHINPUT));
+
+	int y = TOUCH_COORD_TO_PIXEL(ti.y);
+	INT64 c = QueryPerformanceCounter();
+
+	static int yPrev, yStart, nStartPos;
+	static INT64 cPrev;
+
+	if (ti.dwFlags & TOUCHEVENTF_DOWN)
+	{
+		yStart = y;
+		nStartPos = m_sb.GetPos();
+
+		yPrev = y;
+		cPrev = c;
+		
+		m_dTouchScrollSpeed = 0.0;
+		KillTimer(m_hWnd, TOUCH_SCROLL_TIMER_ID);
+	}
+	else if (ti.dwFlags & TOUCHEVENTF_MOVE)
+	{
+		int dy = y - yPrev;
+		if (dy != 0)
+		{
+			// Calculate speed
+
+			double dt = (double)(c - cPrev) / QueryPerformanceFrequency();
+			m_dTouchScrollSpeed = (m_dTouchScrollSpeed + (double)dy / dt) / 2.0;
+
+			yPrev = y;
+			cPrev = c;
+
+			// Scroll
+
+			m_sb.SetPos(nStartPos - y + yStart);
+			Draw();
+		}
+	}
+	else if (ti.dwFlags & TOUCHEVENTF_UP)
+	{
+		if (abs(m_dTouchScrollSpeed) > 80.0)
+			SetTimer(m_hWnd, TOUCH_SCROLL_TIMER_ID, m_nTouchScrollElapse, NULL);
+	}
+
+	// Clean up
+
+	CloseTouchInputHandle(hTouchInput);
+}
+
+void CListView::OnTimer(UINT_PTR nIDEvent)
+{
+	ASSERT(nIDEvent == TOUCH_SCROLL_TIMER_ID);
+
+	// Scroll
+
+	int dy = (int)(m_dTouchScrollSpeed * (m_nTouchScrollElapse / 1000.0));
+	m_sb.SetPos(m_sb.GetPos() - dy);
+	Draw();
+
+	// Decrease speed
+
+	m_dTouchScrollSpeed *= m_dTouchScrollCoeff;
+
+	if (abs(m_dTouchScrollSpeed) < 80.0)
+		KillTimer(m_hWnd, TOUCH_SCROLL_TIMER_ID);
+}
+
 void CListView::OnVScroll(WORD scrollCode, WORD pos, HWND hWndScrollBar)
 {
 	switch (scrollCode)
@@ -557,6 +638,7 @@ LRESULT CListView::WndProc(UINT Msg, WPARAM wParam, LPARAM lParam)
 			}
 		}
 	}
+
 	return RWindow::WndProc(Msg, wParam, lParam);
 }
 
@@ -647,7 +729,6 @@ void CListView::Draw()
 
 		// draw title and year
 		
-
 		hPrevFont = (HFONT)SelectObject(m_mdc, m_fntTitle);
 		SetTextColor(m_mdc, m_clrTitle);
 

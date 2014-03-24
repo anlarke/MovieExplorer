@@ -288,6 +288,10 @@ protected:
 			pWnd->OnTimer(wParam);
 			ASSERT(lParam == 0); // not very well documented
 			return 0;
+		case WM_TOUCH:
+			pWnd->OnTouch(LOWORD(wParam), (HTOUCHINPUT)lParam);
+			CloseTouchInputHandle((HTOUCHINPUT)lParam);
+			return 0;
 		case WM_VSCROLL:
 			pWnd->OnVScroll(LOWORD(wParam), HIWORD(wParam), (HWND)lParam);
 			return 0;
@@ -446,6 +450,10 @@ protected:
 	}
 
 	void OnTimer(UINT_PTR nIDEvent)
+	{
+	}
+
+	void OnTouch(WORD nInputs, HTOUCHINPUT hTouchInput)
 	{
 	}
 

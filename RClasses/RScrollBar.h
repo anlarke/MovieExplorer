@@ -61,6 +61,17 @@ public:
 		SendMessage(m_hWnd, SBM_GETSCROLLINFO, 0, (LPARAM)&si);
 		return si.nTrackPos;
 	}
+
+	void GetRange(int& nMin, int& nMax)
+	{
+		SCROLLINFO si;
+		ZeroMemory(&si, sizeof(SCROLLINFO));
+		si.cbSize = sizeof(SCROLLINFO);
+		si.fMask = SIF_RANGE;
+		SendMessage(m_hWnd, SBM_GETSCROLLINFO, 0, (LPARAM)&si);
+		nMin = si.nMin;
+		nMax = si.nMax;
+	}
 };
 
 #endif // __RSCROLLBAR_H__
