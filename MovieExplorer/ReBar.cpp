@@ -1,6 +1,12 @@
 #include "stdafx.h"
 #include "MovieExplorer.h"
 #include "ReBar.h"
+#include "ToolTip.h"
+
+#define BUTTON_ID_TOOLS			10
+#define BUTTON_ID_SEENMAIN		11
+#define BUTTON_ID_SORT			12
+#define BUTTON_ID_VIEW			13
 
 CReBar::CReBar() : m_hToolsMenu(NULL), m_hSortMenu(NULL)
 {
@@ -166,13 +172,13 @@ void CReBar::OnCommand(WORD id, WORD notifyCode, HWND hWndControl)
 
 bool CReBar::OnCreate(CREATESTRUCT *pCS)
 {
-	if (!m_btnTools.Create<CToolBarButton>(m_hWnd, ID_TOOLS, &m_mdcToolsBtn, NULL, true))
+	if (!m_btnTools.Create<CToolBarButton>(m_hWnd, ID_TOOLS, &m_mdcToolsBtn, NULL, true, (HMENU)BUTTON_ID_TOOLS))
 		ASSERTRETURN(false);
 
-	if (!m_btnSeen.Create<CToolBarButton>(m_hWnd, ID_SEEN, &m_mdcSeenBtn))
+	if (!m_btnSeen.Create<CToolBarButton>(m_hWnd, ID_SEEN, &m_mdcSeenBtn, NULL, false, (HMENU)BUTTON_ID_SEENMAIN))
 		ASSERTRETURN(false);
 
-	if (!m_btnSort.Create<CToolBarButton>(m_hWnd, ID_SORT, &m_mdcSortBtn, NULL, true))
+	if (!m_btnSort.Create<CToolBarButton>(m_hWnd, ID_SORT, &m_mdcSortBtn, NULL, true, (HMENU)BUTTON_ID_SORT))
 		ASSERTRETURN(false);
 
 	if (!m_eSearch.Create<RHintEdit>(m_hWnd, ES_AUTOHSCROLL, 0, NULL, 0, 0, 0, 0, ID_SEARCH))
@@ -180,6 +186,13 @@ bool CReBar::OnCreate(CREATESTRUCT *pCS)
 
 	if (!m_categoryBar.Create<CCategoryBar>(m_hWnd))
 		ASSERTRETURN(false);
+
+	// Create tooltip windows for buttons
+
+	HINSTANCE hInst = GetModuleHandle(NULL);
+	CreateToolTip(m_hWnd, BUTTON_ID_TOOLS, hInst, GETSTR(IDS_TOOLTIP_TOOLS));
+	CreateToolTip(m_hWnd, BUTTON_ID_SEENMAIN, hInst, GETSTR(IDS_TOOLTIP_SEENMAIN));
+	CreateToolTip(m_hWnd, BUTTON_ID_SORT, hInst, GETSTR(IDS_TOOLTIP_SORT));
 
 	m_mdc.Create(0, 0);
 	OnPrefChanged();

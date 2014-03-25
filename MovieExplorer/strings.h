@@ -78,14 +78,17 @@
 #define IDS_TOOLTIP_EDIT 1074
 #define IDS_TOOLTIP_HIDE 1075
 #define IDS_TOOLTIP_DELETE 1076
-#define ID_SORT_TITLEASC 1077
-#define ID_SORT_TITLEDES 1078
-#define ID_SORT_YEARASC 1079
-#define ID_SORT_YEARDES 1080
-#define ID_SORT_RATINGASC 1081
-#define ID_SORT_RATINGDES 1082
-#define ID_SORT_FILETIMEASC 1083
-#define ID_SORT_FILETIMEDES 1084
+#define IDS_TOOLTIP_TOOLS 1077
+#define IDS_TOOLTIP_SEENMAIN 1078
+#define IDS_TOOLTIP_SORT 1079
+#define ID_SORT_TITLEASC 1080
+#define ID_SORT_TITLEDES 1081
+#define ID_SORT_YEARASC 1082
+#define ID_SORT_YEARDES 1083
+#define ID_SORT_RATINGASC 1084
+#define ID_SORT_RATINGDES 1085
+#define ID_SORT_FILETIMEASC 1086
+#define ID_SORT_FILETIMEDES 1087
 
 inline void LoadStrings()
 {
@@ -172,14 +175,17 @@ inline void LoadStrings()
 	GetLangMgr()->SetString(nLanguage, 74, _T("Edit"), false);
 	GetLangMgr()->SetString(nLanguage, 75, _T("Hide"), false);
 	GetLangMgr()->SetString(nLanguage, 76, _T("Delete"), false);
-	GetLangMgr()->SetString(nLanguage, 77, _T("Title"), false);
-	GetLangMgr()->SetString(nLanguage, 78, _T("Title (descending)"), false);
-	GetLangMgr()->SetString(nLanguage, 79, _T("Year"), false);
-	GetLangMgr()->SetString(nLanguage, 80, _T("Year (descending)"), false);
-	GetLangMgr()->SetString(nLanguage, 81, _T("Rating"), false);
-	GetLangMgr()->SetString(nLanguage, 82, _T("Rating (descending)"), false);
-	GetLangMgr()->SetString(nLanguage, 83, _T("File time"), false);
-	GetLangMgr()->SetString(nLanguage, 84, _T("File time (descending)"), false);
+	GetLangMgr()->SetString(nLanguage, 77, _T("Preferences"), false);
+	GetLangMgr()->SetString(nLanguage, 78, _T("Show/Hide Watched"), false);
+	GetLangMgr()->SetString(nLanguage, 79, _T("Sort"), false);
+	GetLangMgr()->SetString(nLanguage, 80, _T("Title"), false);
+	GetLangMgr()->SetString(nLanguage, 81, _T("Title (descending)"), false);
+	GetLangMgr()->SetString(nLanguage, 82, _T("Year"), false);
+	GetLangMgr()->SetString(nLanguage, 83, _T("Year (descending)"), false);
+	GetLangMgr()->SetString(nLanguage, 84, _T("Rating"), false);
+	GetLangMgr()->SetString(nLanguage, 85, _T("Rating (descending)"), false);
+	GetLangMgr()->SetString(nLanguage, 86, _T("File time"), false);
+	GetLangMgr()->SetString(nLanguage, 87, _T("File time (descending)"), false);
 
 	nLanguage = GetLangMgr()->GetLanguage(_T("Dutch"));
 	if (nLanguage == -1)
@@ -262,12 +268,15 @@ inline void LoadStrings()
 	GetLangMgr()->SetString(nLanguage, 74, _T("Bewerken"), false);
 	GetLangMgr()->SetString(nLanguage, 75, _T("Verbergen"), false);
 	GetLangMgr()->SetString(nLanguage, 76, _T("Verwijderen"), false);
-	GetLangMgr()->SetString(nLanguage, 77, _T("Titel"), false);
-	GetLangMgr()->SetString(nLanguage, 78, _T("Titel (aflopend)"), false);
-	GetLangMgr()->SetString(nLanguage, 79, _T("Jaar"), false);
-	GetLangMgr()->SetString(nLanguage, 80, _T("Jaar (aflopend)"), false);
-	GetLangMgr()->SetString(nLanguage, 81, _T("Beoordeling"), false);
-	GetLangMgr()->SetString(nLanguage, 82, _T("Beoordeling (aflopend)"), false);
-	GetLangMgr()->SetString(nLanguage, 83, _T("Bestandstijd"), false);
-	GetLangMgr()->SetString(nLanguage, 84, _T("Bestandstijd (aflopend)"), false);
+	GetLangMgr()->SetString(nLanguage, 77, _T("Voorkeuren"), false);
+	GetLangMgr()->SetString(nLanguage, 78, _T("Weergeven/Verbergen Bekeken"), false);
+	GetLangMgr()->SetString(nLanguage, 79, _T("Sorteer"), false);
+	GetLangMgr()->SetString(nLanguage, 80, _T("Titel"), false);
+	GetLangMgr()->SetString(nLanguage, 81, _T("Titel (aflopend)"), false);
+	GetLangMgr()->SetString(nLanguage, 82, _T("Jaar"), false);
+	GetLangMgr()->SetString(nLanguage, 83, _T("Jaar (aflopend)"), false);
+	GetLangMgr()->SetString(nLanguage, 84, _T("Beoordeling"), false);
+	GetLangMgr()->SetString(nLanguage, 85, _T("Beoordeling (aflopend)"), false);
+	GetLangMgr()->SetString(nLanguage, 86, _T("Bestandstijd"), false);
+	GetLangMgr()->SetString(nLanguage, 87, _T("Bestandstijd (aflopend)"), false);
 }
