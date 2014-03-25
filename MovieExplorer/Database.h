@@ -77,6 +77,8 @@ void ClearMovie(DBMOVIE *pMovie);
 void TagToInfo(RXMLTag *pTag, DBINFO *pInfo);
 void InfoToTag(DBINFO *pInfo, RXMLTag *pTag);
 bool GetFirstMatch(RString_ strTarget, RString_ strPattern, RString *pStr1, ...);
+bool IsTV(DBINFO *pInfo);
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // CDatabase class declaration
