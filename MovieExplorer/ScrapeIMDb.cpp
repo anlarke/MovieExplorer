@@ -208,7 +208,7 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 
 	// For TV try to get the episode release date and episode title
 
-	if ((pInfo->nSeason >= 0 || !pInfo->strAirDate.IsEmpty()))
+	if (IsTV(pInfo))
 		GetFirstMatch(str, _T("<title>\".+?\"[ \t]*(.+?)[ \t]*\\("), &pInfo->strEpisodeName, NULL);
 	
 	// Get season and episode number for TV shows if its not already in parsed from filename.
