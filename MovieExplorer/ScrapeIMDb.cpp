@@ -196,14 +196,11 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 
 	// Get title (fail otherwise)
 
-	if (pInfo->strTitle.IsEmpty())
-	{
-		
-		if (!GetFirstMatch(str, _T("<title>\"(.+?)\".*?- IMDb</title>"), &pInfo->strTitle, NULL) &&
-				!GetFirstMatch(str, _T("<title>(.+?) \\(.*?- IMDb</title>"), &pInfo->strTitle, NULL) &&
-				!GetFirstMatch(str, _T("<title>(.+?)- IMDb</title>"), &pInfo->strTitle, NULL))
-			return DBI_STATUS_SCRAPEERROR;
-	}
+	if ( pInfo->strTitle.IsEmpty() &&
+			!GetFirstMatch(str, _T("<title>\"(.+?)\".*?- IMDb</title>"), &pInfo->strTitle, NULL) &&
+			!GetFirstMatch(str, _T("<title>(.+?) \\(.*?- IMDb</title>"), &pInfo->strTitle, NULL) &&
+			!GetFirstMatch(str, _T("<title>(.+?)- IMDb</title>"), &pInfo->strTitle, NULL))
+		return DBI_STATUS_SCRAPEERROR;
 
 	//Get year (starting year for tv shows)
 
