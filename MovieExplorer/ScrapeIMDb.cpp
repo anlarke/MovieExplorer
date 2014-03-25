@@ -204,7 +204,6 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 				!GetFirstMatch(str, _T("<title>(.+?)- IMDb</title>"), &pInfo->strTitle, NULL))
 			return DBI_STATUS_SCRAPEERROR;
 	}
-	
 
 	//Get year (starting year for tv shows)
 
@@ -214,7 +213,6 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 
 	if ((pInfo->nSeason >= 0 || !pInfo->strAirDate.IsEmpty()))
 		GetFirstMatch(str, _T("<title>\".+?\"[ \t]*(.+?)[ \t]*\\("), &pInfo->strEpisodeName, NULL);
-
 	
 	// Get season and episode number for TV shows if its not already in parsed from filename.
 
