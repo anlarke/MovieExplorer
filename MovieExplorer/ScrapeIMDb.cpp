@@ -33,7 +33,7 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 			RString strURL = _T("http://www.bing.com/search?q=site%3Aimdb.com+");
 
 			strURL += URLEncode(pInfo->strSearchTitle);
-			if (!pInfo->strSearchYear.IsEmpty())
+			if (!pInfo->strSearchYear.IsEmpty() && !IsTV(pInfo))
 				strURL += _T("+%28") + pInfo->strSearchYear + _T("%29");
 
 			str = FixLineEnds(HTMLEntitiesDecode(URLToString(strURL)));
@@ -47,7 +47,7 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 		else
 		{
 			RString strURL = _T("http://www.imdb.com/find?s=tt&q=") + URLEncode(pInfo->strSearchTitle);
-			if (!pInfo->strSearchYear.IsEmpty())
+			if (!pInfo->strSearchYear.IsEmpty() && !IsTV(pInfo))
 				strURL += _T("+%28") + pInfo->strSearchYear + _T("%29");
 
 			str = FixLineEnds(HTMLEntitiesDecode(URLToString(strURL)));
@@ -194,18 +194,23 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 		pInfo->nVotes = StringToNumber(strTemp);
 	}
 
-	// Get title and year
+	// Get title (fail otherwise)
 
-	if (pInfo->strTitle.IsEmpty() && !GetFirstMatch(str, _T("<title>(.+?) \\(\\D*(\\d+)\\D*\\) - IMDb</title>"), 
-			&pInfo->strTitle, &pInfo->strYear, NULL))
+	if (pInfo->strTitle.IsEmpty() &&
+		(!GetFirstMatch(str, _T("<title>(.+?) \\("), &pInfo->strTitle, NULL)))
+		//!GetFirstMatch(str, _T("<title>(.+?)- IMDb</title>"), &pInfo->strTitle, NULL)))
 		return DBI_STATUS_SCRAPEERROR;
+
+	//Get year (starting year for tv shows)
+
+	GetFirstMatch(str, _T("<title>.+? \\(\\D*(\\d+).*?\\) - IMDb</title>"), &pInfo->strYear, NULL);
 
 	// For TV try to get the episode release date and episode title
 
 	if ((pInfo->nSeason >= 0 || !pInfo->strAirDate.IsEmpty()))
-		GetFirstMatch(str, _T("<title>\".+?\"[ \t]*(.+?)[ \t]*\\(TV Episode \\D*(\\d+)\\D*\\) - IMDb</title>"),
-			&pInfo->strEpisodeName, &pInfo->strYear, NULL);
+		GetFirstMatch(str, _T("<title>\".+?\"[ \t]*(.+?)[ \t]*\\("), &pInfo->strEpisodeName, NULL);
 
+	
 	// Get season and episode number for TV shows if its not already in parsed from filename.
 
 	if (pInfo->nSeason < 0 && !pInfo->strAirDate.IsEmpty())

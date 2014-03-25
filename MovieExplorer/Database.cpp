@@ -164,6 +164,11 @@ bool GetFirstMatch(RString_ strTarget, RString_ strPattern, RString *pStr1, ...)
 	return false;
 }
 
+bool IsTV(DBINFO *pInfo)
+{
+	return((!pInfo->strAirDate.IsEmpty() || (pInfo->nEpisode >= 0 && pInfo->nSeason >= 0)) ? true : false);
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // CDatabase implementation
 
