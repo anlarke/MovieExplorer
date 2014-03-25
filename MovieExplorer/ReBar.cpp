@@ -6,7 +6,6 @@
 #define BUTTON_ID_TOOLS			10
 #define BUTTON_ID_SEENMAIN		11
 #define BUTTON_ID_SORT			12
-#define BUTTON_ID_VIEW			13
 
 CReBar::CReBar() : m_hToolsMenu(NULL), m_hSortMenu(NULL)
 {
