@@ -250,7 +250,7 @@ void CReBar::OnPrefChanged()
 			GETTHEMEALPHA(_T("ToolBarButton"), _T("IconAlpha")));
 
 	m_mdcViewBtn.Create(48, 48);
-	DrawAlphaMap(m_mdcViewBtn, 0, 0, IDA_WRENCH, 48, 48,
+	DrawAlphaMap(m_mdcViewBtn, 0, 0, IDA_VIEW, 48, 48,
 		GETTHEMECOLOR(_T("ToolBarButton"), _T("IconColor")),
 		GETTHEMEALPHA(_T("ToolBarButton"), _T("IconAlpha")));
 
