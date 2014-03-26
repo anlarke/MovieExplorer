@@ -228,6 +228,9 @@
     <ClInclude Include="..\..\DynamicDll\User32Dll.h">
       <Filter>DynamicDll</Filter>
     </ClInclude>
+	<ClInclude Include="..\GridView.h">
+      <Filter>Project Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\stdafx.cpp">
@@ -307,6 +310,9 @@
     </ClCompile>
     <ClCompile Include="..\EditListBox.cpp">
       <Filter>Options Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GridView.cpp">
+      <Filter>Project Files</Filter>
     </ClCompile>
     <ClCompile Include="..\ToolTip.h">
       <Filter>Project Files</Filter>

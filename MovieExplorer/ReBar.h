@@ -28,8 +28,8 @@ protected:
 	RMemoryDC m_mdc;
 	bool m_bBackgrWinDefault, m_bInstantSearch, m_bLiteralSearch;
 	COLORREF m_clrBackgrT, m_clrBackgrB, m_clrBackgrLine;
-	CToolBarButton m_btnTools, m_btnSeen, m_btnSort;
-	RMemoryDC m_mdcToolsBtn, m_mdcSeenBtn, m_mdcSortBtn;
+	CToolBarButton m_btnTools, m_btnSeen, m_btnSort, m_btnView;
+	RMemoryDC m_mdcToolsBtn, m_mdcSeenBtn, m_mdcSortBtn, m_mdcViewBtn;
 	HMENU m_hToolsMenu, m_hSortMenu;
 	CCategoryBar m_categoryBar;
 	RHintEdit m_eSearch;
