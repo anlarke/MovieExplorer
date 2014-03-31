@@ -255,8 +255,8 @@ void CGridView::Draw()
 			else
 			{
 				m_sprShadow.Draw(m_mdc, SCX(15) - 2 * SCX(1) + col * SCY(300), y + SCY(15) - 2 * SCY(1),
-					SCX(200) + 5 * SCX(1), SCY(300) + 5 * SCY(1));
-				FillSolidRect(m_mdc, SCX(15), y + SCY(15), SCX(200), SCX(300), m_clrBackgr);
+					SCX(200) + 5 * SCX(1), 300 + 5 * SCY(1));
+				FillSolidRect(m_mdc, SCX(15), y + SCY(15), 200, 300, m_clrBackgr);
 			}
 
 
@@ -341,8 +341,9 @@ void CGridView::OnMouseMove(DWORD keys, short x, short y)
 	//int cx = m_mdc.cx; // -rcScrollBar.cx;
 	//int cy = m_mdc.cy;
 	INT_PTR nStart = m_sb.GetPos() / SCY(LV_DETAILS_HEIGHT);
-	//int yItem = (int)-(m_sb.GetPos() - nStart * SCY(LV_DETAILS_HEIGHT));
+	int nYRow = (int)-(m_sb.GetPos() - nStart * SCY(LV_DETAILS_HEIGHT));
 	INT_PTR nHoverMov = -1;
+
 
 	int cxImg = 200, cyImg = 300;
 	for (INT_PTR row = nStart; row < nRows ; row++)
@@ -352,7 +353,8 @@ void CGridView::OnMouseMove(DWORD keys, short x, short y)
 		{
 			//LOG(NumberToString(x) + _T(" ") + NumberToString(y) + _T("\n"));
 			INT_PTR xx = SCX(15) + col * SCX(cxImg);
-			INT_PTR yy = SCY(15) + row * SCY(cyImg);
+			//INT_PTR yy = SCY(15) + row * SCY(cyImg);
+			INT_PTR yy = nYRow + SCY(15);
 			RECT rcItem = { xx, yy, xx+cxImg, yy+cyImg };
 			/*LOG(NumberToString(SCX(15) + col * SCX(cxImg)) + _T(", ") + NumberToString(SCY(15) + row * SCY(cyImg)) +
 				_T(", ") + NumberToString(cxImg) + _T(", ") + NumberToString(cyImg) + _T("\n"));*/
@@ -361,6 +363,7 @@ void CGridView::OnMouseMove(DWORD keys, short x, short y)
 				nHoverMov = row * nColumns + col; break;
 			}
 		}
+		nYRow += SCY(LV_DETAILS_HEIGHT);
 	}
 
 

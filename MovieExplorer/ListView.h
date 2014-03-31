@@ -15,6 +15,7 @@ protected:
 	void OnCommand(WORD id, WORD notifyCode, HWND hWndControl);
 	bool OnCreate(CREATESTRUCT *pCS);
 	void OnLButtonDown(DWORD keys, short x, short y);
+	void OnLButtonDblClk(DWORD keys, short x, short y);
 	void OnMouseMove(DWORD keys, short x, short y);
 	void OnMouseWheel(WORD keys, short delta, short x, short y);
 	void OnPaint(HDC hDC);

@@ -227,6 +227,14 @@ void CListView::OnLButtonDown(DWORD keys, short x, short y)
 	}
 }
 
+void CListView::OnLButtonDblClk(DWORD keys, short x, short y)
+{
+	// Play movie on double click
+
+	SetFocus(m_hWnd);
+	OnCommand(NULL, NULL, m_btnPlay);
+}
+
 void CListView::OnMouseMove(DWORD keys, short x, short y)
 {
 	bool bDraw = false;
