@@ -29,7 +29,7 @@ bool CMainWnd::Create()
 	m_bShowStatusBar = GETPREFBOOL(_T("MainWnd"), _T("ShowStatusBar"));
 	m_bShowLog = GETPREFBOOL(_T("MainWnd"), _T("ShowLog"));
 	m_nLogHeight = GETPREFINT(_T("MainWnd"), _T("LogHeight"));
-
+	bListView = !GETPREFBOOL(_T("ViewType"));
 	// Restore window state of last session
 
 	if (GETPREFBOOL(_T("MainWnd"), _T("Maximized")))
@@ -45,8 +45,10 @@ bool CMainWnd::Create()
 			MAKEINTRESOURCE(IDI_MOVIEEXPLORER)));
 
 	// Set focus to list view so we can start scrolling
-
-	SetFocus(m_listView);
+	if (bListView)
+		SetFocus(m_listView);
+	else
+		SetFocus(m_gridView);
 
 	return true;
 }
@@ -76,9 +78,15 @@ LRESULT CMainWnd::WndProc(UINT Msg, WPARAM wParam, LPARAM lParam)
 
 		bListView = !bListView;
 		if (bListView)
+		{
 			MoveWindow(m_gridView, 0, 0, 0, 0);
+			SetFocus(m_listView);
+		}
 		else
+		{
 			MoveWindow(m_listView, 0, 0, 0, 0);
+			SetFocus(m_gridView);
+		}
 
 		// Show new view
 
@@ -95,6 +103,8 @@ LRESULT CMainWnd::WndProc(UINT Msg, WPARAM wParam, LPARAM lParam)
 
 		bListView = TRUE;
 		MoveWindow(m_gridView, 0, 0, 0, 0);
+		SetFocus(m_listView);
+		PostMessage(m_reBar, WM_COMMAND, ID_TOGGLEVIEWSTATUS);
 		m_listView.GoToItem((int)wParam);
 
 		RECT rc;

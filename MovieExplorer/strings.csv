@@ -18,6 +18,7 @@ ID_TOOLS_STATUSBAR;Status bar\tCtrl + S;Statusbalk\tCtrl + S
 ID_TOOLS_LOG;Log\tCtrl + L;Log\tCtrl + L
 ID_TOOLS_OPTIONS;Options...\tCtrl + O;Opties...\tCtrl + O
 ID_TOOLS_EXIT;Exit\tAlt + F4;Sluiten\tAlt + F4
+ID_TOGGLEVIEWSTATUS
 IDS_UPDATEINPROGRESS;Please wait, movie information is being retrieved...;Een ogenblik geduld, filminformatie wordt opgehaald...
 IDS_MOVIEUNKNOWN;Failed to find movie in the %SERVICENAME% database, please specify ID manually.;De film werd niet gevonden in de %SERVICENAME% database, u dient de ID handmatig op te geven.
 IDS_CONNECTIONERROR;Unfortunately a connection error occurred while retrieving movie information.;Er is helaas een verbindingsfout opgetreden bij het ophalen van de filminformatie.

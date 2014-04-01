@@ -337,17 +337,13 @@ void CGridView::Draw()
 
 void CGridView::OnMouseMove(DWORD keys, short x, short y)
 {
+	// Determine movie above which we're hovering
+
+	//RRect rcScrollBar;
+	//GetClientRectRelative(m_sb, m_hWnd, &rcScrollBar);
 	bool bDraw = false;
 	int nRows = (int)ceil(((float)GetDB()->m_movies / (float)m_nColumns));
 	int nHeight = (int)(nRows * SCY(GV_POSTER_HEIGHT));
-
-
-	// Determine movie above which we're hovering
-
-	RRect rcScrollBar;
-	GetClientRectRelative(m_sb, m_hWnd, &rcScrollBar);
-	//int cx = m_mdc.cx; // -rcScrollBar.cx;
-	//int cy = m_mdc.cy;
 	INT_PTR nStart = m_sb.GetPos() / SCY(GV_POSTER_HEIGHT);
 	int nYRow = (int)-(m_sb.GetPos() - nStart * SCY(GV_POSTER_HEIGHT));
 	INT_PTR nHoverMov = -1;
@@ -359,13 +355,9 @@ void CGridView::OnMouseMove(DWORD keys, short x, short y)
 
 		for (INT_PTR col = 0; col < m_nColumns && (row * m_nColumns + col) < GetDB()->m_movies; col++)
 		{
-			//LOG(NumberToString(x) + _T(" ") + NumberToString(y) + _T("\n"));
 			INT_PTR xx = SCX(15) + col * SCX(cxImg);
-			//INT_PTR yy = SCY(15) + row * SCY(cyImg);
 			INT_PTR yy = nYRow + SCY(15);
-			RECT rcItem = { xx, yy, xx+cxImg, yy+cyImg };
-			/*LOG(NumberToString(SCX(15) + col * SCX(cxImg)) + _T(", ") + NumberToString(SCY(15) + row * SCY(cyImg)) +
-				_T(", ") + NumberToString(cxImg) + _T(", ") + NumberToString(cyImg) + _T("\n"));*/
+			RECT rcItem = { xx, yy, xx+SCX(cxImg), yy+SCY(cyImg) };
 			if (PtInRect(&rcItem, x, y))
 			{
 				nHoverMov = row * m_nColumns + col; break;

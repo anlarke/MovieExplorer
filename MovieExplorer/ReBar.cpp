@@ -86,7 +86,9 @@ void CReBar::OnCommand(WORD id, WORD notifyCode, HWND hWndControl)
 		SETPREFBOOL(_T("ViewType"), m_btnView.GetCheck());
 		SendMessage(GetMainWnd(), WM_SWITCHVIEW);
 		break;
-
+	case ID_TOGGLEVIEWSTATUS:
+		m_btnView.SetCheck(!m_btnView.GetCheck());
+		break;
 	case ID_SORT:
 		{
 		// If the button is clicked again while menu is shown, we shouldn't show it again
