@@ -64,7 +64,7 @@ LRESULT CMainWnd::WndProc(UINT Msg, WPARAM wParam, LPARAM lParam)
 		return 0;
 	}
 	else if (Msg == WM_DBUPDATED)
-	{	
+	{
 		//MSG msg;
 		//if (!PeekMessage(&msg, m_hWnd, WM_DBUPDATED, WM_DBUPDATED, PM_REMOVE))
 		PostChildrenRec(m_hWnd, WM_DBUPDATED);
@@ -88,7 +88,20 @@ LRESULT CMainWnd::WndProc(UINT Msg, WPARAM wParam, LPARAM lParam)
 		PostChildrenRec(m_hWnd, WM_PAINT);
 
 		return 0;
-		//m_reBar.m_eSearch;
+	}
+	else if (Msg == WM_LISTVIEW_ITEM)
+	{
+		// Go to list view with scrollbar set to specific item
+
+		bListView = TRUE;
+		MoveWindow(m_gridView, 0, 0, 0, 0);
+		m_listView.GoToItem((int)wParam);
+
+		RECT rc;
+		GetClientRect(m_hWnd, &rc);
+		OnSize(0, (WORD)rc.right, (WORD)rc.bottom);
+		PostChildrenRec(m_hWnd, WM_PAINT);
+
 	}
 	return RWindow::WndProc(Msg, wParam, lParam);
 }
@@ -131,8 +144,8 @@ void CMainWnd::OnCommand(WORD id, WORD notifyCode, HWND hWndControl)
 		case ID_TOOLS_ZOOMOUT:
 		{
 			float fScale = GetScale() - 0.125f;
-			if (fScale < 0.75f)
-				fScale = 0.75f;
+			if (fScale < 0.50f)
+				fScale = 0.50f;
 			SetScale(fScale);
 			RECT rc;
 			GetClientRect(m_hWnd, &rc);

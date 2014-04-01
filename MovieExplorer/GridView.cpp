@@ -3,12 +3,12 @@
 #include "GridView.h"
 #include "EditDlg.h"
 
-#define LV_DETAILS_HEIGHT		330
+#define GV_DETAILS_HEIGHT		330
+#define GV_POSTER_HEIGHT		300
+#define GV_PAGESIZE				300
+#define GV_LINESIZE				30
 
-#define LV_PAGESIZE				300
-#define LV_LINESIZE				30
-
-CGridView::CGridView() : m_nHoverMov(-1), m_bScrolling(false), m_bCaptureM(false)
+CGridView::CGridView() : m_nHoverMov(-1), m_bScrolling(false), m_bCaptureM(false), m_nColumns(4)
 {
 }
 
@@ -78,6 +78,7 @@ void CGridView::OnScaleChanged()
 
 	// Calculate required column width
 
+	m_nColumns = (m_mdc.cx - SCX(30)) / SCX(200);
 	/*HFONT hPrevFont = (HFONT)SelectObject(m_mdc, m_fntText);
 	m_nColumnWidth = 0;
 	m_nColumnWidth += SCX(10);
@@ -108,6 +109,8 @@ void CGridView::OnSize(DWORD type, WORD cx, WORD cy)
 
 	if (cx == 0 || cy == 0)
 		return;
+
+	m_nColumns = (m_mdc.cx - SCX(30)) / SCX(200);
 
 	Draw();
 }
@@ -147,16 +150,16 @@ void CGridView::OnVScroll(WORD scrollCode, WORD pos, HWND hWndScrollBar)
 	switch (scrollCode)
 	{
 	case SB_PAGEUP:
-		m_sb.SetPos(m_sb.GetPos() - SCY(LV_PAGESIZE));
+		m_sb.SetPos(m_sb.GetPos() - SCY(GV_PAGESIZE));
 		break;
 	case SB_LINEUP:
-		m_sb.SetPos(m_sb.GetPos() - SCY(LV_LINESIZE));
+		m_sb.SetPos(m_sb.GetPos() - SCY(GV_LINESIZE));
 		break;
 	case SB_PAGEDOWN:
-		m_sb.SetPos(m_sb.GetPos() + SCY(LV_PAGESIZE));
+		m_sb.SetPos(m_sb.GetPos() + SCY(GV_PAGESIZE));
 		break;
 	case SB_LINEDOWN:
-		m_sb.SetPos(m_sb.GetPos() + SCY(LV_LINESIZE));
+		m_sb.SetPos(m_sb.GetPos() + SCY(GV_LINESIZE));
 		break;
 	case SB_THUMBTRACK:
 		m_sb.SetPos(m_sb.GetTrackPos(), false);
@@ -190,7 +193,6 @@ void CGridView::Draw()
 
 	int cx = m_mdc.cx;
 	int cy = m_mdc.cy;
-	INT_PTR nColumns = 4;
 
 	POINT pt;
 	GetCursorPos(&pt);
@@ -201,8 +203,8 @@ void CGridView::Draw()
 	DrawRect(m_mdc, 0, 0, cx, cy, m_clrBackgr);
 
 	// Calculate total list height and adjust scrollbar
-	int nRows =  (int)ceil(((float)GetDB()->m_movies / (float)nColumns));
-	int nHeight = (int)(nRows * SCY(LV_DETAILS_HEIGHT));
+	int nRows =  (int)ceil(((float)GetDB()->m_movies / (float)m_nColumns));
+	int nHeight = (int)(nRows * SCY(GV_POSTER_HEIGHT));
 
 	if (nHeight > cy)
 	{
@@ -219,8 +221,8 @@ void CGridView::Draw()
 
 	// Calculate index of first movie and the draw offset
 
-	INT_PTR nStart = m_sb.GetPos() / SCY(LV_DETAILS_HEIGHT);
-	int y = (int)-(m_sb.GetPos() - nStart * SCY(LV_DETAILS_HEIGHT));
+	INT_PTR nStart = m_sb.GetPos() / SCY(GV_POSTER_HEIGHT);
+	int y = (int)-(m_sb.GetPos() - nStart * SCY(GV_POSTER_HEIGHT));
 
 	// Hide the buttons
 
@@ -235,7 +237,7 @@ void CGridView::Draw()
 	for (INT_PTR row = nStart; row < nRows && y < cy; row++)
 	{
 
-		for (INT_PTR col = 0; col < nColumns && (row * nColumns + col) < GetDB()->m_movies; col++)
+		for (INT_PTR col = 0; col < m_nColumns && (row * m_nColumns + col) < GetDB()->m_movies; col++)
 		{
 			//	RECT rcItem = { 0, y, cx, y + SCY(LV_DETAILS_HEIGHT) };
 
@@ -243,7 +245,7 @@ void CGridView::Draw()
 			//		DrawRect(m_mdc, 0, y, cx, SCY(LV_DETAILS_HEIGHT), m_clrBackgrAlt);
 			//DrawRect(m_mdc, 0, y - SCY(1), cx, SCY(1), m_clrShadow, m_aItemShadow);
 
-			DBMOVIE& mov = *GetDB()->m_movies[row * nColumns + col];
+			DBMOVIE& mov = *GetDB()->m_movies[row * m_nColumns + col];
 			DBDIRECTORY& dir = *mov.pDirectory;
 			DBCATEGORY& cat = *dir.pCategory;
 
@@ -255,13 +257,13 @@ void CGridView::Draw()
 				VERIFY(LoadImage(mov.posterData, mdcPoster, SCX(200), SCY(300)));
 				int cxImg, cyImg;
 				mdcPoster.GetDimensions(cxImg, cyImg);
-				m_sprShadow.Draw(m_mdc, SCX(15) - 2 * SCX(1) + col * SCX(cxImg), y + SCY(15) - 2 * SCY(1),
+				m_sprShadow.Draw(m_mdc, SCX(15) - 2 * SCX(1) + col * cxImg, y + SCY(15) - 2 * SCY(1),
 					cxImg + 5 * SCX(1), cyImg + 5 * SCY(1));
-				BitBlt(m_mdc, SCX(15) + col * SCX(cxImg), y + SCY(15), cxImg, cyImg, mdcPoster, 0, 0, SRCCOPY);
+				BitBlt(m_mdc, SCX(15) + col * cxImg, y + SCY(15), cxImg, cyImg, mdcPoster, 0, 0, SRCCOPY);
 			}
 			else
 			{
-				m_sprShadow.Draw(m_mdc, SCX(15) - 2 * SCX(1) + col * SCY(300), y + SCY(15) - 2 * SCY(1),
+				m_sprShadow.Draw(m_mdc, SCX(15) - 2 * SCX(1) + SCX(col * 300), y + SCY(15) - 2 * SCY(1),
 					SCX(200) + 5 * SCX(1), 300 + 5 * SCY(1));
 				FillSolidRect(m_mdc, SCX(15), y + SCY(15), 200, 300, m_clrBackgr);
 			}
@@ -314,7 +316,7 @@ void CGridView::Draw()
 			}
 			*/
 		}
-		y += SCY(LV_DETAILS_HEIGHT);
+		y += SCY(GV_POSTER_HEIGHT);
 		
 
 	}
@@ -336,9 +338,8 @@ void CGridView::Draw()
 void CGridView::OnMouseMove(DWORD keys, short x, short y)
 {
 	bool bDraw = false;
-	INT_PTR nColumns = 4;
-	int nRows = (int)ceil(((float)GetDB()->m_movies / (float)nColumns));
-	int nHeight = (int)(nRows * SCY(LV_DETAILS_HEIGHT));
+	int nRows = (int)ceil(((float)GetDB()->m_movies / (float)m_nColumns));
+	int nHeight = (int)(nRows * SCY(GV_POSTER_HEIGHT));
 
 
 	// Determine movie above which we're hovering
@@ -347,8 +348,8 @@ void CGridView::OnMouseMove(DWORD keys, short x, short y)
 	GetClientRectRelative(m_sb, m_hWnd, &rcScrollBar);
 	//int cx = m_mdc.cx; // -rcScrollBar.cx;
 	//int cy = m_mdc.cy;
-	INT_PTR nStart = m_sb.GetPos() / SCY(LV_DETAILS_HEIGHT);
-	int nYRow = (int)-(m_sb.GetPos() - nStart * SCY(LV_DETAILS_HEIGHT));
+	INT_PTR nStart = m_sb.GetPos() / SCY(GV_POSTER_HEIGHT);
+	int nYRow = (int)-(m_sb.GetPos() - nStart * SCY(GV_POSTER_HEIGHT));
 	INT_PTR nHoverMov = -1;
 
 
@@ -356,7 +357,7 @@ void CGridView::OnMouseMove(DWORD keys, short x, short y)
 	for (INT_PTR row = nStart; row < nRows ; row++)
 	{
 
-		for (INT_PTR col = 0; col < nColumns && (row * nColumns + col) < GetDB()->m_movies; col++)
+		for (INT_PTR col = 0; col < m_nColumns && (row * m_nColumns + col) < GetDB()->m_movies; col++)
 		{
 			//LOG(NumberToString(x) + _T(" ") + NumberToString(y) + _T("\n"));
 			INT_PTR xx = SCX(15) + col * SCX(cxImg);
@@ -367,10 +368,10 @@ void CGridView::OnMouseMove(DWORD keys, short x, short y)
 				_T(", ") + NumberToString(cxImg) + _T(", ") + NumberToString(cyImg) + _T("\n"));*/
 			if (PtInRect(&rcItem, x, y))
 			{
-				nHoverMov = row * nColumns + col; break;
+				nHoverMov = row * m_nColumns + col; break;
 			}
 		}
-		nYRow += SCY(LV_DETAILS_HEIGHT);
+		nYRow += SCY(GV_POSTER_HEIGHT);
 	}
 
 
@@ -401,12 +402,12 @@ void CGridView::OnKeyDown(UINT virtKey, WORD repCount, UINT flags)
 	case VK_UP:
 	case VK_NUMPAD8:
 		// move it up
-		m_sb.SetPos(m_sb.GetPos() - SCY(LV_LINESIZE));
+		m_sb.SetPos(m_sb.GetPos() - SCY(GV_LINESIZE));
 		break;
 	case VK_DOWN:
 	case VK_NUMPAD2:
 		// move it down
-		m_sb.SetPos(m_sb.GetPos() + SCY(LV_LINESIZE));
+		m_sb.SetPos(m_sb.GetPos() + SCY(GV_LINESIZE));
 		break;
 	}
 
@@ -424,9 +425,9 @@ void CGridView::OnLButtonDown(DWORD keys, short x, short y)
 	if (m_nHoverMov >= 0)
 	{
 
-		keywords.Add(GetDB()->m_movies[m_nHoverMov]->strFileName);
-		GetDB()->FilterByKeywords(keywords);
-		SendMessage(GetMainWnd(), WM_SWITCHVIEW);
+		//keywords.Add(GetDB()->m_movies[m_nHoverMov]->strFileName);
+		//GetDB()->FilterByKeywords(keywords);
+		SendMessage(GetMainWnd(), WM_LISTVIEW_ITEM, m_nHoverMov);
 	}
 	//LOG(_T("Clicked on movie: ") + NumberToString(m_nHoverMov));
 }

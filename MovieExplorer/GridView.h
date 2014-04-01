@@ -38,5 +38,5 @@ protected:
 	RObArray<LINK> m_links;
 	CScrollBar m_sb;
 	RObArray<RString> m_servicesInUse;
-
+	INT_PTR m_nColumns;
 };
