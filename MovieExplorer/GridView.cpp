@@ -5,6 +5,9 @@
 
 #define LV_DETAILS_HEIGHT		330
 
+#define LV_PAGESIZE				300
+#define LV_LINESIZE				30
+
 CGridView::CGridView() : m_nHoverMov(-1), m_bScrolling(false), m_bCaptureM(false)
 {
 }
@@ -143,13 +146,17 @@ void CGridView::OnVScroll(WORD scrollCode, WORD pos, HWND hWndScrollBar)
 {
 	switch (scrollCode)
 	{
-	case SB_PAGEDOWN:
-		m_sb.SetPos(m_sb.GetPos() + SCY(30));
+	case SB_PAGEUP:
+		m_sb.SetPos(m_sb.GetPos() - SCY(LV_PAGESIZE));
+		break;
 	case SB_LINEUP:
-		m_sb.SetPos(m_sb.GetPos() - SCY(30));
+		m_sb.SetPos(m_sb.GetPos() - SCY(LV_LINESIZE));
+		break;
+	case SB_PAGEDOWN:
+		m_sb.SetPos(m_sb.GetPos() + SCY(LV_PAGESIZE));
 		break;
 	case SB_LINEDOWN:
-		m_sb.SetPos(m_sb.GetPos() + SCY(30));
+		m_sb.SetPos(m_sb.GetPos() + SCY(LV_LINESIZE));
 		break;
 	case SB_THUMBTRACK:
 		m_sb.SetPos(m_sb.GetTrackPos(), false);
@@ -386,6 +393,27 @@ void CGridView::OnMouseMove(DWORD keys, short x, short y)
 		m_bCaptureM = true;
 	}
 }
+
+void CGridView::OnKeyDown(UINT virtKey, WORD repCount, UINT flags)
+{
+	switch (virtKey)
+	{
+	case VK_UP:
+	case VK_NUMPAD8:
+		// move it up
+		m_sb.SetPos(m_sb.GetPos() - SCY(LV_LINESIZE));
+		break;
+	case VK_DOWN:
+	case VK_NUMPAD2:
+		// move it down
+		m_sb.SetPos(m_sb.GetPos() + SCY(LV_LINESIZE));
+		break;
+	}
+
+	Draw();
+
+}
+
 
 void CGridView::OnLButtonDown(DWORD keys, short x, short y)
 {

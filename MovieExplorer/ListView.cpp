@@ -603,6 +603,10 @@ void CListView::OnKeyDown(UINT virtKey, WORD repCount, UINT flags)
 {
 	switch (virtKey)
 	{
+		case VK_PRIOR:
+			// page up
+			m_sb.SetPos(m_sb.GetPos() - SCY(LV_PAGESIZE));
+			break;
 		case VK_UP:
 		case VK_NUMPAD8:
 			// move it up
@@ -613,6 +617,9 @@ void CListView::OnKeyDown(UINT virtKey, WORD repCount, UINT flags)
 			// move it down
 			m_sb.SetPos(m_sb.GetPos() + SCY(LV_LINESIZE));
 			break;
+		case VK_NEXT:
+			//page down
+			m_sb.SetPos(m_sb.GetPos() + SCY(LV_PAGESIZE));
 	}
 
 	Draw();

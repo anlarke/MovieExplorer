@@ -20,6 +20,7 @@ protected:
 	void OnMouseWheel(WORD keys, short delta, short x, short y);
 	void OnMouseMove(DWORD keys, short x, short y);
 	void OnLButtonDown(DWORD keys, short x, short y);
+	void OnKeyDown(UINT virtKey, WORD repCount, UINT flags);
 	bool OnSetCursor(HWND hWnd, WORD hitTest, WORD mouseMsg);
 	void OnSize(DWORD type, WORD cx, WORD cy);
 	LRESULT WndProc(UINT Msg, WPARAM wParam, LPARAM lParam);
