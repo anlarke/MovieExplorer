@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "MovieExplorer.h"
 #include "GridView.h"
-#include "EditDlg.h"
 
 #define GV_DETAILS_HEIGHT		330
 #define GV_POSTER_HEIGHT		300
@@ -49,8 +48,8 @@ void CGridView::OnPrefChanged()
 
 	m_clrShadow = GETTHEMECOLOR(_T("ListView"), _T("ShadowColor"));
 	m_aPosterShadow = GETTHEMEALPHA(_T("ListView"), _T("PosterShadowAlpha"));
-
-	
+	m_aRebarShadow = GETTHEMEALPHA(_T("ListView"), _T("RebarShadowAlpha"));
+	m_clrText = GETTHEMECOLOR(_T("ListView"), _T("TextFontColor"));
 
 	// Determine the services that are in use
 
@@ -64,6 +63,8 @@ void CGridView::OnPrefChanged()
 
 void CGridView::OnScaleChanged()
 {
+
+	GETTHEMEFONT(&m_fntText, _T("ListView"), _T("TextFont"));
 
 	// Create sprite for shadow behind poster
 
@@ -79,10 +80,6 @@ void CGridView::OnScaleChanged()
 	// Calculate required column width
 
 	m_nColumns = (m_mdc.cx - SCX(30)) / SCX(200);
-	/*HFONT hPrevFont = (HFONT)SelectObject(m_mdc, m_fntText);
-	m_nColumnWidth = 0;
-	m_nColumnWidth += SCX(10);
-	SelectObject(m_mdc, hPrevFont);*/
 
 	Draw();
 }
@@ -92,14 +89,6 @@ bool CGridView::OnSetCursor(HWND hWnd, WORD hitTest, WORD mouseMsg)
 	POINT pt;
 	GetCursorPos(&pt);
 	ScreenToClient(m_hWnd, &pt);
-	foreach(m_links, link)
-	{
-		if (PtInRect(&link.rc, pt))
-		{
-			SetCursor(LoadCursor(NULL, IDC_HAND));
-			return true;
-		}
-	}
 	return RWindow::OnSetCursor(hWnd, hitTest, mouseMsg);
 }
 
@@ -224,11 +213,6 @@ void CGridView::Draw()
 	INT_PTR nStart = m_sb.GetPos() / SCY(GV_POSTER_HEIGHT);
 	int y = (int)-(m_sb.GetPos() - nStart * SCY(GV_POSTER_HEIGHT));
 
-	// Hide the buttons
-
-	//m_links.SetSize(0);
-	//m_nHoverMov = -1;
-
 	// Draw the movies
 
 	//HFONT hPrevFont;
@@ -239,12 +223,6 @@ void CGridView::Draw()
 
 		for (INT_PTR col = 0; col < m_nColumns && (row * m_nColumns + col) < GetDB()->m_movies; col++)
 		{
-			//	RECT rcItem = { 0, y, cx, y + SCY(LV_DETAILS_HEIGHT) };
-
-			//	if (i & 0x1)
-			//		DrawRect(m_mdc, 0, y, cx, SCY(LV_DETAILS_HEIGHT), m_clrBackgrAlt);
-			//DrawRect(m_mdc, 0, y - SCY(1), cx, SCY(1), m_clrShadow, m_aItemShadow);
-
 			DBMOVIE& mov = *GetDB()->m_movies[row * m_nColumns + col];
 			DBDIRECTORY& dir = *mov.pDirectory;
 			DBCATEGORY& cat = *dir.pCategory;
@@ -263,71 +241,31 @@ void CGridView::Draw()
 			}
 			else
 			{
-				m_sprShadow.Draw(m_mdc, SCX(15) - 2 * SCX(1) + SCX(col * 300), y + SCY(15) - 2 * SCY(1),
-					SCX(200) + 5 * SCX(1), 300 + 5 * SCY(1));
-				FillSolidRect(m_mdc, SCX(15), y + SCY(15), 200, 300, m_clrBackgr);
+				m_sprShadow.Draw(m_mdc, SCX(15) - 2 * SCX(1) + col * SCX(200), y + SCY(15) - 2 * SCY(1),
+					SCX(200) + 5 * SCX(1), SCY(300) + 5 * SCY(1));
+				FillSolidRect(m_mdc, SCX(15) + col * SCX(200), y + SCY(15), SCX(200), SCY(300), m_clrBackgr);
+
+				// Write filename centered in poster
+
+				SIZE sz; 
+				SelectObject(m_mdc, m_fntText);
+				SetTextColor(m_mdc, m_clrText);
+				GetTextExtentPoint32(m_mdc, mov.strFileName, &sz);
+				RECT rc = { SCX(15) + col * SCX(200), y + SCY(15), SCX(15) + col * SCX(200) + SCX(200), y + SCY(15) + SCY(300) };
+				
+				if (!mov.strTitle.IsEmpty())
+					DrawText(m_mdc, mov.strTitle, &rc, DT_CENTER | DT_WORDBREAK);
+				else
+					DrawText(m_mdc, mov.strFileName, &rc, DT_CENTER | DT_WORDBREAK);
 			}
-
-
-			// show edit button when mouse over item
-			/*
-			if (!m_bScrolling && PtInRect(&rcItem, pt) && pt.y >= 0)
-			{
-			m_nHoverMov = i;
-
-			RRect rcBtn;
-			rcBtn.left = cx - SCX(154);
-			rcBtn.top = y + SCY(LV_DETAILS_HEIGHT) - SCX(42);
-			rcBtn.right = cx;
-			rcBtn.bottom = y + SCY(LV_DETAILS_HEIGHT);
-			DrawRect(m_mdc, &rcBtn, (i & 0x1 ? m_clrBackgrAlt : m_clrBackgr));
-
-			rcBtn.cx = SCX(24);
-			rcBtn.x = cx - SCX(15) - rcBtn.cx;
-			rcBtn.cy = SCX(24);
-			rcBtn.y = y + SCY(LV_DETAILS_HEIGHT) - SCY(15) - rcBtn.cy;
-
-			MoveWindow(m_btnHide, &rcBtn);
-			rcBtn.x -= rcBtn.cx + SCX(4);
-			MoveWindow(m_btnEdit, &rcBtn);
-			rcBtn.x -= rcBtn.cx + SCX(4);
-			MoveWindow(m_btnSeen, &rcBtn);
-
-			RString strCorrDirPath = CorrectPath(dir.strPath, true);
-			if ((dir.strComputerName == GetComputerName() || dir.strComputerName.IsEmpty()) &&
-			(DirectoryExists(strCorrDirPath) || FileExists(strCorrDirPath)))
-			{
-			rcBtn.x -= rcBtn.cx + SCX(4);
-			MoveWindow(m_btnDir, &rcBtn);
-			}
-
-			RString strCorrFilePath = CorrectPath(dir.strPath + _T("\\") + mov.strFileName, true);
-			if ((dir.strComputerName == GetComputerName() || dir.strComputerName.IsEmpty()) &&
-			(DirectoryExists(strCorrFilePath) || FileExists(strCorrFilePath)))
-			{
-			rcBtn.x -= rcBtn.cx + SCX(4);
-			MoveWindow(m_btnPlay, &rcBtn);
-			}
-
-			m_btnSeen.SetCheck(mov.bSeen);
-			m_btnHide.SetCheck(mov.bHide);
-
-			//PostChildren(m_hWnd, WM_PAINT);
-			}
-			*/
 		}
 		y += SCY(GV_POSTER_HEIGHT);
-		
-
 	}
 
 	// Draw shadow line
 
-	//DrawRect(m_mdc, 0, 0, cx, SCY(1), m_clrShadow, m_aRebarShadow);
-	//DrawRect(m_mdc, 0, 0, cx, SCY(1), 0x000000, 100);
-	//DrawRect(m_mdc, 0, SCY(1), cx, SCY(1), 0x000000, 50);
-	//DrawRect(m_mdc, 0, 2*SCY(1), cx, SCY(1), 0x000000, 10);
-
+	DrawRect(m_mdc, 0, 0, cx, SCY(1), m_clrShadow, m_aRebarShadow);
+	
 	// Copy to screen
 
 	Invalidate(m_hWnd);
@@ -339,8 +277,6 @@ void CGridView::OnMouseMove(DWORD keys, short x, short y)
 {
 	// Determine movie above which we're hovering
 
-	//RRect rcScrollBar;
-	//GetClientRectRelative(m_sb, m_hWnd, &rcScrollBar);
 	bool bDraw = false;
 	int nRows = (int)ceil(((float)GetDB()->m_movies / (float)m_nColumns));
 	int nHeight = (int)(nRows * SCY(GV_POSTER_HEIGHT));
@@ -355,9 +291,9 @@ void CGridView::OnMouseMove(DWORD keys, short x, short y)
 
 		for (INT_PTR col = 0; col < m_nColumns && (row * m_nColumns + col) < GetDB()->m_movies; col++)
 		{
-			INT_PTR xx = SCX(15) + col * SCX(cxImg);
-			INT_PTR yy = nYRow + SCY(15);
-			RECT rcItem = { xx, yy, xx+SCX(cxImg), yy+SCY(cyImg) };
+			INT_PTR nX = SCX(15) + col * SCX(cxImg);
+			INT_PTR nY = nYRow + SCY(15);
+			RECT rcItem = { nX, nY, nX+SCX(cxImg), nY+SCY(cyImg) };
 			if (PtInRect(&rcItem, x, y))
 			{
 				nHoverMov = row * m_nColumns + col; break;
@@ -365,7 +301,6 @@ void CGridView::OnMouseMove(DWORD keys, short x, short y)
 		}
 		nYRow += SCY(GV_POSTER_HEIGHT);
 	}
-
 
 	// Redraw if changed
 
@@ -391,6 +326,11 @@ void CGridView::OnKeyDown(UINT virtKey, WORD repCount, UINT flags)
 {
 	switch (virtKey)
 	{
+
+	case VK_PRIOR:
+		// page up
+		m_sb.SetPos(m_sb.GetPos() - SCY(GV_PAGESIZE));
+		break;
 	case VK_UP:
 	case VK_NUMPAD8:
 		// move it up
@@ -400,6 +340,10 @@ void CGridView::OnKeyDown(UINT virtKey, WORD repCount, UINT flags)
 	case VK_NUMPAD2:
 		// move it down
 		m_sb.SetPos(m_sb.GetPos() + SCY(GV_LINESIZE));
+		break;
+	case VK_NEXT:
+		//page down
+		m_sb.SetPos(m_sb.GetPos() + SCY(GV_PAGESIZE));
 		break;
 	}
 

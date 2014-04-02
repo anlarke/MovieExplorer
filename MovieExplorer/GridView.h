@@ -31,8 +31,9 @@ protected:
 	INT_PTR m_nHoverMov;
 	bool m_bScrolling, m_bCaptureM;
 
-	COLORREF m_clrBackgr, m_clrBackgrAlt, m_clrShadow;
-	BYTE m_aPosterShadow;
+	RFont m_fntText;
+	COLORREF m_clrBackgr, m_clrBackgrAlt, m_clrShadow, m_clrText;
+	BYTE m_aPosterShadow, m_aRebarShadow;
 	RSprite m_sprShadow;
 	struct LINK { RString strText, strURL; RRect rc; UINT_PTR state; };
 	RObArray<LINK> m_links;

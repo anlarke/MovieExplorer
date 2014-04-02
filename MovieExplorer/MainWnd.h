@@ -39,7 +39,7 @@ protected:
 	CGridView m_gridView;
 	CStatusBar m_statusBar;
 	CLogWnd m_logWnd;
-	bool m_bShowStatusBar, m_bShowLog, m_bSizingLog, bListView; 
+	bool m_bShowStatusBar, m_bShowLog, m_bSizingLog, m_bListView; 
 	int m_nLogHeight;
 	POINT m_ptSizing;
 	RECT m_rcSizing;

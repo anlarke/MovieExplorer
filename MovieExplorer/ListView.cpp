@@ -1073,7 +1073,7 @@ void CListView::Draw()
 				else
 					rectColor = m_clrBad;
 
-				// Draw square and metascore
+				// Draw square and metascore link
 
 				FillSolidRect(m_mdc, nRectStart , nRectStartY, SCX(24), SCY(24), rectColor);
 

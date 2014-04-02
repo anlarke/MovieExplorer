@@ -24,12 +24,12 @@ bool CMainWnd::Create()
 			GETPREFINT(_T("MainWnd"), _T("cy")), NULL, NULL))
 		ASSERTRETURN(false);
 
-	bListView = true; // Start on list view.
+	m_bListView = true; // Start on list view.
 
 	m_bShowStatusBar = GETPREFBOOL(_T("MainWnd"), _T("ShowStatusBar"));
 	m_bShowLog = GETPREFBOOL(_T("MainWnd"), _T("ShowLog"));
 	m_nLogHeight = GETPREFINT(_T("MainWnd"), _T("LogHeight"));
-	bListView = !GETPREFBOOL(_T("ViewType"));
+	m_bListView = !GETPREFBOOL(_T("ViewType"));
 	// Restore window state of last session
 
 	if (GETPREFBOOL(_T("MainWnd"), _T("Maximized")))
@@ -45,7 +45,7 @@ bool CMainWnd::Create()
 			MAKEINTRESOURCE(IDI_MOVIEEXPLORER)));
 
 	// Set focus to list view so we can start scrolling
-	if (bListView)
+	if (m_bListView)
 		SetFocus(m_listView);
 	else
 		SetFocus(m_gridView);
@@ -76,8 +76,8 @@ LRESULT CMainWnd::WndProc(UINT Msg, WPARAM wParam, LPARAM lParam)
 	{
 		// Hide other view windows
 
-		bListView = !bListView;
-		if (bListView)
+		m_bListView = !m_bListView;
+		if (m_bListView)
 		{
 			MoveWindow(m_gridView, 0, 0, 0, 0);
 			SetFocus(m_listView);
@@ -101,7 +101,7 @@ LRESULT CMainWnd::WndProc(UINT Msg, WPARAM wParam, LPARAM lParam)
 	{
 		// Go to list view with scrollbar set to specific item
 
-		bListView = TRUE;
+		m_bListView = TRUE;
 		MoveWindow(m_gridView, 0, 0, 0, 0);
 		SetFocus(m_listView);
 		PostMessage(m_reBar, WM_COMMAND, ID_TOGGLEVIEWSTATUS);
@@ -319,7 +319,7 @@ bool CMainWnd::OnSetCursor(HWND hWnd, WORD hitTest, WORD mouseMsg)
 
 void CMainWnd::OnSetFocus(HWND hWndLoseFocus)
 {
-	if (bListView)
+	if (m_bListView)
 		SetFocus(m_listView);
 	else
 		SetFocus(m_gridView);
@@ -338,7 +338,7 @@ void CMainWnd::OnSize(DWORD type, WORD cx, WORD cy)
 	MoveWindow(m_logWnd, &rcLog);
 	MoveWindow(m_statusBar, &rcStatusBar);
 
-	if (bListView)
+	if (m_bListView)
 		MoveWindow(m_listView, &rcList);
 	else
 		MoveWindow(m_gridView, &rcList);
