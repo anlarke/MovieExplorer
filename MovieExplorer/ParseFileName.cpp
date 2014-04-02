@@ -44,10 +44,21 @@ void ParseFileName(RString_ strFileName, RString &strTitle, RString &strYear, IN
 	*((LPTSTR)(LPCTSTR)strTitle + i) = _T(' ');
 	*/
 
-	// replace ._ by a space
+	// remove urls
+
+	RString strUrl;
+	if (GetFirstMatch(strTitle, _T("([wW][wW][wW]\\.[^\\.]*?\\.[cC][oO][mM])"), &strUrl, NULL))
+	{
+		m = strTitle.Find(strUrl, 0);
+		if (m >= 0)
+			strTitle = strTitle.Left(m) + strTitle.Right(strTitle.GetLength()-(m+strUrl.GetLength()));
+	}
+
+	// replace ._ -by a space
 
 	strTitle.Replace(_T('.'), _T(' '));
 	strTitle.Replace(_T('_'), _T(' '));
+	strTitle.Replace(_T('-'), _T(' '));
 
 	// remove redundant space
 
