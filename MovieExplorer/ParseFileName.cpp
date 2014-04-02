@@ -150,6 +150,15 @@ void ParseFileName(RString_ strFileName, RString &strTitle, RString &strYear, IN
 		}
 	}
 
+	// strip 'season[s] \\d' and anything following it
+	RString strSeasons;
+	if (GetFirstMatch(strTitle, _T("([Ss]eason[s]? ?\\d?\\d(?: ?- ?\\d?\\d)?)"), &strSeasons, NULL))
+	{
+		m = strTitle.Find(strSeasons, 0);
+		if (m >= 0)
+			strTitle = strTitle.Left(m);
+	}
+
 	while (strTitle.Replace(_T("  "), _T(" ")));
 	strTitle.Trim();
 
