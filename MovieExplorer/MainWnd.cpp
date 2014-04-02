@@ -24,10 +24,12 @@ bool CMainWnd::Create()
 			GETPREFINT(_T("MainWnd"), _T("cy")), NULL, NULL))
 		ASSERTRETURN(false);
 
+	m_bListView = true; // Start on list view.
+
 	m_bShowStatusBar = GETPREFBOOL(_T("MainWnd"), _T("ShowStatusBar"));
 	m_bShowLog = GETPREFBOOL(_T("MainWnd"), _T("ShowLog"));
 	m_nLogHeight = GETPREFINT(_T("MainWnd"), _T("LogHeight"));
-
+	m_bListView = !GETPREFBOOL(_T("ViewType"));
 	// Restore window state of last session
 
 	if (GETPREFBOOL(_T("MainWnd"), _T("Maximized")))
@@ -43,8 +45,10 @@ bool CMainWnd::Create()
 			MAKEINTRESOURCE(IDI_MOVIEEXPLORER)));
 
 	// Set focus to list view so we can start scrolling
-
-	SetFocus(m_listView);
+	if (m_bListView)
+		SetFocus(m_listView);
+	else
+		SetFocus(m_gridView);
 
 	return true;
 }
@@ -67,6 +71,47 @@ LRESULT CMainWnd::WndProc(UINT Msg, WPARAM wParam, LPARAM lParam)
 		//if (!PeekMessage(&msg, m_hWnd, WM_DBUPDATED, WM_DBUPDATED, PM_REMOVE))
 		PostChildrenRec(m_hWnd, WM_DBUPDATED);
 		return 0;
+	}
+	else if (Msg == WM_SWITCHVIEW)
+	{
+		// Hide other view windows
+
+		m_bListView = !m_bListView;
+		if (m_bListView)
+		{
+			MoveWindow(m_gridView, 0, 0, 0, 0);
+			SetFocus(m_listView);
+		}
+		else
+		{
+			MoveWindow(m_listView, 0, 0, 0, 0);
+			SetFocus(m_gridView);
+		}
+
+		// Show new view
+
+		RECT rc;
+		GetClientRect(m_hWnd, &rc);
+		OnSize(0, (WORD)rc.right, (WORD)rc.bottom);
+		PostChildrenRec(m_hWnd, WM_PAINT);
+
+		return 0;
+	}
+	else if (Msg == WM_LISTVIEW_ITEM)
+	{
+		// Go to list view with scrollbar set to specific item
+
+		m_bListView = TRUE;
+		MoveWindow(m_gridView, 0, 0, 0, 0);
+		SetFocus(m_listView);
+		PostMessage(m_reBar, WM_COMMAND, ID_TOGGLEVIEWSTATUS);
+		m_listView.GoToItem((int)wParam);
+
+		RECT rc;
+		GetClientRect(m_hWnd, &rc);
+		OnSize(0, (WORD)rc.right, (WORD)rc.bottom);
+		PostChildrenRec(m_hWnd, WM_PAINT);
+
 	}
 	return RWindow::WndProc(Msg, wParam, lParam);
 }
@@ -109,8 +154,8 @@ void CMainWnd::OnCommand(WORD id, WORD notifyCode, HWND hWndControl)
 		case ID_TOOLS_ZOOMOUT:
 		{
 			float fScale = GetScale() - 0.125f;
-			if (fScale < 0.75f)
-				fScale = 0.75f;
+			if (fScale < 0.50f)
+				fScale = 0.50f;
 			SetScale(fScale);
 			RECT rc;
 			GetClientRect(m_hWnd, &rc);
@@ -168,6 +213,8 @@ bool CMainWnd::OnCreate(CREATESTRUCT *pCS)
 	if (!m_reBar.Create<CReBar>(m_hWnd))
 		ASSERTRETURN(false);
 	if (!m_listView.Create<CListView>(m_hWnd))
+		ASSERTRETURN(false);
+	if (!m_gridView.Create<CGridView>(m_hWnd))
 		ASSERTRETURN(false);
 	if (!m_statusBar.Create<CStatusBar>(m_hWnd))
 		ASSERTRETURN(false);
@@ -272,7 +319,10 @@ bool CMainWnd::OnSetCursor(HWND hWnd, WORD hitTest, WORD mouseMsg)
 
 void CMainWnd::OnSetFocus(HWND hWndLoseFocus)
 {
-	SetFocus(m_listView);
+	if (m_bListView)
+		SetFocus(m_listView);
+	else
+		SetFocus(m_gridView);
 }
 
 void CMainWnd::OnSize(DWORD type, WORD cx, WORD cy)
@@ -287,7 +337,11 @@ void CMainWnd::OnSize(DWORD type, WORD cx, WORD cy)
 	MoveWindow(m_reBar, &rcReBar);
 	MoveWindow(m_logWnd, &rcLog);
 	MoveWindow(m_statusBar, &rcStatusBar);
-	MoveWindow(m_listView, &rcList);
+
+	if (m_bListView)
+		MoveWindow(m_listView, &rcList);
+	else
+		MoveWindow(m_gridView, &rcList);
 }
 
 void CMainWnd::SaveWindowPos()

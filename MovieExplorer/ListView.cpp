@@ -227,6 +227,14 @@ void CListView::OnLButtonDown(DWORD keys, short x, short y)
 	}
 }
 
+void CListView::OnLButtonDblClk(DWORD keys, short x, short y)
+{
+	// Play movie on double click
+
+	SetFocus(m_hWnd);
+	OnCommand(NULL, NULL, m_btnPlay);
+}
+
 void CListView::OnMouseMove(DWORD keys, short x, short y)
 {
 	bool bDraw = false;
@@ -595,6 +603,10 @@ void CListView::OnKeyDown(UINT virtKey, WORD repCount, UINT flags)
 {
 	switch (virtKey)
 	{
+		case VK_PRIOR:
+			// page up
+			m_sb.SetPos(m_sb.GetPos() - SCY(LV_PAGESIZE));
+			break;
 		case VK_UP:
 		case VK_NUMPAD8:
 			// move it up
@@ -605,10 +617,19 @@ void CListView::OnKeyDown(UINT virtKey, WORD repCount, UINT flags)
 			// move it down
 			m_sb.SetPos(m_sb.GetPos() + SCY(LV_LINESIZE));
 			break;
+		case VK_NEXT:
+			//page down
+			m_sb.SetPos(m_sb.GetPos() + SCY(LV_PAGESIZE));
+			break;
 	}
 
 	Draw();
 	
+}
+
+void CListView::GoToItem(int item)
+{
+	m_sb.SetPos(item * SCY(LV_DETAILS_HEIGHT));
 }
 
 LRESULT CListView::WndProc(UINT Msg, WPARAM wParam, LPARAM lParam)
@@ -1017,18 +1038,57 @@ void CListView::Draw()
 			if (mov.nMetascore >= 0 && m_strRatingServ == _T("imdb.com"))
 			{
 				LINK *pMetascoreLink = m_links.AddNew();
-				pMetascoreLink->strText = _T("Metascore: ") + NumberToString(mov.nMetascore) + _T("/100");
+				pMetascoreLink->strText = _T("Metascore:");
 				pMetascoreLink->strURL = _T("http://www.imdb.com/title/") + mov.strIMDbID + _T("/criticreviews");
 				hPrevFont = (HFONT)SelectObject(m_mdc, m_fntText);
 				GetTextExtentPoint32(m_mdc, pMetascoreLink->strText, &sz);
-				pMetascoreLink->rc.x = cx - sz.cx - SCX(15);
+				pMetascoreLink->rc.x = cx - sz.cx - SCX(50);
 				pMetascoreLink->rc.cx = sz.cx;
-				pMetascoreLink->rc.y = y + SCY(66);
+				pMetascoreLink->rc.y = y + SCY(73);
 				pMetascoreLink->rc.cy = sz.cy;
 				pMetascoreLink->state = (PtInRect(&pMetascoreLink->rc, pt) ? LINKSTATE_HOVER : LINKSTATE_NORMAL);
 				SetTextColor(m_mdc, (pMetascoreLink->state == LINKSTATE_HOVER ? m_clrLink : m_clrText));
 				TextOut(m_mdc, pMetascoreLink->rc.x, pMetascoreLink->rc.y, pMetascoreLink->strText);
 				SelectObject(m_mdc, hPrevFont);
+
+				hPrevFont = (HFONT)SelectObject(m_mdc, m_fntTextBold);
+				GetTextExtentPoint32(m_mdc, NumberToString(mov.nMetascore), &sz);
+				
+				// Center metascore in square
+
+				int nRectStart = cx - SCX(45);
+				int nRectMiddle = nRectStart + SCX(12);
+				int nTextMiddle = sz.cx / 2;
+				int nRectStartY = y + SCY(70);
+				int nRectMiddleY = nRectStartY + SCY(12);
+				int nTextMiddleY = sz.cy / 2;
+				
+				// Color square based on metascore
+
+				COLORREF clrRect;
+				if (mov.nMetascore > 60)
+					clrRect = m_clrGood;
+				else if (mov.nMetascore > 39)
+					clrRect = m_clrNeutral;
+				else
+					clrRect = m_clrBad;
+
+				// Draw square and metascore link
+
+				FillSolidRect(m_mdc, nRectStart , nRectStartY, SCX(24), SCY(24), clrRect);
+
+				LINK *pMetascoreLink2 = m_links.AddNew();
+				pMetascoreLink2->strText = NumberToString(mov.nMetascore);
+				pMetascoreLink2->strURL = _T("http://www.imdb.com/title/") + mov.strIMDbID + _T("/criticreviews");
+				pMetascoreLink2->rc.x = nRectStart;
+				pMetascoreLink2->rc.cx = SCX(24);
+				pMetascoreLink2->rc.y = nRectStartY;
+				pMetascoreLink2->rc.cy = SCY(24);
+				pMetascoreLink2->state = (PtInRect(&pMetascoreLink2->rc, pt) ? LINKSTATE_HOVER : LINKSTATE_NORMAL);
+				SetTextColor(m_mdc, m_clrBackgr);
+				TextOut(m_mdc, nRectMiddle - nTextMiddle, nRectMiddleY - nTextMiddleY, pMetascoreLink2->strText);
+				SelectObject(m_mdc, hPrevFont);
+
 			}
 			else if (mov.fIMDbRating != 0.0f && m_strRatingServ != _T("imdb.com"))
 			{

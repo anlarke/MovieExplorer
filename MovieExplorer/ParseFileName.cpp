@@ -44,10 +44,21 @@ void ParseFileName(RString_ strFileName, RString &strTitle, RString &strYear, IN
 	*((LPTSTR)(LPCTSTR)strTitle + i) = _T(' ');
 	*/
 
-	// replace ._ by a space
+	// remove urls
+
+	RString strUrl;
+	if (GetFirstMatch(strTitle, _T("([wW][wW][wW]\\.[^\\.]*?\\.[cC][oO][mM])"), &strUrl, NULL))
+	{
+		m = strTitle.Find(strUrl, 0);
+		if (m >= 0)
+			strTitle = strTitle.Left(m) + strTitle.Right(strTitle.GetLength()-(m+strUrl.GetLength()));
+	}
+
+	// replace ._ -by a space
 
 	strTitle.Replace(_T('.'), _T(' '));
 	strTitle.Replace(_T('_'), _T(' '));
+	strTitle.Replace(_T('-'), _T(' '));
 
 	// remove redundant space
 
@@ -137,6 +148,15 @@ void ParseFileName(RString_ strFileName, RString &strTitle, RString &strYear, IN
 
 			m = n + 1;
 		}
+	}
+
+	// strip 'season[s] \\d' and anything following it
+	RString strSeasons;
+	if (GetFirstMatch(strTitle, _T("([Ss]eason[s]? ?\\d?\\d(?: ?- ?\\d?\\d)?)"), &strSeasons, NULL))
+	{
+		m = strTitle.Find(strSeasons, 0);
+		if (m >= 0)
+			strTitle = strTitle.Left(m);
 	}
 
 	while (strTitle.Replace(_T("  "), _T(" ")));

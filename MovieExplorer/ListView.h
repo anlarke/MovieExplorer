@@ -10,11 +10,13 @@ class CListView : public RWindow
 public:
 	CListView();
 	~CListView();
+	void GoToItem(int item);
 
 protected:
 	void OnCommand(WORD id, WORD notifyCode, HWND hWndControl);
 	bool OnCreate(CREATESTRUCT *pCS);
 	void OnLButtonDown(DWORD keys, short x, short y);
+	void OnLButtonDblClk(DWORD keys, short x, short y);
 	void OnMouseMove(DWORD keys, short x, short y);
 	void OnMouseWheel(WORD keys, short delta, short x, short y);
 	void OnPaint(HDC hDC);
@@ -49,4 +51,8 @@ protected:
 	double m_dTouchScrollSpeed;
 	int m_nTouchScrollElapse;
 	double m_dTouchScrollCoeff;
+
+	const COLORREF m_clrGood = RGB(102, 204, 51);
+	const COLORREF m_clrNeutral = RGB(255, 204, 51);
+	const COLORREF m_clrBad = RGB(255, 0, 0);
 };
