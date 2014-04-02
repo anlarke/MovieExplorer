@@ -1065,17 +1065,17 @@ void CListView::Draw()
 				
 				// Color square based on metascore
 
-				COLORREF rectColor;
+				COLORREF clrRect;
 				if (mov.nMetascore > 60)
-					rectColor = m_clrGood;
+					clrRect = m_clrGood;
 				else if (mov.nMetascore > 39)
-					rectColor = m_clrNeutral;
+					clrRect = m_clrNeutral;
 				else
-					rectColor = m_clrBad;
+					clrRect = m_clrBad;
 
 				// Draw square and metascore link
 
-				FillSolidRect(m_mdc, nRectStart , nRectStartY, SCX(24), SCY(24), rectColor);
+				FillSolidRect(m_mdc, nRectStart , nRectStartY, SCX(24), SCY(24), clrRect);
 
 				LINK *pMetascoreLink2 = m_links.AddNew();
 				pMetascoreLink2->strText = NumberToString(mov.nMetascore);
