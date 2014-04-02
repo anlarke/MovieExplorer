@@ -247,10 +247,8 @@ void CGridView::Draw()
 
 				// Write filename centered in poster
 
-				SIZE sz; 
 				SelectObject(m_mdc, m_fntText);
 				SetTextColor(m_mdc, m_clrText);
-				GetTextExtentPoint32(m_mdc, mov.strFileName, &sz);
 				RECT rc = { SCX(15) + col * SCX(200), y + SCY(15), SCX(15) + col * SCX(200) + SCX(200), y + SCY(15) + SCY(300) };
 				
 				if (!mov.strTitle.IsEmpty())
