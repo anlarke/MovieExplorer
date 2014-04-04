@@ -106,7 +106,7 @@ void ParseFileName(RString_ strFileName, RString &strTitle, RString &strYear, IN
 
 	if (GetFirstMatch(strTitle, _T("(\\d\\d\\d\\d) (\\d?\\d) (\\d?\\d)"), &strYearTmp, &strMonthTmp, &strDayTmp, NULL))
 	{
-		const RString Month[12] = { _T("Jan"), _T("Feb"), _T("Mar"), _T("Apr")
+		const RString Month[12] = { _T("Jan"), _T("Feb"), _T("Mar"), _T("Apr"),
 			_T("May"), _T("Jun"), _T("Jul"), _T("Aug"), _T("Sep"), _T("Oct"), _T("Nov"), _T("Dec") };
 
 		strAirDate = strDayTmp + _T(" ") + Month[StringToNumber(strMonthTmp) - 1] + _T(". ") + strYearTmp;
