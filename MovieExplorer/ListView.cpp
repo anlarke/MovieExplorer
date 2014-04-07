@@ -78,24 +78,51 @@ void CListView::OnCommand(WORD id, WORD notifyCode, HWND hWndControl)
 				RObArray<FILEINFO> fileInfos = EnumFiles(strPath, _T("*"));
 
 				bool bFileFound = false;
-				foreach (fileInfos, fi)
-				{
-					// See if extension is in the list of valid ones
 
+				// Check for exact filename matches with directory name first
+
+				foreach(fileInfos, fi)
+				{
+
+					// See if extension is in the list of valid ones
 					if (strIndexExtensions.FindNoCase(_T("|") + GetFileExt(fi.strName) + _T("|")) == -1)
 						continue;
 
-					// Make sure its not the 'sample' video
-
-					if (fi.strName.FindNoCase(_T("sample")) >= 0)
-						continue;
-
-					RString strMoviePath = CorrectPath(strFilePath + _T("\\") + fi.strName);
-					if (FileExists(strMoviePath))
+					if (fi.strName.FindNoCase(mov.strFileName) >= 0)
 					{
-						ShellExecute(HWND_DESKTOP, _T("open"), strMoviePath, NULL, NULL, SW_SHOW);
-						bFileFound = true;
-						break;
+						RString strMoviePath = CorrectPath(strFilePath + _T("\\") + fi.strName);
+						if (FileExists(strMoviePath))
+						{
+							ShellExecute(HWND_DESKTOP, _T("open"), strMoviePath, NULL, NULL, SW_SHOW);
+							bFileFound = true;
+							break;
+						}
+					}
+				}
+
+				if (!bFileFound)
+				{
+					// No exact matches so try all files with the correct extension not containing "sample".
+
+					foreach(fileInfos, fi)
+					{
+						// See if extension is in the list of valid ones
+
+						if (strIndexExtensions.FindNoCase(_T("|") + GetFileExt(fi.strName) + _T("|")) == -1)
+							continue;
+
+						// Make sure its not the 'sample' video
+
+						if (fi.strName.FindNoCase(_T("sample")) >= 0)
+							continue;
+
+						RString strMoviePath = CorrectPath(strFilePath + _T("\\") + fi.strName);
+						if (FileExists(strMoviePath))
+						{
+							ShellExecute(HWND_DESKTOP, _T("open"), strMoviePath, NULL, NULL, SW_SHOW);
+							bFileFound = true;
+							break;
+						}
 					}
 				}
 				
