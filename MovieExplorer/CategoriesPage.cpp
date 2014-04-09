@@ -45,7 +45,7 @@ void CCategoriesPage::OnCommand(WORD id, WORD notifyCode, HWND hWndControl)
 
 		if (id == ID_ADD && !tv.GetEditControl())
 		{
-			DBCATEGORY *pNewCat = m_categories.AddNew();
+			m_categories.AddNew();
 			foreach (m_categories, cat)
 				foreach (cat.directories, dir)
 					dir.pCategory = &cat;

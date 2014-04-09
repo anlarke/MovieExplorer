@@ -76,7 +76,7 @@
 	#define TRACE0(x) OutputDebugString(x)
 #else
 	#define ASSERT(...) __noop
-	#define VERIFY(x) x
+	#define VERIFY(x) __noop
 	#define ASSERTRETURN(x) return x
 	#define TRACE(...) __noop
 	#define TRACE0(...) __noop

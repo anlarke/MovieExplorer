@@ -130,6 +130,8 @@ protected:
 
 	void OnLButtonDown(DWORD keys, short x, short y)
 	{
+		UNREFERENCED_PARAMETER(keys);
+
 		if (m_bResizable)
 		{
 			POINT pt;
@@ -148,6 +150,10 @@ protected:
 
 	void OnLButtonUp(DWORD keys, short x, short y)
 	{
+		UNREFERENCED_PARAMETER(keys);
+		UNREFERENCED_PARAMETER(x);
+		UNREFERENCED_PARAMETER(y);
+
 		if (m_bSizing)
 		{
 			m_bSizing = false;
@@ -159,6 +165,8 @@ protected:
 
 	void OnMouseMove(DWORD keys, short x, short y)
 	{
+		UNREFERENCED_PARAMETER(keys);
+
 		if (m_bSizing)
 		{
 			RECT rc = m_rcSizing;
@@ -214,6 +222,8 @@ protected:
 
 	void OnSize(DWORD type, WORD cx, WORD cy)
 	{
+		UNREFERENCED_PARAMETER(type);
+
 		if (m_bResizable)
 		{
 			m_rcSizeBox.left = cx - GetSystemMetrics(SM_CXHTHUMB) + 1;

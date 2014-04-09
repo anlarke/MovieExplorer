@@ -49,12 +49,15 @@ CListView::~CListView()
 
 void CListView::OnCommand(WORD id, WORD notifyCode, HWND hWndControl)
 {
+	UNREFERENCED_PARAMETER(id);
+	UNREFERENCED_PARAMETER(notifyCode);
+
 	if (m_nHoverMov < 0 || m_nHoverMov >= GetDB()->m_movies)
 		return;
 
 	DBMOVIE& mov = *GetDB()->m_movies[m_nHoverMov];
 	DBDIRECTORY& dir = *mov.pDirectory;
-	DBCATEGORY& cat = *dir.pCategory;
+	//DBCATEGORY& cat = *dir.pCategory;
 
 	if (hWndControl == m_btnPlay)
 	{
@@ -83,8 +86,8 @@ void CListView::OnCommand(WORD id, WORD notifyCode, HWND hWndControl)
 
 				foreach(fileInfos, fi)
 				{
-
 					// See if extension is in the list of valid ones
+
 					if (strIndexExtensions.FindNoCase(_T("|") + GetFileExt(fi.strName) + _T("|")) == -1)
 						continue;
 
@@ -212,6 +215,8 @@ void CListView::OnCommand(WORD id, WORD notifyCode, HWND hWndControl)
 
 bool CListView::OnCreate(CREATESTRUCT *pCS)
 {
+	UNREFERENCED_PARAMETER(pCS);
+
 	if (!m_sb.Create<CScrollBar>(m_hWnd, false))
 		ASSERTRETURN(false);
 
@@ -245,6 +250,8 @@ bool CListView::OnCreate(CREATESTRUCT *pCS)
 
 void CListView::OnLButtonDown(DWORD keys, short x, short y)
 {
+	UNREFERENCED_PARAMETER(keys);
+
 	SetFocus(m_hWnd);
 
 	foreach (m_links, link)
@@ -256,6 +263,10 @@ void CListView::OnLButtonDown(DWORD keys, short x, short y)
 
 void CListView::OnLButtonDblClk(DWORD keys, short x, short y)
 {
+	UNREFERENCED_PARAMETER(keys);
+	UNREFERENCED_PARAMETER(x);
+	UNREFERENCED_PARAMETER(y);
+
 	// Play movie on double click
 
 	SetFocus(m_hWnd);
@@ -264,6 +275,8 @@ void CListView::OnLButtonDblClk(DWORD keys, short x, short y)
 
 void CListView::OnMouseMove(DWORD keys, short x, short y)
 {
+	UNREFERENCED_PARAMETER(keys);
+
 	bool bDraw = false;
 
 	foreach (m_links, link)
@@ -316,6 +329,10 @@ void CListView::OnMouseMove(DWORD keys, short x, short y)
 
 void CListView::OnMouseWheel(WORD keys, short delta, short x, short y)
 {
+	UNREFERENCED_PARAMETER(keys);
+	UNREFERENCED_PARAMETER(x);
+	UNREFERENCED_PARAMETER(y);
+
 	UINT nScrollLines = 3;
 	SystemParametersInfo(SPI_GETWHEELSCROLLLINES, 0, &nScrollLines, 0);
 
@@ -328,6 +345,9 @@ void CListView::OnMouseWheel(WORD keys, short delta, short x, short y)
 
 void CListView::OnRButtonDown(DWORD keys, short x, short y)
 {
+	UNREFERENCED_PARAMETER(keys);
+	UNREFERENCED_PARAMETER(x);
+	UNREFERENCED_PARAMETER(y);
 	SetFocus(m_hWnd);
 }
 
@@ -520,6 +540,7 @@ bool CListView::OnSetCursor(HWND hWnd, WORD hitTest, WORD mouseMsg)
 
 void CListView::OnSize(DWORD type, WORD cx, WORD cy)
 {
+	UNREFERENCED_PARAMETER(type);
 	VERIFY(m_mdc.Create(cx, cy));
 
 	if (cx == 0 || cy == 0)
@@ -530,6 +551,8 @@ void CListView::OnSize(DWORD type, WORD cx, WORD cy)
 
 void CListView::OnTouch(WORD nInputs, HTOUCHINPUT hTouchInput)
 {
+	UNREFERENCED_PARAMETER(nInputs);
+
 	TOUCHINPUT ti;
 	GetTouchInputInfo(hTouchInput, 1, &ti, sizeof(TOUCHINPUT));
 
@@ -600,6 +623,9 @@ void CListView::OnTimer(UINT_PTR nIDEvent)
 
 void CListView::OnVScroll(WORD scrollCode, WORD pos, HWND hWndScrollBar)
 {
+	UNREFERENCED_PARAMETER(pos);
+	UNREFERENCED_PARAMETER(hWndScrollBar);
+
 	switch (scrollCode)
 	{
 	case SB_PAGEUP:
@@ -628,6 +654,8 @@ void CListView::OnVScroll(WORD scrollCode, WORD pos, HWND hWndScrollBar)
 
 void CListView::OnKeyDown(UINT virtKey, WORD repCount, UINT flags)
 {
+	UNREFERENCED_PARAMETER(repCount);
+	UNREFERENCED_PARAMETER(flags);
 	switch (virtKey)
 	{
 		case VK_PRIOR:

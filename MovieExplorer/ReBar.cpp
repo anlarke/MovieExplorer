@@ -45,8 +45,8 @@ void CReBar::OnCommand(WORD id, WORD notifyCode, HWND hWndControl)
 
 		HHOOK hHook = SetWindowsHookEx(WH_MOUSE_LL, LLMouseProc, GetModuleHandle(NULL), 0);
 		ASSERT(hHook);
-		LLMouseProc(-1, -1, (LPARAM)hHook);
-		LLMouseProc(-2, -2, (LPARAM)this);
+		LLMouseProc(-1, 1, (LPARAM)hHook);
+		LLMouseProc(-2, 2, (LPARAM)this);
 
 		// Show menu, make sure commands get sent to the main window
 
@@ -109,8 +109,8 @@ void CReBar::OnCommand(WORD id, WORD notifyCode, HWND hWndControl)
 
 		HHOOK hHook = SetWindowsHookEx(WH_MOUSE_LL, LLMouseProc, GetModuleHandle(NULL), 0);
 		ASSERT(hHook);
-		LLMouseProc(-1, -1, (LPARAM)hHook);
-		LLMouseProc(-2, -2, (LPARAM)this);
+		LLMouseProc(-1, 1, (LPARAM)hHook);
+		LLMouseProc(-2, 2, (LPARAM)this);
 
 		// Show menu, make sure commands get sent to THIS window
 
@@ -180,6 +180,8 @@ void CReBar::OnCommand(WORD id, WORD notifyCode, HWND hWndControl)
 
 bool CReBar::OnCreate(CREATESTRUCT *pCS)
 {
+	UNREFERENCED_PARAMETER(pCS);
+
 	if (!m_btnTools.Create<CToolBarButton>(m_hWnd, ID_TOOLS, &m_mdcToolsBtn, NULL, true, (HMENU)BUTTON_ID_TOOLS))
 		ASSERTRETURN(false);
 
@@ -340,6 +342,7 @@ void CReBar::OnScaleChanged()
 
 void CReBar::OnSize(DWORD type, WORD cx, WORD cy)
 {
+	UNREFERENCED_PARAMETER(type);
 	VERIFY(m_mdc.Create(cx, cy));
 
 	Draw();
@@ -408,14 +411,14 @@ LRESULT CALLBACK CReBar::LLMouseProc(int nCode, WPARAM wParam, LPARAM lParam)
 	// Store information passed to the procedure
 
 	static HHOOK hhk = NULL;
-	if (nCode == -1 && wParam == -1)
+	if (nCode == -1 && wParam == 1)
 	{
 		hhk = (HHOOK)lParam;
 		return 0;
 	}
 
 	static CReBar *pReBar = NULL;
-	if (nCode == -2 && wParam == -2)
+	if (nCode == -2 && wParam == 2)
 	{
 		pReBar = (CReBar*)lParam;
 		return 0;

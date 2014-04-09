@@ -18,6 +18,7 @@ int CStatusBar::GetHeight()
 
 bool CStatusBar::OnCreate(CREATESTRUCT *pCS)
 {
+	UNREFERENCED_PARAMETER(pCS);
 	m_mdc.Create(0, 0);
 	OnPrefChanged();
 	return true;
@@ -64,6 +65,8 @@ LRESULT CStatusBar::OnSetText(const TCHAR *lpszText)
 
 void CStatusBar::OnSize(DWORD type, WORD cx, WORD cy)
 {
+	UNREFERENCED_PARAMETER(type);
+
 	m_mdc.Create(cx, cy);
 
 	if (cx == 0 || cy == 0)

@@ -26,6 +26,7 @@ public:
 protected:
 	void OnCommand(WORD id, WORD notifyCode, HWND hWndControl)
 	{
+		UNREFERENCED_PARAMETER(hWndControl);
 		PostMessage(GetParent(m_hWnd), WM_COMMAND, MAKEWPARAM(id, notifyCode), (LPARAM)m_hWnd);
 	}
 
@@ -43,6 +44,8 @@ protected:
 
 	void OnSize(DWORD type, WORD cx, WORD cy)
 	{
+		UNREFERENCED_PARAMETER(type);
+
 		m_mdc.Create(cx, cy);
 
 		RECT rc;

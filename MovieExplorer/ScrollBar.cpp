@@ -87,6 +87,7 @@ int CScrollBar::GetTrackPos() const
 
 bool CScrollBar::OnCreate(CREATESTRUCT *pCS)
 {
+	UNREFERENCED_PARAMETER(pCS);
 	if (!m_sb.Create<RScrollBar>(m_hWnd, m_bHorz))
 		{ASSERT(false); return false;}
 	PrepareDraw();
@@ -100,6 +101,8 @@ void CScrollBar::OnLButtonDblClk(DWORD keys, short x, short y)
 
 void CScrollBar::OnLButtonDown(DWORD keys, short x, short y)
 {
+	UNREFERENCED_PARAMETER(keys);
+
 	if (PtInRect(&m_rcBtn1, x, y))
 	{
 		PostMessage(GetParent(m_hWnd), WM_VSCROLL, MAKEWPARAM(SB_LINEUP, m_nPos), (LPARAM)m_hWnd);
@@ -154,6 +157,8 @@ void CScrollBar::OnLButtonUp(DWORD keys, short x, short y)
 
 void CScrollBar::OnMouseMove(DWORD keys, short x, short y)
 {
+	UNREFERENCED_PARAMETER(keys);
+
 	if (m_bDragging)
 	{
 		m_bMouseOver = true;
@@ -230,6 +235,8 @@ void CScrollBar::OnPrefChanged()
 
 void CScrollBar::OnSize(DWORD type, WORD cx, WORD cy)
 {
+	UNREFERENCED_PARAMETER(type);
+
 	if (m_bWindowsDefault)
 	{
 		MoveWindow(m_sb, 0, 0, cx, cy);
@@ -264,12 +271,13 @@ void CScrollBar::OnTimer(UINT_PTR nIDEvent)
 
 void CScrollBar::OnVScroll(WORD scrollCode, WORD pos, HWND hWndScrollBar)
 {
+	UNREFERENCED_PARAMETER(hWndScrollBar);
 	PostMessage(GetParent(m_hWnd), WM_VSCROLL, MAKEWPARAM(scrollCode, pos), (LPARAM)m_hWnd);
 }
 
 void CScrollBar::CalcRects(int y /*= 0*/)
 {
-	const int &cx = m_mdc.cx;
+	//const int &cx = m_mdc.cx;
 	const int &cy = m_mdc.cy;
 
 	const int cxBtn = GetSystemMetrics(SM_CXHTHUMB);

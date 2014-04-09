@@ -28,6 +28,9 @@ LRESULT CCategoryBar::WndProc(UINT Msg, WPARAM wParam, LPARAM lParam)
 
 void CCategoryBar::OnCommand(WORD id, WORD notifyCode, HWND hWndControl)
 {
+	UNREFERENCED_PARAMETER(notifyCode);
+	UNREFERENCED_PARAMETER(hWndControl);
+
 	if (id >= m_buttons-1)
 		{ASSERT(false); return;}
 
@@ -56,6 +59,7 @@ void CCategoryBar::OnCommand(WORD id, WORD notifyCode, HWND hWndControl)
 
 bool CCategoryBar::OnCreate(CREATESTRUCT *pCS)
 {
+	UNREFERENCED_PARAMETER(pCS);
 	m_mdc.Create(0, 0);
 	Update();
 	return true;
@@ -69,6 +73,8 @@ void CCategoryBar::OnDestroy()
 
 void CCategoryBar::OnMouseMove(DWORD keys, short x, short y)
 {
+	UNREFERENCED_PARAMETER(keys);
+
 	bool bOnButton = false;
 
 	foreach (m_buttons, button)
@@ -103,6 +109,8 @@ void CCategoryBar::OnMouseMove(DWORD keys, short x, short y)
 
 void CCategoryBar::OnLButtonDown(DWORD keys, short x, short y)
 {
+	UNREFERENCED_PARAMETER(keys);
+
 	SetFocus(m_hWnd);
 
 	foreach (m_buttons, button, i)
@@ -146,6 +154,8 @@ void CCategoryBar::OnPrefChanged()
 
 void CCategoryBar::OnSize(DWORD type, WORD cx, WORD cy)
 {
+	UNREFERENCED_PARAMETER(type);
+
 	bool bHeightChanged = (cy != m_mdc.cx);
 
 	VERIFY(m_mdc.Create(cx, cy));
