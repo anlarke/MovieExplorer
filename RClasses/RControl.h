@@ -64,7 +64,7 @@ public:
 
 		// Create the window
 
-		WndProc<DERIVED_TYPE>((HWND)-1, 0, 0, (LPARAM)(DERIVED_TYPE*)this);
+		WndProc<DERIVED_TYPE>((HWND)-1, -1, -1, (LPARAM)(DERIVED_TYPE*)this);
 
 		m_hWnd = CreateWindowEx(exStyle, szClassName, lpszWindowName, style, x, y, cx, cy, 
 				hWndParent, (HMENU)id, GetModuleHandle(NULL), pParam);
