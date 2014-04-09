@@ -96,7 +96,7 @@ inline RString HTMLEntitiesDecode(RString str)
 			if (m-n > 7)
 				continue;
 
-			WCHAR code = 0;
+			UINT code = 0;
 			if (_stscanf(str.Mid(m+3, n-m-3), _T("%X"), &code) != 1)
 				continue;
 
@@ -108,7 +108,7 @@ inline RString HTMLEntitiesDecode(RString str)
 			if (m-n > 7)
 				continue;
 
-			WCHAR code = (UINT)StringToNumber(str.Mid(m+2, n-m-2));
+			UINT code = (UINT)StringToNumber(str.Mid(m+2, n-m-2));
 			WCHAR ws[2] = {code, 0};
 			str.Replace(str.Mid(m, n-m+1), ws);
 		}

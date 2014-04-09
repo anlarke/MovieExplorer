@@ -84,7 +84,7 @@ bool CGeneralPage::OnCreate(CREATESTRUCT *pCS)
 	RXMLFile xmlFile;
 	RXMLTag *pMainTag;
 	CONFIGFILE *pCF;
-	INT_PTR nSelected;
+	INT_PTR nSelected = 0;
 
 	foreach (fileNames, strFileName)
 	{
