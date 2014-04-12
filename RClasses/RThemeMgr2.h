@@ -24,8 +24,6 @@ public:
 
 	bool GetFont(RFont *pFont, const TCHAR *lpszCategory, const TCHAR *lpszName)
 	{
-		TRACE(_T("Don't use RThemeMgr2::GetFont anymore.\n"));
-
 		pFont->Destroy();
 
 		// Get list of preferred fonts and font size
