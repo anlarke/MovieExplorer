@@ -24,6 +24,8 @@ void ClearInfo(DBINFO *pInfo)
 	pInfo->nVotes = 0;
 	pInfo->nIMDbVotes = 0;
 	pInfo->posterData.SetSize(0);
+	for (int i = 0; i < DBI_STAR_NUMBER; i++)
+		pInfo->actorImageData[i] = NULL;
 	pInfo->status = DBI_STATUS_NONE;
 	pInfo->strCountries.Empty();
 	pInfo->strDirectors.Empty();
@@ -65,6 +67,8 @@ void ClearMovie(DBMOVIE *pMovie)
 	pMovie->nYear = 0;
 	pMovie->pDirectory = NULL;
 	pMovie->posterData.SetSize(0);
+	for (int i = 0; i < DBI_STAR_NUMBER; i++)
+		pMovie->actorImageData[i] = NULL;
 	pMovie->strCountries.Empty();
 	pMovie->strDirectors.Empty();
 	pMovie->strFileName.Empty();
@@ -167,6 +171,56 @@ bool GetFirstMatch(RString_ strTarget, RString_ strPattern, RString *pStr1, ...)
 bool IsTV(DBINFO *pInfo)
 {
 	return(!pInfo->strAirDate.IsEmpty() || (pInfo->nEpisode >= 0 && pInfo->nSeason >= 0));
+}
+ 
+RString GetStar(RString strStars, int nStar)
+{
+	INT_PTR n, n2, n3;
+	if (!strStars.IsEmpty())
+	{
+		switch (nStar + 1)
+		{
+
+		case 1:
+			n = strStars.Find('|', 0);
+			if (n > 0)
+				return strStars.Left(n);
+			else
+				return strStars;
+			break;
+		case 2:
+			n = strStars.Find('|', 0);
+			if (n > 0)
+			{
+				n2 = strStars.Find('|', n + 1);
+				if (n2 > n)
+					return strStars.Mid(n + 1, n2 - n - 1);
+				else
+					return strStars.Right(n);
+			}
+			else
+				return NULL;
+			break;
+		case 3:
+			n = strStars.Find('|', 0);
+			if (n > 0)
+			{
+				n2 = strStars.Find('|', n + 1);
+				if (n2 > 0)
+				{
+					n3 = strStars.Find('|', n2 + 1) > n2 + 1 ? strStars.Find('|', n2 + 1) : strStars.GetLength() - 1;
+					return strStars.Mid(n2 + 1, n3 - n2 - 1);
+				}
+			}
+			return NULL;
+			break;
+		default:
+			return NULL;
+		}
+	}
+	else
+		return NULL;
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

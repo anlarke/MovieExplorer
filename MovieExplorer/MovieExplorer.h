@@ -8,12 +8,14 @@
 #define STATUS			Status
 
 #include "Database.h"
+#include "ImageHash.h"
 
 RPreferencesMgr2* GetPrefMgr();
 RLanguageMgr* GetLangMgr();
 RThemeMgr2* GetThemeMgr();
 HWND GetMainWnd();
 CDatabase* GetDB();
+ImageHash* GetImageHash();
 void Log(const TCHAR *lpszText, UINT_PTR type = LOG_MESSAGE);
 void Status(const TCHAR *lpszText);
 

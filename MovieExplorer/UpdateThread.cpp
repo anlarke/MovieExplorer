@@ -111,6 +111,26 @@ UINT CALLBACK UpdateThread(void *pParam)
 							TagToInfo(pInfoTag, &info);
 							VERIFY(FileToData(strCacheDir + _T("\\") + strServ + _T("\\") + strID + 
 									_T(".jpg"), info.posterData));
+
+							for (int i = 0; i < DBI_STAR_NUMBER; i++)
+							{
+								// Check hash table first then try to load from file cache
+
+								RString strStarName = GetStar(info.strStars, i);
+								info.actorImageData[i] = GetImageHash()->GetImage(strStarName);
+
+								if (!info.actorImageData[i] && !strStarName.IsEmpty() && FileExists(strCacheDir + _T("\\") + 
+									strServ + _T("\\actors\\") + strStarName + _T(".jpg")))
+								{
+									RArray<BYTE> arTmp;
+									VERIFY(FileToData(strCacheDir + _T("\\") + strServ + _T("\\actors\\")
+										+ strStarName + _T(".jpg"), arTmp));
+									GetImageHash()->SetImage(strStarName, arTmp);
+									info.actorImageData[i] = GetImageHash()->GetImage(strStarName);
+								}
+							}
+							
+
 							info.status = DBI_STATUS_UPDATED;
 						}
 					}
@@ -160,6 +180,22 @@ UINT CALLBACK UpdateThread(void *pParam)
 							_T("\\") + strID + _T(".xml")));
 					VERIFY(DataToFile(info.posterData, strCacheDir + _T("\\") + strServ + 
 							_T("\\") + strID + _T(".jpg")));
+					
+					// save actor images to directory
+					
+					if (!DirectoryExists(strCacheDir + _T("\\") + strServ + _T("\\actors\\")))
+						CreateDirectory(strCacheDir + _T("\\") + strServ + _T("\\actors\\"));
+
+					for (int i = 0; i < DBI_STAR_NUMBER; i++)
+					{
+						RString strStarName = GetStar(info.strStars, i);
+						if (!strStarName.IsEmpty() && info.actorImageData[i] && 
+							!FileExists(strCacheDir + _T("\\") + strServ + _T("\\actors\\")
+							+ strStarName + _T(".jpg")))
+							VERIFY(DataToFile(*info.actorImageData[i], strCacheDir + _T("\\") + strServ + _T("\\actors\\")
+							+ strStarName + _T(".jpg")));
+
+					}
 				}
 				else if (info.status == DBI_STATUS_UNKNOWN)
 				{
@@ -234,6 +270,8 @@ UINT CALLBACK UpdateThread(void *pParam)
 					mov.nEpisode = info.nEpisode;
 					mov.strEpisodeName = info.strEpisodeName;
 					mov.strAirDate = info.strAirDate;
+					for (int i=0; i < DBI_STAR_NUMBER; i++)
+						mov.actorImageData[i] = info.actorImageData[i];
 				}
 			}
 

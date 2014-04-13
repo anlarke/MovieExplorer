@@ -304,6 +304,7 @@
     <ClInclude Include="..\..\RClasses\scale.h" />
     <ClInclude Include="..\..\RClasses\time.h" />
     <ClInclude Include="..\..\RClasses\wcsistr.h" />
+    <ClInclude Include="..\ImageHash.h" />
     <ClInclude Include="..\CategoriesPage.h" />
     <ClInclude Include="..\CategoryBar.h" />
     <ClInclude Include="..\Database.h" />
@@ -337,6 +338,7 @@
     <ClCompile Include="..\..\RClasses\capturem.cpp" />
     <ClCompile Include="..\..\RClasses\scale.cpp" />
     <ClCompile Include="..\..\RClasses\wcsistr.cpp" />
+    <ClCompile Include="..\ImageHash.cpp" />
     <ClCompile Include="..\CategoriesPage.cpp" />
     <ClCompile Include="..\CategoryBar.cpp" />
     <ClCompile Include="..\CorrectPreferences.cpp" />

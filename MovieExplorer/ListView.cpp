@@ -782,7 +782,7 @@ void CListView::Draw()
 
 		DBMOVIE& mov = *GetDB()->m_movies[i];
 		DBDIRECTORY& dir = *mov.pDirectory;
-		DBCATEGORY& cat = *dir.pCategory;
+		//DBCATEGORY& cat = *dir.pCategory;
 
 		// draw poster
 
@@ -924,25 +924,51 @@ void CListView::Draw()
 			SelectObject(m_mdc, hPrevFont);
 		}
 		
-		// draw stars
+		// draw stars names and pictures
 
+		SIZE sz;
 		if (!mov.strStars.IsEmpty())
 		{
+			// Stars: label
+
 			hPrevFont = (HFONT)SelectObject(m_mdc, m_fntTextBold);
 			SetTextColor(m_mdc, m_clrText);
-			TextOut(m_mdc, SCX(200) + SCX(35), y + SCY(LV_DETAILS_HEIGHT) - SCY(72), 
-					GETSTR(IDS_STARS) + _T(":"));
+			TextOut(m_mdc, SCX(200) + SCX(35), y + SCY(LV_DETAILS_HEIGHT) - SCY(54),
+				GETSTR(IDS_STARS) + _T(":"));
 			SelectObject(m_mdc, hPrevFont);
 
 			hPrevFont = (HFONT)SelectObject(m_mdc, m_fntText);
 			SetTextColor(m_mdc, m_clrText);
-			TextOut(m_mdc, SCX(200) + SCX(35) + m_nColumnWidth + SCX(10), 
-					y + SCY(LV_DETAILS_HEIGHT) - SCY(72), PrettyList(mov.strStars));
+
+			/*TextOut(m_mdc, SCX(200) + SCX(35) + m_nColumnWidth + SCX(10),
+				y + SCY(LV_DETAILS_HEIGHT) - SCY(72), PrettyList(mov.strStars));*/
+			
+			// draw actor images
+
+			int nDeltaX = 0;
+			for (int i = 0; i < DBI_STAR_NUMBER; i++)
+			{
+				if (mov.actorImageData[i] && mov.actorImageData[i]->GetSize())
+				{
+					RMemoryDC mdcThumb;
+					VERIFY(LoadImage(*mov.actorImageData[i], mdcThumb, SCX(32), SCY(44)));
+					int cxImg, cyImg;
+					mdcThumb.GetDimensions(cxImg, cyImg);
+					BitBlt(m_mdc, SCX(200) + SCX(30) + m_nColumnWidth + nDeltaX, y + SCY(LV_DETAILS_HEIGHT) - SCY(68), cxImg, cyImg, mdcThumb, 0, 0, SRCCOPY);
+					
+					RString strStar = GetStar(mov.strStars, i) + _T("  ");
+					TextOut(m_mdc, SCX(200) + SCX(30) + m_nColumnWidth + nDeltaX + SCX(32), y + SCY(LV_DETAILS_HEIGHT) - SCY(54), strStar);
+					GetTextExtentPoint32(m_mdc, strStar, &sz);	
+
+					nDeltaX += SCX(32) + sz.cx;
+				}
+
+			}
 			SelectObject(m_mdc, hPrevFont);
 		}
 
 		// draw category (and directory)
-
+		/*
 		hPrevFont = (HFONT)SelectObject(m_mdc, m_fntTextBold);
 		SetTextColor(m_mdc, m_clrText);
 		TextOut(m_mdc, SCX(200) + SCX(35), y + SCY(LV_DETAILS_HEIGHT) - SCY(52), 
@@ -958,19 +984,20 @@ void CListView::Draw()
 		TextOut(m_mdc, SCX(200) + SCX(35) + m_nColumnWidth + SCX(10) + sz.cx, 
 				y + SCY(LV_DETAILS_HEIGHT) - SCY(52), dir.strPath + _T("]"));
 		SelectObject(m_mdc, hPrevFont);
+		*/
 
 		// draw file/entry
 
 		hPrevFont = (HFONT)SelectObject(m_mdc, m_fntTextBold);
 		SetTextColor(m_mdc, m_clrText);
-		TextOut(m_mdc, SCX(200) + SCX(35), y + SCY(LV_DETAILS_HEIGHT) - SCY(34), 
+		TextOut(m_mdc, SCX(200) + SCX(35), y + SCY(LV_DETAILS_HEIGHT) - SCY(20), 
 				GETSTR(IDS_FILE) + _T(":"));
 		SelectObject(m_mdc, hPrevFont);
 
 		hPrevFont = (HFONT)SelectObject(m_mdc, m_fntText);
 		SetTextColor(m_mdc, m_clrText);
 		TextOut(m_mdc, SCX(200) + SCX(35) + m_nColumnWidth + SCX(10),
-				y + SCY(LV_DETAILS_HEIGHT) - SCY(34), mov.strFileName + 
+				y + SCY(LV_DETAILS_HEIGHT) - SCY(20), mov.strFileName + 
 				(mov.fileSize != 0 ? _T(" [") + SizeToString(mov.fileSize) + 
 				_T("]") : _T("")));
 		SelectObject(m_mdc, hPrevFont);

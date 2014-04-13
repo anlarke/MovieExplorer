@@ -13,6 +13,8 @@
 #define DBI_STATUS_CONNERROR	3	// there was a connection error whilst retrieving information
 #define DBI_STATUS_SCRAPEERROR	4
 
+#define DBI_STAR_NUMBER			3	//number of movie star names 
+
 /*
 #define DB_SORTBY_TITLEASC		0
 #define DB_SORTBY_TITLEDES		1
@@ -52,6 +54,7 @@ struct DBMOVIE
 	float fRating, fRatingMax, fIMDbRating, fIMDbRatingMax;
 	INT_PTR nVotes, nIMDbVotes, nYear, nMetascore, nSeason, nEpisode;
 	RArray<BYTE> posterData;
+	RArray<BYTE>* actorImageData[DBI_STAR_NUMBER];
 	UINT64 fileSize, fileTime;
 	bool bSeen, bHide, bUpdated; // would be great to eliminate bUpdated...
 	DBDIRECTORY *pDirectory;
@@ -65,6 +68,7 @@ struct DBINFO
 	float fRating, fRatingMax, fIMDbRating, fIMDbRatingMax;
 	INT_PTR nVotes, nIMDbVotes, nMetascore, nSeason, nEpisode;
 	RArray<BYTE> posterData;
+	RArray<BYTE>* actorImageData[DBI_STAR_NUMBER];
 	DWORD status;
 	UINT64 timestamp;
 };
@@ -78,6 +82,7 @@ void TagToInfo(RXMLTag *pTag, DBINFO *pInfo);
 void InfoToTag(DBINFO *pInfo, RXMLTag *pTag);
 bool GetFirstMatch(RString_ strTarget, RString_ strPattern, RString *pStr1, ...);
 bool IsTV(DBINFO *pInfo);
+RString GetStar(RString strStars, int nStar);
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

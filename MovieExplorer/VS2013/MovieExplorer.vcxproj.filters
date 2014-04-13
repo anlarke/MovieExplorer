@@ -228,8 +228,11 @@
     <ClInclude Include="..\..\DynamicDll\User32Dll.h">
       <Filter>DynamicDll</Filter>
     </ClInclude>
-	<ClInclude Include="..\GridView.h">
+    <ClInclude Include="..\GridView.h">
       <Filter>Project Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ImageHash.h">
+      <Filter>Database</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -319,6 +322,9 @@
     </ClCompile>
     <ClCompile Include="..\..\DynamicDll\User32Dll.cpp">
       <Filter>DynamicDll</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ImageHash.cpp">
+      <Filter>Database</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

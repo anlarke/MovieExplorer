@@ -122,11 +122,8 @@ void ParseFileName(RString_ strFileName, RString &strTitle, RString &strYear, IN
 	if (strYear.IsEmpty())
 	{
 		m = 0;
-		while (true)
+		while (m < strTitle.GetLength())
 		{
-			if (m >= strTitle.GetLength())
-				break;
-
 			n = strTitle.Find(_T(' '), m);
 
 			if (n == -1)
