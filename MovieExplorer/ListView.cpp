@@ -782,7 +782,7 @@ void CListView::Draw()
 
 		DBMOVIE& mov = *GetDB()->m_movies[i];
 		DBDIRECTORY& dir = *mov.pDirectory;
-		//DBCATEGORY& cat = *dir.pCategory;
+		DBCATEGORY& cat = *dir.pCategory;
 
 		// draw poster
 
@@ -967,25 +967,6 @@ void CListView::Draw()
 			SelectObject(m_mdc, hPrevFont);
 		}
 
-		// draw category (and directory)
-		/*
-		hPrevFont = (HFONT)SelectObject(m_mdc, m_fntTextBold);
-		SetTextColor(m_mdc, m_clrText);
-		TextOut(m_mdc, SCX(200) + SCX(35), y + SCY(LV_DETAILS_HEIGHT) - SCY(52), 
-				GETSTR(IDS_CATEGORY) + _T(":"));
-		SelectObject(m_mdc, hPrevFont);
-
-		hPrevFont = (HFONT)SelectObject(m_mdc, m_fntText);
-		SetTextColor(m_mdc, m_clrText);
-		TextOut(m_mdc, SCX(200) + SCX(35) + m_nColumnWidth + SCX(10), 
-				y + SCY(LV_DETAILS_HEIGHT) - SCY(52), cat.strName + _T(" ["));
-		SIZE sz;
-		GetTextExtentPoint32(m_mdc, cat.strName + _T(" ["), &sz);
-		TextOut(m_mdc, SCX(200) + SCX(35) + m_nColumnWidth + SCX(10) + sz.cx, 
-				y + SCY(LV_DETAILS_HEIGHT) - SCY(52), dir.strPath + _T("]"));
-		SelectObject(m_mdc, hPrevFont);
-		*/
-
 		// draw file/entry
 
 		hPrevFont = (HFONT)SelectObject(m_mdc, m_fntTextBold);
@@ -996,11 +977,38 @@ void CListView::Draw()
 
 		hPrevFont = (HFONT)SelectObject(m_mdc, m_fntText);
 		SetTextColor(m_mdc, m_clrText);
+		GetTextExtentPoint32(m_mdc, GETSTR(IDS_FILE) + _T(":"), &sz);
+		int nOffset = sz.cx;
+		RString strPrintFileName = mov.strFileName +
+			(mov.fileSize != 0 ? _T(" [") + SizeToString(mov.fileSize) +
+			_T("]") : _T(""));
 		TextOut(m_mdc, SCX(200) + SCX(35) + m_nColumnWidth + SCX(10),
-				y + SCY(LV_DETAILS_HEIGHT) - SCY(20), mov.strFileName + 
-				(mov.fileSize != 0 ? _T(" [") + SizeToString(mov.fileSize) + 
-				_T("]") : _T("")));
+				y + SCY(LV_DETAILS_HEIGHT) - SCY(20), strPrintFileName);
+		GetTextExtentPoint32(m_mdc, strPrintFileName, &sz);
+		nOffset += sz.cx;
 		SelectObject(m_mdc, hPrevFont);
+
+
+		// draw category (and directory)
+		
+		hPrevFont = (HFONT)SelectObject(m_mdc, m_fntTextBold);
+		SetTextColor(m_mdc, m_clrText);
+		TextOut(m_mdc, SCX(200) + SCX(35) + m_nColumnWidth + nOffset + SCX(30), y + SCY(LV_DETAILS_HEIGHT) - SCY(20),
+		GETSTR(IDS_CATEGORY) + _T(":"));
+		GetTextExtentPoint32(m_mdc, GETSTR(IDS_CATEGORY) + _T(":"), &sz);
+		nOffset += sz.cx;
+		SelectObject(m_mdc, hPrevFont);
+
+		hPrevFont = (HFONT)SelectObject(m_mdc, m_fntText);
+		SetTextColor(m_mdc, m_clrText);
+		TextOut(m_mdc, SCX(200) + SCX(35) + m_nColumnWidth + nOffset + SCX(40),
+		y + SCY(LV_DETAILS_HEIGHT) - SCY(20), cat.strName );
+	/*	GetTextExtentPoint32(m_mdc, cat.strName + _T(" ["), &sz);
+		TextOut(m_mdc, SCX(200) + SCX(35) + m_nColumnWidth + SCX(10) + sz.cx,
+		y + SCY(LV_DETAILS_HEIGHT) - SCY(52), dir.strPath + _T("]"));*/
+		SelectObject(m_mdc, hPrevFont);
+		
+
 
 		// draw rating
 
