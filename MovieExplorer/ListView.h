@@ -52,7 +52,7 @@ protected:
 	int m_nTouchScrollElapse;
 	double m_dTouchScrollCoeff;
 
-	const COLORREF m_clrGood = RGB(102, 204, 51);
-	const COLORREF m_clrNeutral = RGB(255, 204, 51);
-	const COLORREF m_clrBad = RGB(255, 0, 0);
+	static const COLORREF m_clrGood = RGB(102, 204, 51);
+	static const COLORREF m_clrNeutral = RGB(255, 204, 51);
+	static const COLORREF m_clrBad = RGB(255, 0, 0);
 };
