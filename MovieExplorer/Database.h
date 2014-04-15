@@ -55,6 +55,7 @@ struct DBMOVIE
 	INT_PTR nVotes, nIMDbVotes, nYear, nMetascore, nSeason, nEpisode;
 	RArray<BYTE> posterData;
 	RArray<BYTE>* actorImageData[DBI_STAR_NUMBER];
+	RString strActorId[DBI_STAR_NUMBER];
 	UINT64 fileSize, fileTime;
 	bool bSeen, bHide, bUpdated; // would be great to eliminate bUpdated...
 	DBDIRECTORY *pDirectory;
@@ -69,6 +70,7 @@ struct DBINFO
 	INT_PTR nVotes, nIMDbVotes, nMetascore, nSeason, nEpisode;
 	RArray<BYTE> posterData;
 	RArray<BYTE>* actorImageData[DBI_STAR_NUMBER];
+	RString strActorId[DBI_STAR_NUMBER];
 	DWORD status;
 	UINT64 timestamp;
 };

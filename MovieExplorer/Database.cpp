@@ -25,7 +25,10 @@ void ClearInfo(DBINFO *pInfo)
 	pInfo->nIMDbVotes = 0;
 	pInfo->posterData.SetSize(0);
 	for (int i = 0; i < DBI_STAR_NUMBER; i++)
+	{
 		pInfo->actorImageData[i] = NULL;
+		pInfo->strActorId[i].Empty();
+	}
 	pInfo->status = DBI_STATUS_NONE;
 	pInfo->strCountries.Empty();
 	pInfo->strDirectors.Empty();
@@ -68,7 +71,10 @@ void ClearMovie(DBMOVIE *pMovie)
 	pMovie->pDirectory = NULL;
 	pMovie->posterData.SetSize(0);
 	for (int i = 0; i < DBI_STAR_NUMBER; i++)
+	{
 		pMovie->actorImageData[i] = NULL;
+		pMovie->strActorId[i].Empty();
+	}
 	pMovie->strCountries.Empty();
 	pMovie->strDirectors.Empty();
 	pMovie->strFileName.Empty();
@@ -105,6 +111,8 @@ void TagToInfo(RXMLTag *pTag, DBINFO *pInfo)
 	pInfo->nEpisode = StringToNumber(pTag->GetChildContent(_T("Episode")));
 	pInfo->strEpisodeName = pTag->GetChildContent(_T("EpisodeName"));
 	pInfo->strAirDate = pTag->GetChildContent(_T("AirDate"));
+	for (int i = 0; i < DBI_STAR_NUMBER; i++)
+		pInfo->strActorId[i] = pTag->GetChildContent(_T("ActorId") + NumberToString(i));
 	if (pTag->GetChild(_T("IMDbID")))
 	{
 		pInfo->strIMDbID = pTag->GetChildContent(_T("IMDbID"));
@@ -137,6 +145,8 @@ void InfoToTag(DBINFO *pInfo, RXMLTag *pTag)
 	pTag->AddChild(_T("Season"))->SetContent(NumberToString(pInfo->nSeason));
 	pTag->AddChild(_T("EpisodeName"))->SetContent(pInfo->strEpisodeName);
 	pTag->AddChild(_T("AirDate"))->SetContent(pInfo->strAirDate);
+	for (int i = 0; i < DBI_STAR_NUMBER; i++)
+		pTag->AddChild(_T("ActorId") + NumberToString(i))->SetContent(pInfo->strActorId[i]);
 	if (!pInfo->strIMDbID.IsEmpty())
 	{
 		pTag->AddChild(_T("IMDbID"))->SetContent(pInfo->strIMDbID);

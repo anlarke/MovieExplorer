@@ -115,8 +115,11 @@ void CEditDlg::OnOK()
 		m_pMov->strGenres.Empty(); m_pMov->strRuntime.Empty(); m_pMov->strStoryline.Empty();
 		m_pMov->strDirectors.Empty(); m_pMov->strWriters.Empty(); m_pMov->strStars.Empty();
 		m_pMov->posterData.SetSize(0); 
-		for (int i=0; i < DBI_STAR_NUMBER; i++)
+		for (int i = 0; i < DBI_STAR_NUMBER; i++)
+		{
+			m_pMov->strActorId[i].Empty();
 			m_pMov->actorImageData[i] = NULL;
+		}
 	}
 
 	m_pMov->strIMDbID = m_eIMDb.GetText();

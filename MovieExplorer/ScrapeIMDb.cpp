@@ -2,9 +2,11 @@
 #include "MovieExplorer.h"
 
 
-RArray<BYTE>* GetActorImagePointer(RString str, RString strName)
+RArray<BYTE>* GetActorImagePointer(RString str, RString strName, RString &returnId)
 {
 	RString strUrl;
+	RString strId;
+	strId.Empty();
 
 	ARBYTE *arB = GetImageHash()->GetImage(strName);
 
@@ -12,9 +14,13 @@ RArray<BYTE>* GetActorImagePointer(RString str, RString strName)
 
 	if (arB)
 		return arB;
-	else if (GetFirstMatch(str, _T("title=\"") + strName + _T("\".*?loadlate=\"(.*?)\""), &strUrl, NULL))
+	else if (GetFirstMatch(str,_T("<a href=\"/name/(nm\\d+)/[^>]*?><img[^>]*?title=\"") + strName 
+		+ _T("\"[^>]*?loadlate=\"([^\"]*?)\""), &strId, &strUrl, NULL))
 	{
 		// Load from web string if not in hash table
+
+		if (strId && !strId.IsEmpty())
+			returnId = strId;
 
 		ARBYTE arBnew;
 		if (URLToData(strUrl, arBnew))
@@ -297,7 +303,9 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 		RString strStarsTmp = pInfo->strStars;
 		RArray<const TCHAR*> parts = SplitString(strStarsTmp, _T("|"), true);
 		for (int i = 0; (i < parts) && (i < DBI_STAR_NUMBER); i++)
-			pInfo->actorImageData[i] = GetActorImagePointer(str, parts[i]);
+		{
+			pInfo->actorImageData[i] = GetActorImagePointer(str, parts[i],pInfo->strActorId[i]);
+		}
 	}
 
 

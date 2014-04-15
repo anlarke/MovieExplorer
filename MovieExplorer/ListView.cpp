@@ -945,6 +945,7 @@ void CListView::Draw()
 			
 			// draw actor images
 
+
 			int nDeltaX = 0;
 			for (int i = 0; i < DBI_STAR_NUMBER; i++)
 			{
@@ -953,14 +954,36 @@ void CListView::Draw()
 					RMemoryDC mdcThumb;
 					VERIFY(LoadImage(*mov.actorImageData[i], mdcThumb, SCX(32), SCY(44)));
 					int cxImg, cyImg;
-					mdcThumb.GetDimensions(cxImg, cyImg);
-					BitBlt(m_mdc, SCX(200) + SCX(30) + m_nColumnWidth + nDeltaX, y + SCY(LV_DETAILS_HEIGHT) - SCY(68), cxImg, cyImg, mdcThumb, 0, 0, SRCCOPY);
-					
-					RString strStar = GetStar(mov.strStars, i) + _T("  ");
-					TextOut(m_mdc, SCX(200) + SCX(30) + m_nColumnWidth + nDeltaX + SCX(32), y + SCY(LV_DETAILS_HEIGHT) - SCY(54), strStar);
-					GetTextExtentPoint32(m_mdc, strStar, &sz);	
+					INT_PTR xx, yy;
+					xx = SCX(200) + SCX(30) + m_nColumnWidth + nDeltaX;
+					yy = y + SCY(LV_DETAILS_HEIGHT) - SCY(68);
 
+					mdcThumb.GetDimensions(cxImg, cyImg);
+					BitBlt(m_mdc, xx, yy, cxImg, cyImg, mdcThumb, 0, 0, SRCCOPY);
+					
+					LINK *pImageLink = m_links.AddNew();
+					pImageLink->strText = _T("");
+					pImageLink->strURL = _T("http://www.imdb.com/name/") + mov.strActorId[i];
+					pImageLink->rc.x = xx;
+					pImageLink->rc.cx = cxImg;
+					pImageLink->rc.y = yy;
+					pImageLink->rc.cy = cyImg;
+					pImageLink->state = (PtInRect(&pImageLink->rc, pt) ? LINKSTATE_HOVER : LINKSTATE_NORMAL);
+
+					RString strStar = GetStar(mov.strStars, i) + _T("  ");
+					GetTextExtentPoint32(m_mdc, strStar, &sz);	
 					nDeltaX += SCX(32) + sz.cx;
+
+					LINK *pImageLinkText = m_links.AddNew();
+					pImageLinkText->strText = strStar;
+					pImageLinkText->strURL = _T("http://www.imdb.com/name/") + mov.strActorId[i];
+					pImageLinkText->rc.x = xx+32;
+					pImageLinkText->rc.cx = sz.cx;
+					pImageLinkText->rc.y = y + SCY(LV_DETAILS_HEIGHT) - SCY(54);
+					pImageLinkText->rc.cy = sz.cy;
+					pImageLinkText->state = (PtInRect(&pImageLinkText->rc, pt)? LINKSTATE_HOVER : LINKSTATE_NORMAL);
+					SetTextColor(m_mdc, (pImageLinkText->state == LINKSTATE_HOVER ? m_clrLink : m_clrText));
+					TextOut(m_mdc, xx + SCX(32), y + SCY(LV_DETAILS_HEIGHT) - SCY(54), strStar);
 				}
 
 			}
