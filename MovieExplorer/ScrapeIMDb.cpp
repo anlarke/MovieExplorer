@@ -44,7 +44,7 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 {
 	Sleep((200 * rand()) / RAND_MAX);
 
-	bool bUseBingSearch = GETPREFBOOL(_T("IMDbUseBingSeach"));
+	bool bUseBingSearch = GETPREFBOOL(_T("IMDbUseBingSearch"));
 	bool bUseOriginalTitle = GETPREFBOOL(_T("IMDbUseOriginalTitle"));
 
 	if (!pInfo || pInfo->strSearchTitle.IsEmpty() || pInfo->strServiceName != _T("imdb.com"))
