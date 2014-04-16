@@ -1,10 +1,9 @@
 #include "stdafx.h"
 #include "ImageHash.h"
 #include "MovieExplorer.h"
-#include <unordered_map>
 
 ImageHash::ImageHash()
-{
+{ 
 }
 
 ImageHash::~ImageHash()
@@ -13,17 +12,29 @@ ImageHash::~ImageHash()
 
 ARBYTE* ImageHash::GetImage(RString strName)
 {
-	std::wstring s = std::wstring((LPCWSTR)strName);
-	if (hashtable.count(s) == 0)
+	std::wstring sz = std::wstring((LPCWSTR)strName);
+	mtx_.lock();
+	std::unordered_map<std::wstring, ARBYTE>::iterator got = hashtable.find(sz);
+
+	if (got == hashtable.end())  // If not in hashtable return NULL
+	{
+		mtx_.unlock();
 		return NULL;
-	else
-		return(&hashtable[s]);
+	}
+	else    // In hash table. return image.
+	{
+		ARBYTE* arImage = &got->second;
+		mtx_.unlock();
+		return(arImage);
+	}
 }
 
 void ImageHash::SetImage(RString strName, ARBYTE image)
 {
-	std::wstring s = std::wstring((LPCWSTR)strName);
-	hashtable[s] =  image;
+	std::wstring sz = std::wstring((LPCWSTR)strName);
+	mtx_.lock();
+	hashtable[sz] =  image;
+	mtx_.unlock();
 }
 
 

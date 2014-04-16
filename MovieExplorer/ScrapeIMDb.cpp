@@ -8,12 +8,12 @@ RArray<BYTE>* GetActorImagePointer(RString str, RString strName, RString &return
 	RString strId;
 	strId.Empty();
 
-	ARBYTE *arB = GetImageHash()->GetImage(strName);
+	ARBYTE *arbImage = GetImageHash()->GetImage(strName);
 
 	// Check for image in hash table
 
-	if (arB)
-		return arB;
+	if (arbImage)
+		return arbImage;
 	else if (GetFirstMatch(str,_T("<a href=\"/name/(nm\\d+)/[^>]*?><img[^>]*?title=\"") + strName 
 		+ _T("\"[^>]*?loadlate=\"([^\"]*?)\""), &strId, &strUrl, NULL))
 	{
@@ -22,10 +22,10 @@ RArray<BYTE>* GetActorImagePointer(RString str, RString strName, RString &return
 		if (strId && !strId.IsEmpty())
 			returnId = strId;
 
-		ARBYTE arBnew;
-		if (URLToData(strUrl, arBnew))
+		ARBYTE arbImageNew;
+		if (URLToData(strUrl, arbImageNew))
 		{
-			GetImageHash()->SetImage(strName, arBnew);
+			GetImageHash()->SetImage(strName, arbImageNew);
 			return(GetImageHash()->GetImage(strName));
 		}
 	}

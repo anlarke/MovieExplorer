@@ -687,6 +687,19 @@ void CListView::GoToItem(int item)
 	m_sb.SetPos(item * SCY(LV_DETAILS_HEIGHT));
 }
 
+CListView::LINK* CListView::MakeLink(RString strText, RString strUrl, INT_PTR x, int cx, INT_PTR y, int cy, POINT pt)
+{
+	LINK *pLink = m_links.AddNew();
+	pLink->strText = strText;
+	pLink->strURL = strUrl;
+	pLink->rc.x = x;
+	pLink->rc.cx = cx;
+	pLink->rc.y = y;
+	pLink->rc.cy = cy;
+	pLink->state = (PtInRect(&pLink->rc, pt) ? LINKSTATE_HOVER : LINKSTATE_NORMAL);
+	return (pLink);
+}
+
 LRESULT CListView::WndProc(UINT Msg, WPARAM wParam, LPARAM lParam)
 {
 	if (Msg == WM_DBUPDATED)
@@ -961,27 +974,14 @@ void CListView::Draw()
 					mdcThumb.GetDimensions(cxImg, cyImg);
 					BitBlt(m_mdc, xx, yy, cxImg, cyImg, mdcThumb, 0, 0, SRCCOPY);
 					
-					LINK *pImageLink = m_links.AddNew();
-					pImageLink->strText = _T("");
-					pImageLink->strURL = _T("http://www.imdb.com/name/") + mov.strActorId[i];
-					pImageLink->rc.x = xx;
-					pImageLink->rc.cx = cxImg;
-					pImageLink->rc.y = yy;
-					pImageLink->rc.cy = cyImg;
-					pImageLink->state = (PtInRect(&pImageLink->rc, pt) ? LINKSTATE_HOVER : LINKSTATE_NORMAL);
+					MakeLink(_T(""), _T("http://www.imdb.com/name/") + mov.strActorId[i], xx, cxImg, yy, cyImg, pt);
 
 					RString strStar = GetStar(mov.strStars, i) + _T("  ");
 					GetTextExtentPoint32(m_mdc, strStar, &sz);	
 					nDeltaX += SCX(32) + sz.cx;
 
-					LINK *pImageLinkText = m_links.AddNew();
-					pImageLinkText->strText = strStar;
-					pImageLinkText->strURL = _T("http://www.imdb.com/name/") + mov.strActorId[i];
-					pImageLinkText->rc.x = xx+32;
-					pImageLinkText->rc.cx = sz.cx;
-					pImageLinkText->rc.y = y + SCY(LV_DETAILS_HEIGHT) - SCY(54);
-					pImageLinkText->rc.cy = sz.cy;
-					pImageLinkText->state = (PtInRect(&pImageLinkText->rc, pt)? LINKSTATE_HOVER : LINKSTATE_NORMAL);
+					LINK *pImageLinkText = MakeLink(strStar, _T("http://www.imdb.com/name/") + mov.strActorId[i],
+						xx + 32, sz.cx, y + SCY(LV_DETAILS_HEIGHT) - SCY(54), sz.cy, pt);
 					SetTextColor(m_mdc, (pImageLinkText->state == LINKSTATE_HOVER ? m_clrLink : m_clrText));
 					TextOut(m_mdc, xx + SCX(32), y + SCY(LV_DETAILS_HEIGHT) - SCY(54), strStar);
 				}
@@ -1142,6 +1142,7 @@ void CListView::Draw()
 			pLink->rc.y = y + SCY(48);
 			pLink->rc.cy = sz.cy;
 			pLink->state = (PtInRect(&pLink->rc, pt) ? LINKSTATE_HOVER : LINKSTATE_NORMAL);
+			
 			SetTextColor(m_mdc, (pLink->state == LINKSTATE_HOVER ? m_clrLink : m_clrText));
 			TextOut(m_mdc, pLink->rc.x, pLink->rc.y, pLink->strText);
 			SelectObject(m_mdc, hPrevFont);
@@ -1150,16 +1151,12 @@ void CListView::Draw()
 
 			if (mov.nMetascore >= 0 && m_strRatingServ == _T("imdb.com"))
 			{
-				LINK *pMetascoreLink = m_links.AddNew();
-				pMetascoreLink->strText = _T("Metascore:");
-				pMetascoreLink->strURL = _T("http://www.imdb.com/title/") + mov.strIMDbID + _T("/criticreviews");
 				hPrevFont = (HFONT)SelectObject(m_mdc, m_fntText);
-				GetTextExtentPoint32(m_mdc, pMetascoreLink->strText, &sz);
-				pMetascoreLink->rc.x = cx - sz.cx - SCX(50);
-				pMetascoreLink->rc.cx = sz.cx;
-				pMetascoreLink->rc.y = y + SCY(73);
-				pMetascoreLink->rc.cy = sz.cy;
-				pMetascoreLink->state = (PtInRect(&pMetascoreLink->rc, pt) ? LINKSTATE_HOVER : LINKSTATE_NORMAL);
+				GetTextExtentPoint32(m_mdc, _T("Metascore"), &sz);
+
+				LINK *pMetascoreLink = MakeLink(_T("Metascore:"), _T("http://www.imdb.com/title/") + mov.strIMDbID + _T("/criticreviews"),
+					cx - sz.cx - SCX(50), sz.cx, y + SCY(73), sz.cy, pt);
+
 				SetTextColor(m_mdc, (pMetascoreLink->state == LINKSTATE_HOVER ? m_clrLink : m_clrText));
 				TextOut(m_mdc, pMetascoreLink->rc.x, pMetascoreLink->rc.y, pMetascoreLink->strText);
 				SelectObject(m_mdc, hPrevFont);
@@ -1190,14 +1187,9 @@ void CListView::Draw()
 
 				FillSolidRect(m_mdc, nRectStart , nRectStartY, SCX(24), SCY(24), clrRect);
 
-				LINK *pMetascoreLink2 = m_links.AddNew();
-				pMetascoreLink2->strText = NumberToString(mov.nMetascore);
-				pMetascoreLink2->strURL = _T("http://www.imdb.com/title/") + mov.strIMDbID + _T("/criticreviews");
-				pMetascoreLink2->rc.x = nRectStart;
-				pMetascoreLink2->rc.cx = SCX(24);
-				pMetascoreLink2->rc.y = nRectStartY;
-				pMetascoreLink2->rc.cy = SCY(24);
-				pMetascoreLink2->state = (PtInRect(&pMetascoreLink2->rc, pt) ? LINKSTATE_HOVER : LINKSTATE_NORMAL);
+				LINK *pMetascoreLink2 = MakeLink(NumberToString(mov.nMetascore), _T("http://www.imdb.com/title/") + mov.strIMDbID +
+					_T("/criticreviews"), nRectStart, SCX(24), nRectStartY, SCY(24), pt);
+
 				SetTextColor(m_mdc, m_clrBackgr);
 				TextOut(m_mdc, nRectMiddle - nTextMiddle, nRectMiddleY - nTextMiddleY, pMetascoreLink2->strText);
 				SelectObject(m_mdc, hPrevFont);
@@ -1234,16 +1226,10 @@ void CListView::Draw()
 				TextOut(m_mdc, x, y + SCY(66), str);
 				SelectObject(m_mdc, hPrevFont);
 
-				LINK *pLink = m_links.AddNew();
-				pLink->strText = _T("IMDb");
-				pLink->strURL = _T("http://www.imdb.com/title/") + mov.strIMDbID + _T("/");
 				hPrevFont = (HFONT)SelectObject(m_mdc, m_fntText);
-				GetTextExtentPoint32(m_mdc, pLink->strText , &sz);
-				pLink->rc.x = x - sz.cx;
-				pLink->rc.cx = sz.cx;
-				pLink->rc.y = y + SCY(66);
-				pLink->rc.cy = sz.cy;
-				pLink->state = (PtInRect(&pLink->rc, pt) ? LINKSTATE_HOVER : LINKSTATE_NORMAL);
+				GetTextExtentPoint32(m_mdc, _T("IMDb") , &sz);
+				LINK *pLink = MakeLink(_T("IMDb"), _T("http://www.imdb.com/title/") + mov.strIMDbID + _T("/"),
+					x - sz.cx, sz.cx, y + SCY(66), sz.cy, pt);
 				SetTextColor(m_mdc, (pLink->state == LINKSTATE_HOVER ? m_clrLink : m_clrText));
 				TextOut(m_mdc, pLink->rc.x, pLink->rc.y, pLink->strText);
 				SelectObject(m_mdc, hPrevFont);

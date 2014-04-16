@@ -33,6 +33,7 @@ protected:
 
 	void Draw();
 
+
 	RMemoryDC m_mdc, m_mdcSmallStar, m_mdcSmallStarEmpty, m_mdcLargeStar, m_mdcLargeStarEmpty,
 			m_mdcPlayBtn, m_mdcDirBtn, m_mdcEditBtn, m_mdcSeenBtn, m_mdcHideBtn, m_mdcDeleteBtn;
 	COLORREF m_clrBackgr, m_clrBackgrAlt, m_clrShadow, m_clrTitle, m_clrText, m_clrLink;
@@ -51,6 +52,8 @@ protected:
 	double m_dTouchScrollSpeed;
 	int m_nTouchScrollElapse;
 	double m_dTouchScrollCoeff;
+
+	LINK* MakeLink(RString strText, RString strUrl, INT_PTR x, int cx, INT_PTR cy, int y, POINT pt);
 
 	static const COLORREF m_clrGood = RGB(102, 204, 51);
 	static const COLORREF m_clrNeutral = RGB(255, 204, 51);
