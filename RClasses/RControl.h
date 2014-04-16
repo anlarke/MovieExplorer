@@ -70,6 +70,7 @@ public:
 				hWndParent, (HMENU)id, GetModuleHandle(NULL), pParam);
 
 		ASSERTRETURN(m_hWnd != NULL);
+		return true;
 	}
 
 protected:
