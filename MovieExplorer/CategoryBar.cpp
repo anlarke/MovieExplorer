@@ -457,11 +457,12 @@ void CCategoryBar::Update(bool bResetSelections /*= false*/)
 	bool bShowHidden = GETPREFBOOL(_T("ShowHiddenMovies"));
 	INT_PTR nTotalCount = 0;
 	INT_PTR nTVCount = 0;
+	INT_PTR nMovieCount = 0;
 	RArray<INT_PTR> movieCounts(GetDB()->m_categories.GetSize());
 	foreach (GetDB()->m_categories, cat, i)
 	{
-		INT_PTR &nMovieCount = movieCounts[i];
-		nMovieCount = 0;
+		INT_PTR &nCategoryCount = movieCounts[i];
+		nCategoryCount = 0;
 		foreach (cat.directories, dir)
 		{
 			foreach (dir.movies, mov)
@@ -470,12 +471,16 @@ void CCategoryBar::Update(bool bResetSelections /*= false*/)
 					continue;
 				if (!bShowHidden && mov.bHide)
 					continue;
+
 				if (mov.bType == DB_TYPE_TV)
 					++nTVCount;
-				++nMovieCount;
+				else if (mov.bType)
+					++nMovieCount;
+
+				++nCategoryCount;
 			}
 		}
-		nTotalCount += nMovieCount;
+		nTotalCount += nCategoryCount;
 	}
 
 	// Array should hold All button, Movie button, TV button, category button, and menu button
@@ -494,7 +499,7 @@ void CCategoryBar::Update(bool bResetSelections /*= false*/)
 	ZeroMemory(&m_buttons[CB_MOVIE_BUTTON].rc, sizeof(RECT));
 	m_buttons[CB_MOVIE_BUTTON].state = CTBBSTATE_NORMAL;
 	m_buttons[CB_MOVIE_BUTTON].strText = GETSTR(IDS_MOVIES);
-	m_buttons[CB_MOVIE_BUTTON].strText2 = _T("(") + NumberToString(nTotalCount - nTVCount) + _T(")");
+	m_buttons[CB_MOVIE_BUTTON].strText2 = _T("(") + NumberToString(nMovieCount) + _T(")");
 
 	//Update TV button
 

@@ -21,7 +21,7 @@ void ClearInfo(DBINFO *pInfo)
 	pInfo->nEpisode = -1;
 	pInfo->strEpisodeName.Empty();
 	pInfo->strAirDate.Empty();
-	pInfo->bType = DB_TYPE_MOVIE;
+	pInfo->bType = DB_TYPE_UNKNOWN;
 	pInfo->nVotes = 0;
 	pInfo->nIMDbVotes = 0;
 	pInfo->posterData.SetSize(0);
@@ -67,7 +67,7 @@ void ClearMovie(DBMOVIE *pMovie)
 	pMovie->nEpisode = -1;
 	pMovie->strEpisodeName.Empty();
 	pMovie->strAirDate.Empty();
-	pMovie->bType = DB_TYPE_MOVIE;
+	pMovie->bType = DB_TYPE_UNKNOWN;
 	pMovie->nVotes = 0;
 	pMovie->nYear = 0;
 	pMovie->pDirectory = NULL;
@@ -821,10 +821,10 @@ void CDatabase::Filter()
 				if (mov.bHide && !m_bShowHiddenMovies)
 					continue;
 
-				if (m_bShowOnlyTV  && mov.bType == DB_TYPE_MOVIE)
+				if (m_bShowOnlyTV  && mov.bType != DB_TYPE_TV)
 					continue;
 
-				if (m_bShowOnlyMovies && mov.bType == DB_TYPE_TV)
+				if (m_bShowOnlyMovies && mov.bType != DB_TYPE_MOVIE)
 					continue;
 
 				if (m_filterKeywords)

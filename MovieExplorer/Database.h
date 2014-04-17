@@ -15,8 +15,9 @@
 
 #define DBI_STAR_NUMBER			3	//number of movie star names 
 
-#define DB_TYPE_MOVIE			0
-#define DB_TYPE_TV				1
+#define DB_TYPE_UNKNOWN			0
+#define DB_TYPE_MOVIE			1
+#define DB_TYPE_TV				2
 /*
 #define DB_SORTBY_TITLEASC		0
 #define DB_SORTBY_TITLEDES		1

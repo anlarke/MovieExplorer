@@ -149,7 +149,8 @@ UINT CALLBACK UpdateThread(void *pParam)
 				info.nSeason = nSeason;
 				info.nEpisode = nEpisode;
 				info.strAirDate = strAirDate;
-				info.bType = (IsTVEpisode(&info) ? DB_TYPE_TV: DB_TYPE_MOVIE);
+				if (IsTVEpisode(&info))
+					info.bType = DB_TYPE_TV;
 				info.strID = strID;
 
 				if (strServ == _T("imdb.com"))
