@@ -4,23 +4,21 @@
 
 RArray<BYTE>* GetActorImagePointer(RString str, RString strName, RString &returnId)
 {
-	RString strUrl;
-	RString strId;
-	strId.Empty();
+	// Set strId
 
-	ARBYTE *arbImage = GetImageHash()->GetImage(strName);
+	RString strUrl;
+	returnId.Empty();
+	bool bMatched = GetFirstMatch(str, _T("<a href=\"/name/(nm\\d+)/[^>]*?><img[^>]*?title=\"") + strName
+		+ _T("\"[^>]*?loadlate=\"([^\"]*?)\""), &returnId, &strUrl, NULL);
 
 	// Check for image in hash table
 
+	ARBYTE *arbImage = GetImageHash()->GetImage(strName);
 	if (arbImage)
 		return arbImage;
-	else if (GetFirstMatch(str,_T("<a href=\"/name/(nm\\d+)/[^>]*?><img[^>]*?title=\"") + strName 
-		+ _T("\"[^>]*?loadlate=\"([^\"]*?)\""), &strId, &strUrl, NULL))
+	else if (bMatched)
 	{
 		// Load from web string if not in hash table
-
-		if (strId && !strId.IsEmpty())
-			returnId = strId;
 
 		ARBYTE arbImageNew;
 		if (URLToData(strUrl, arbImageNew))
