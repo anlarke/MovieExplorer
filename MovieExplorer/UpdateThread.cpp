@@ -270,6 +270,7 @@ UINT CALLBACK UpdateThread(void *pParam)
 					mov.nEpisode = info.nEpisode;
 					mov.strEpisodeName = info.strEpisodeName;
 					mov.strAirDate = info.strAirDate;
+					mov.bType = info.bType;
 					for (int i = 0; i < DBI_STAR_NUMBER; i++)
 					{
 						mov.strActorId[i] = info.strActorId[i];

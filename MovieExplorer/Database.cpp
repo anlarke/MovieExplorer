@@ -21,6 +21,7 @@ void ClearInfo(DBINFO *pInfo)
 	pInfo->nEpisode = -1;
 	pInfo->strEpisodeName.Empty();
 	pInfo->strAirDate.Empty();
+	pInfo->bType = DB_TYPE_MOVIE;
 	pInfo->nVotes = 0;
 	pInfo->nIMDbVotes = 0;
 	pInfo->posterData.SetSize(0);
@@ -66,6 +67,7 @@ void ClearMovie(DBMOVIE *pMovie)
 	pMovie->nEpisode = -1;
 	pMovie->strEpisodeName.Empty();
 	pMovie->strAirDate.Empty();
+	pMovie->bType = DB_TYPE_MOVIE;
 	pMovie->nVotes = 0;
 	pMovie->nYear = 0;
 	pMovie->pDirectory = NULL;
@@ -111,6 +113,7 @@ void TagToInfo(RXMLTag *pTag, DBINFO *pInfo)
 	pInfo->nEpisode = StringToNumber(pTag->GetChildContent(_T("Episode")));
 	pInfo->strEpisodeName = pTag->GetChildContent(_T("EpisodeName"));
 	pInfo->strAirDate = pTag->GetChildContent(_T("AirDate"));
+	pInfo->bType = StringToNumber(pTag->GetChildContent(_T("Type")));
 	for (int i = 0; i < DBI_STAR_NUMBER; i++)
 		pInfo->strActorId[i] = pTag->GetChildContent(_T("ActorId") + NumberToString(i));
 	if (pTag->GetChild(_T("IMDbID")))
@@ -145,6 +148,7 @@ void InfoToTag(DBINFO *pInfo, RXMLTag *pTag)
 	pTag->AddChild(_T("Season"))->SetContent(NumberToString(pInfo->nSeason));
 	pTag->AddChild(_T("EpisodeName"))->SetContent(pInfo->strEpisodeName);
 	pTag->AddChild(_T("AirDate"))->SetContent(pInfo->strAirDate);
+	pTag->AddChild(_T("Type"))->SetContent(NumberToString(pInfo->bType));
 	for (int i = 0; i < DBI_STAR_NUMBER; i++)
 		pTag->AddChild(_T("ActorId") + NumberToString(i))->SetContent(pInfo->strActorId[i]);
 	if (!pInfo->strIMDbID.IsEmpty())
@@ -178,7 +182,7 @@ bool GetFirstMatch(RString_ strTarget, RString_ strPattern, RString *pStr1, ...)
 	return false;
 }
 
-bool IsTV(DBINFO *pInfo)
+bool IsTVEpisode(DBINFO *pInfo)
 {
 	return(!pInfo->strAirDate.IsEmpty() || (pInfo->nEpisode >= 0 && pInfo->nSeason >= 0));
 }
@@ -393,6 +397,7 @@ bool CDatabase::Load(RString_ strFilePath)
 	// Loading successful, finalize
 
 	m_strFilePath = strFilePath;
+	m_bShowOnlyMovies = false; m_bShowOnlyTV = false;
 
 	OnPrefChanged();
 
@@ -780,6 +785,16 @@ void CDatabase::FilterByCategories(RArray<INT_PTR> categories)
 	Filter();
 }
 
+void CDatabase::SetOnlyTV(bool bFlag)
+{
+	m_bShowOnlyTV = bFlag;
+}
+
+void CDatabase::SetOnlyMovies(bool bFlag)
+{
+	m_bShowOnlyMovies = bFlag;
+}
+
 void CDatabase::Filter()
 {
 	m_movies.SetSize(0);
@@ -804,6 +819,12 @@ void CDatabase::Filter()
 					continue;
 
 				if (mov.bHide && !m_bShowHiddenMovies)
+					continue;
+
+				if (m_bShowOnlyTV  && mov.bType == DB_TYPE_MOVIE)
+					continue;
+
+				if (m_bShowOnlyMovies && mov.bType == DB_TYPE_TV)
 					continue;
 
 				if (m_filterKeywords)

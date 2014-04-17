@@ -15,6 +15,8 @@
 
 #define DBI_STAR_NUMBER			3	//number of movie star names 
 
+#define DB_TYPE_MOVIE			0
+#define DB_TYPE_TV				1
 /*
 #define DB_SORTBY_TITLEASC		0
 #define DB_SORTBY_TITLEDES		1
@@ -53,6 +55,7 @@ struct DBMOVIE
 			strRuntime, strStoryline, strDirectors, strWriters, strStars, strEpisodeName, strAirDate;
 	float fRating, fRatingMax, fIMDbRating, fIMDbRatingMax;
 	INT_PTR nVotes, nIMDbVotes, nYear, nMetascore, nSeason, nEpisode;
+	BYTE bType;
 	RArray<BYTE> posterData;
 	RArray<BYTE>* actorImageData[DBI_STAR_NUMBER];
 	RString strActorId[DBI_STAR_NUMBER];
@@ -68,6 +71,7 @@ struct DBINFO
 			strFileName, strEpisodeName, strAirDate;
 	float fRating, fRatingMax, fIMDbRating, fIMDbRatingMax;
 	INT_PTR nVotes, nIMDbVotes, nMetascore, nSeason, nEpisode;
+	BYTE bType;
 	RArray<BYTE> posterData;
 	RArray<BYTE>* actorImageData[DBI_STAR_NUMBER];
 	RString strActorId[DBI_STAR_NUMBER];
@@ -83,7 +87,7 @@ void ClearMovie(DBMOVIE *pMovie);
 void TagToInfo(RXMLTag *pTag, DBINFO *pInfo);
 void InfoToTag(DBINFO *pInfo, RXMLTag *pTag);
 bool GetFirstMatch(RString_ strTarget, RString_ strPattern, RString *pStr1, ...);
-bool IsTV(DBINFO *pInfo);
+bool IsTVEpisode(DBINFO *pInfo);
 RString GetStar(RString strStars, int nStar);
 
 
@@ -108,6 +112,8 @@ public:
 	void FilterByGenres(RObArray<RString> genres);
 	void FilterByCategories(RArray<INT_PTR> categories);
 	void Filter();
+	void SetOnlyTV(bool bFlag);
+	void SetOnlyMovies(bool bFlag);
 
 	RArray<DBMOVIE*> m_movies;
 	RObArray<DBCATEGORY> m_categories;
@@ -123,6 +129,6 @@ protected:
 	INT_PTR m_nTotalUpdates, m_nUpdatesFromWeb;
 	RObArray<RString> m_filterKeywords, m_filterGenres;
 	RArray<INT_PTR> m_filterCategories;
-	bool m_bShowSeenMovies, m_bShowHiddenMovies, m_bSearchStoryline;
+	bool m_bShowSeenMovies, m_bShowHiddenMovies, m_bSearchStoryline, m_bShowOnlyTV, m_bShowOnlyMovies;
 	UINT_PTR m_sortBy;
 };

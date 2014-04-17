@@ -7,6 +7,9 @@
 #define CB_TEXTMARGIN		SCX(10)
 #define CB_MENUBUTTONWIDTH	SCX(18)
 
+#define CB_MOVIE_BUTTON		1
+#define CB_TV_BUTTON		2
+
 CCategoryBar::CCategoryBar() : m_clrNormalText(0), m_clrNormalText2(0), m_clrHighlightText(0), 
 		m_clrHighlightText2(0), m_clrSelectedText(0), m_clrSelectedText2(0), m_hMenu(NULL)
 {
@@ -177,11 +180,17 @@ void CCategoryBar::FilterDB()
 	RArray<INT_PTR> categories;
 	if (m_buttons[0].state != CTBBSTATE_SELECTED)
 	{
-		for (INT_PTR i = 1; i < m_buttons-1; ++i)
+		for (INT_PTR i = 3; i < m_buttons-1; ++i)
 			if (m_buttons[i].state == CTBBSTATE_SELECTED)
-				categories.Add(i-1);
+				categories.Add(i-3);
 	}
 
+	GetDB()->SetOnlyTV(false);
+	GetDB()->SetOnlyMovies(false);
+	if (m_buttons[CB_MOVIE_BUTTON].state == CTBBSTATE_SELECTED)
+		GetDB()->SetOnlyMovies(true);
+	else if (m_buttons[CB_TV_BUTTON].state == CTBBSTATE_SELECTED)
+		GetDB()->SetOnlyTV(true);
 	GetDB()->FilterByCategories(categories);
 }
 
@@ -447,6 +456,7 @@ void CCategoryBar::Update(bool bResetSelections /*= false*/)
 	bool bShowSeen = GETPREFBOOL(_T("ShowSeenMovies"));
 	bool bShowHidden = GETPREFBOOL(_T("ShowHiddenMovies"));
 	INT_PTR nTotalCount = 0;
+	INT_PTR nTVCount = 0;
 	RArray<INT_PTR> movieCounts(GetDB()->m_categories.GetSize());
 	foreach (GetDB()->m_categories, cat, i)
 	{
@@ -460,15 +470,17 @@ void CCategoryBar::Update(bool bResetSelections /*= false*/)
 					continue;
 				if (!bShowHidden && mov.bHide)
 					continue;
+				if (mov.bType == DB_TYPE_TV)
+					++nTVCount;
 				++nMovieCount;
 			}
 		}
 		nTotalCount += nMovieCount;
 	}
 
-	// Array should hold All button, category button and menu button
+	// Array should hold All button, Movie button, TV button, category button, and menu button
 
-	m_buttons.SetSize(GetDB()->m_categories + 2);
+	m_buttons.SetSize(GetDB()->m_categories + 4);
 
 	// Update All button
 
@@ -477,15 +489,29 @@ void CCategoryBar::Update(bool bResetSelections /*= false*/)
 	m_buttons[0].strText = GETSTR(IDS_ALL);
 	m_buttons[0].strText2 = _T("(") + NumberToString(nTotalCount) + _T(")");
 
+	//Update Movie button
+
+	ZeroMemory(&m_buttons[CB_MOVIE_BUTTON].rc, sizeof(RECT));
+	m_buttons[CB_MOVIE_BUTTON].state = CTBBSTATE_NORMAL;
+	m_buttons[CB_MOVIE_BUTTON].strText = GETSTR(IDS_MOVIES);
+	m_buttons[CB_MOVIE_BUTTON].strText2 = _T("(") + NumberToString(nTotalCount - nTVCount) + _T(")");
+
+	//Update TV button
+
+	ZeroMemory(&m_buttons[CB_TV_BUTTON].rc, sizeof(RECT));
+	m_buttons[CB_TV_BUTTON].state = CTBBSTATE_NORMAL;
+	m_buttons[CB_TV_BUTTON].strText = GETSTR(IDS_TV);
+	m_buttons[CB_TV_BUTTON].strText2 = _T("(") + NumberToString(nTVCount) + _T(")");
+
 	// Update category buttons
 
-	for (INT_PTR i = 1; i < m_buttons-1; ++i)
+	for (INT_PTR i = 3; i < m_buttons-1; ++i)
 	{
 		BUTTON &button = m_buttons[i];
 		ZeroMemory(&button.rc, sizeof(RECT));
 		button.state = CTBBSTATE_NORMAL;
-		button.strText = GetDB()->m_categories[i-1].strName;
-		button.strText2 = _T("(") + NumberToString(movieCounts[i-1]) + _T(")");
+		button.strText = GetDB()->m_categories[i-3].strName;
+		button.strText2 = _T("(") + NumberToString(movieCounts[i-3]) + _T(")");
 	}
 
 	// Update menu button
