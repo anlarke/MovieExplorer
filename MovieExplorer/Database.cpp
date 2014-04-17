@@ -113,7 +113,7 @@ void TagToInfo(RXMLTag *pTag, DBINFO *pInfo)
 	pInfo->nEpisode = StringToNumber(pTag->GetChildContent(_T("Episode")));
 	pInfo->strEpisodeName = pTag->GetChildContent(_T("EpisodeName"));
 	pInfo->strAirDate = pTag->GetChildContent(_T("AirDate"));
-	pInfo->bType = StringToNumber(pTag->GetChildContent(_T("Type")));
+	pInfo->bType = (BYTE)StringToNumber(pTag->GetChildContent(_T("Type")));
 	for (int i = 0; i < DBI_STAR_NUMBER; i++)
 		pInfo->strActorId[i] = pTag->GetChildContent(_T("ActorId") + NumberToString(i));
 	if (pTag->GetChild(_T("IMDbID")))
