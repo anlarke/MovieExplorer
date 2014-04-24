@@ -4,6 +4,7 @@
 #include "ParseFileName.h"
 #include "ScrapeIMDb.h"
 #include "ScrapeMovieMeter.h"
+#include <mutex>
 
 UINT CALLBACK UpdateThread(void *pParam)
 {
@@ -123,10 +124,14 @@ UINT CALLBACK UpdateThread(void *pParam)
 									strServ + _T("\\actors\\") + strStarName + _T(".jpg")))
 								{
 									RArray<BYTE> arTmp;
-									VERIFY(FileToData(strCacheDir + _T("\\") + strServ + _T("\\actors\\")
-										+ strStarName + _T(".jpg"), arTmp));
-									GetImageHash()->SetImage(strStarName, arTmp);
-									info.actorImageData[i] = GetImageHash()->GetImage(strStarName);
+									if (FileToData(strCacheDir + _T("\\") + strServ + _T("\\actors\\")
+										+ strStarName + _T(".jpg"), arTmp))
+									{
+										GetImageHash()->SetImage(strStarName, arTmp);
+										info.actorImageData[i] = GetImageHash()->GetImage(strStarName);
+									}
+									else
+										ASSERT(false);  // Couldn't read data from file that exists.
 								}
 							}
 							

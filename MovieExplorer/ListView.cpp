@@ -976,7 +976,7 @@ void CListView::Draw()
 					
 					MakeLink(_T(""), _T("http://www.imdb.com/name/") + mov.strActorId[i], xx, cxImg, yy, cyImg, pt);
 
-					RString strStar = GetStar(mov.strStars, i) + _T("  ");
+					RString strStar = _T(" ") + GetStar(mov.strStars, i) + _T("  ");
 					GetTextExtentPoint32(m_mdc, strStar, &sz);	
 					nDeltaX += SCX(32) + sz.cx;
 
