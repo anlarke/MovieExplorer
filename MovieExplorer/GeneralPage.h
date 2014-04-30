@@ -18,7 +18,7 @@ protected:
 	void OnCommand(WORD id, WORD notifyCode, HWND hWndControl);
 
 	RButton m_grpInterface, m_grpSearch, m_chkNormalizeRatings, m_chkSearchInstantly, 
-			m_chkSearchLiterally, m_chkSearchStoryline;
+			m_chkSearchLiterally, m_chkSearchStoryline, m_chkAutoCategories;
 	RStatic m_stcLanguage, m_stcTheme;
 	RComboBox m_cbLanguage, m_cbTheme;
 	struct CONFIGFILE {RString strFilePath, strName;};

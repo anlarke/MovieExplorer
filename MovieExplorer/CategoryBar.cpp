@@ -63,7 +63,6 @@ void CCategoryBar::OnCommand(WORD id, WORD notifyCode, HWND hWndControl)
 bool CCategoryBar::OnCreate(CREATESTRUCT *pCS)
 {
 	UNREFERENCED_PARAMETER(pCS);
-	m_nAutoCategories = GETPREFBOOL(_T("AutoCategories"))?3:1;
 	m_mdc.Create(0, 0);
 	Update();
 	return true;
@@ -151,6 +150,7 @@ void CCategoryBar::OnPaint(HDC hDC)
 
 void CCategoryBar::OnPrefChanged()
 {
+	m_nAutoCategories = GETPREFBOOL(_T("AutoCategories")) ? 3 : 1;
 	PrepareDraw();
 	Draw();
 	Invalidate(m_hWnd);

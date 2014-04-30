@@ -42,6 +42,7 @@ void CGeneralPage::ApplyChanges()
 
 	// The rest
 
+	SETPREFBOOL(_T("AutoCategories"), (bool)m_chkAutoCategories.GetCheck());
 	SETPREFBOOL(_T("NormalizeRatings"), (bool)m_chkNormalizeRatings.GetCheck());
 	SETPREFBOOL(_T("Search"), _T("Instantly"), (bool)m_chkSearchInstantly.GetCheck());
 	SETPREFBOOL(_T("Search"), _T("Literally"), (bool)m_chkSearchLiterally.GetCheck());
@@ -65,6 +66,7 @@ bool CGeneralPage::OnCreate(CREATESTRUCT *pCS)
 			!m_cbTheme.Create<RComboBox>(m_hWnd, cbStyle) ||
 			!m_stcTheme.Create<RStatic>(m_hWnd) ||
 			!m_chkNormalizeRatings.Create<RButton>(m_hWnd, BS_AUTOCHECKBOX|WS_TABSTOP) ||
+			!m_chkAutoCategories.Create<RButton>(m_hWnd, BS_AUTOCHECKBOX|WS_TABSTOP) ||
 			!m_grpInterface.Create<RButton>(m_hWnd, BS_GROUPBOX) ||
 
 			!m_chkSearchInstantly.Create<RButton>(m_hWnd, BS_AUTOCHECKBOX|WS_TABSTOP) ||
@@ -147,6 +149,7 @@ bool CGeneralPage::OnCreate(CREATESTRUCT *pCS)
 	// Load settings
 
 	m_chkNormalizeRatings.SetCheck(GETPREFBOOL(_T("NormalizeRatings")));
+	m_chkAutoCategories.SetCheck(GETPREFBOOL(_T("AutoCategories")));
 
 	m_chkSearchInstantly.SetCheck(GETPREFBOOL(_T("Search"), _T("Instantly")));
 	m_chkSearchLiterally.SetCheck(GETPREFBOOL(_T("Search"), _T("Literally")));
@@ -164,7 +167,7 @@ void CGeneralPage::OnSize(DWORD type, WORD cx, WORD cy)
 	RPropertyPage::OnSize(type, cx, cy);
 
 	int y = DUY(4);
-	MoveWindow(m_grpInterface, DUX(4), y, cx - DUX(8), DUY(56));
+	MoveWindow(m_grpInterface, DUX(4), y, cx - DUX(8), DUY(69));
 	y += DUY(12);
 	MoveStatic(m_stcLanguage, DUX(14), y+DUY(2));
 	MoveWindow(m_cbLanguage, DUX(54), y, DUX(90), DUY(12));
@@ -173,8 +176,10 @@ void CGeneralPage::OnSize(DWORD type, WORD cx, WORD cy)
 	MoveWindow(m_cbTheme, DUX(54), y, DUX(90), DUY(12));
 	y += DUY(16);
 	MoveCheckBox(m_chkNormalizeRatings, DUX(14), y);
+	y += DUY(14);
+	MoveCheckBox(m_chkAutoCategories, DUX(14), y);
 
-	y = DUY(64);
+	y = DUY(80);
 	MoveWindow(m_grpSearch, DUX(4), y, cx - DUX(8), DUY(54));
 	y += DUY(12);
 	MoveCheckBox(m_chkSearchInstantly, DUX(14), y);
@@ -194,6 +199,7 @@ void CGeneralPage::OnPrefChanged()
 	m_stcLanguage.SetText(GETSTR(IDS_LANGUAGE) + _T(":"));
 	m_stcTheme.SetText(GETSTR(IDS_THEME) + _T(":"));
 	m_chkNormalizeRatings.SetText(_T(" ") + GETSTR(IDS_NORMALIZERATINGS));
+	m_chkAutoCategories.SetText(_T(" ") + GETSTR(IDS_AUTOCATEGORIES));
 	m_grpInterface.SetText(GETSTR(IDS_INTERFACE));
 
 	m_chkSearchInstantly.SetText(_T(" ") + GETSTR(IDS_SEARCHINSTANTLY));
