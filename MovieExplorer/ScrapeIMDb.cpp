@@ -301,7 +301,7 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 
 	// Get actors
 
-	if (GetFirstMatch(str, _T("\\.  With (.*?)\\.[ \"]"), &pInfo->strStars, NULL))
+	if (GetFirstMatch(str, _T("<meta name=\"description\" content=\".*?With (.*?\\w\\w)\\.[ \"]"), &pInfo->strStars, NULL))
 	{
 		pInfo->strStars.Replace(_T(", "), _T("|"));
 
