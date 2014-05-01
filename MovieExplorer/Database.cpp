@@ -210,7 +210,7 @@ RString GetStar(RString strStars, int nStar)
 				if (n2 > n)
 					return strStars.Mid(n + 1, n2 - n - 1);
 				else
-					return strStars.Right(n);
+					return strStars.Right(strStars.GetLength() - (n + 1));
 			}
 			else
 				return NULL;

@@ -27,6 +27,12 @@ RArray<BYTE>* GetActorImagePointer(RString str, RString strName, RString &return
 			return(GetImageHash()->GetImage(strName));
 		}
 	}
+	else
+	{
+		// Try again to get actor id without image
+
+		GetFirstMatch(str, _T("<a href=\"/name/(nm\\d+)/[^>]*><span[^>]*>") + strName + _T("</"), &returnId, NULL);
+	}
 	return NULL;
 }
 
@@ -92,13 +98,17 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 			{
 				if (pInfo->strSearchYear.IsEmpty())
 				{
-					// 1. Try to match exact title
-					// 2. Try to match title partly
-					// 3. Just take the first one
+					// 1. Try to match exact title in this century (20xx)
+					// 2. Try to match exact title
+					// 3. Try to match title partly
+					// 4. Just take the first one
 
-					if (!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/';\">") + pInfo->strSearchTitle +
+					if (
+						!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/[^>]*>") + pInfo->strSearchTitle + _T("</a> \\(20"),
+						 &pInfo->strID, NULL) &&
+						!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/[^>]*>") + pInfo->strSearchTitle +
 								_T("</a> \\("), &pInfo->strID, NULL) &&
-							!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/';\">[^<]*?") + pInfo->strSearchTitle +
+							!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/[^>]*>[^<]*?") + pInfo->strSearchTitle +
 								_T("[^<]*?</a> \\("), &pInfo->strID, NULL) &&
 							!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)"), &pInfo->strID, NULL))
 						return DBI_STATUS_UNKNOWN;
@@ -118,17 +128,17 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 					RString strYearMinusOne = NumberToString(StringToNumber(pInfo->strSearchYear) - 1);
 					RString strYearPlusOne = NumberToString(StringToNumber(pInfo->strSearchYear) + 1);
 
-					if (!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/';\">") + pInfo->strSearchTitle + _T("</a> \\(") +
+					if (!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/[^>]*>") + pInfo->strSearchTitle + _T("</a> \\(") +
 								pInfo->strSearchYear, &pInfo->strID, NULL) &&
-							!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/';\">") + pInfo->strSearchTitle + _T("</a> \\(") +
+							!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/[^>]*>") + pInfo->strSearchTitle + _T("</a> \\(") +
 								strYearMinusOne, &pInfo->strID, NULL) &&
-							!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/';\">") + pInfo->strSearchTitle + _T("</a> \\(") +
+							!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/[^>]*>") + pInfo->strSearchTitle + _T("</a> \\(") +
 								strYearPlusOne, &pInfo->strID, NULL) &&
-							!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/';\">[^<]+</a> \\(") +
+							!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/[^>]*>[^<]+</a> \\(") +
 								pInfo->strSearchYear, &pInfo->strID, NULL) &&
-							!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/';\">") + pInfo->strSearchTitle +
+							!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/[^>]*>") + pInfo->strSearchTitle +
 								_T("</a> \\("), &pInfo->strID, NULL) &&
-							!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/';\">[^<]*?") + pInfo->strSearchTitle +
+							!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/[^>]*>[^<]*?") + pInfo->strSearchTitle +
 								_T("[^<]*?</a> \\("), &pInfo->strID, NULL) &&
 							!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)"), &pInfo->strID, NULL))
 						return DBI_STATUS_UNKNOWN;
@@ -206,7 +216,7 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 
 	if (_tcsicmp(GETPREFSTR(_T("InfoService"), _T("Poster")), _T("imdb.com")) == 0)
 	{
-		if (GetFirstMatch(str, _T("Poster\"[\\s\\S]*?(http://ia\\.media-imdb\\.com/images/M/.+?_V1\\.?_.*?)\\.(.+?)\""),
+		if (GetFirstMatch(str, _T("title=\"[^\"]*?Poster\"[^>]*?(http://ia\\.media-imdb\\.com/images/M/[^\"]+?_V1\\.?_[^\"]*?)\\.([^\"]+?)\""),
 				&strTemp, &strTemp2, NULL))
 		{
 			strTemp = strTemp + _T(".") + strTemp2; // take the server's default cropping and resizing
@@ -228,7 +238,7 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 
 	// Get votes
 
-	if (GetFirstMatch(str, _T("<span itemprop=\"ratingCount\">([^<]+)</span>"), &strTemp, NULL))
+	if (GetFirstMatch(str, _T("<span itemprop=\"ratingCount\">([^<]+?)</span>"), &strTemp, NULL))
 	{
 		strTemp.Replace(_T(","), _T(""));
 		pInfo->nVotes = StringToNumber(strTemp);
@@ -237,23 +247,23 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 	// Get title (fail otherwise)
 
 	if (pInfo->strTitle.IsEmpty() &&
-			!GetFirstMatch(str, _T("<title>\"(.+?)\".*?- IMDb</title>"), &pInfo->strTitle, NULL) &&
-			!GetFirstMatch(str, _T("<title>(.+?) \\(.*?- IMDb</title>"), &pInfo->strTitle, NULL) &&
+			!GetFirstMatch(str, _T("<title>\"(.+?)\"[^<]*?- IMDb</title>"), &pInfo->strTitle, NULL) &&
+			!GetFirstMatch(str, _T("<title>(.+?) \\([^<]*?- IMDb</title>"), &pInfo->strTitle, NULL) &&
 			!GetFirstMatch(str, _T("<title>(.+?)- IMDb</title>"), &pInfo->strTitle, NULL))
 		return DBI_STATUS_SCRAPEERROR;
 
 	//Get year (starting year for tv shows)
 
-	GetFirstMatch(str, _T("<title>.+? \\(\\D*(\\d+).*?\\) - IMDb</title>"), &pInfo->strYear, NULL);
+	GetFirstMatch(str, _T("<title>[^\\(]+? \\(\\D*(\\d+)[^\\)]*?\\) - IMDb</title>"), &pInfo->strYear, NULL);
 
 	// For TV try to get the episode release date and episode title
 
-	if (IsTVEpisode(pInfo))
-		GetFirstMatch(str, _T("<title>\".+?\"[ \t]*(.+?)[ \t]*\\("), &pInfo->strEpisodeName, NULL);
+	if (pInfo->bType == DB_TYPE_TV)
+		GetFirstMatch(str, _T("<title>\"[^\"]+?\"[ \t]*([^\\(]+?)[ \t]*\\("), &pInfo->strEpisodeName, NULL);
 
 	// Get season and episode number for TV shows if its not already in parsed from filename.
 
-	if (pInfo->nSeason < 0 && !pInfo->strAirDate.IsEmpty())
+	if (pInfo->bType == DB_TYPE_TV && pInfo->nSeason < 0)
 	{
 		if (GetFirstMatch(str, _T("Season (\\d+), Episode (\\d+)"), &strSeasonTmp, &strEpisodeTmp, NULL))
 		{
@@ -301,7 +311,7 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 
 	// Get actors
 
-	if (GetFirstMatch(str, _T("<meta name=\"description\" content=\".*?With (.*?\\w\\w)\\.[ \"]"), &pInfo->strStars, NULL))
+	if (GetFirstMatch(str, _T("<meta name=\"description\" content=\"[^\"]*?With ([^\"]*?\\w\\w)\\.[ \"]"), &pInfo->strStars, NULL))
 	{
 		pInfo->strStars.Replace(_T(", "), _T("|"));
 

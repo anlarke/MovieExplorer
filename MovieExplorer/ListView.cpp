@@ -952,40 +952,48 @@ void CListView::Draw()
 
 			hPrevFont = (HFONT)SelectObject(m_mdc, m_fntText);
 			SetTextColor(m_mdc, m_clrText);
-
-			/*TextOut(m_mdc, SCX(200) + SCX(35) + m_nColumnWidth + SCX(10),
-				y + SCY(LV_DETAILS_HEIGHT) - SCY(72), PrettyList(mov.strStars));*/
 			
-			// draw actor images
+			// draw actor images and names with links
 
-
-			int nDeltaX = 0;
+			int nX = SCX(200)+ SCX(32) + m_nColumnWidth;
+			INT_PTR nY = y + SCY(LV_DETAILS_HEIGHT) - SCY(68);
 			for (int i = 0; i < DBI_STAR_NUMBER; i++)
 			{
-				if (mov.actorImageData[i] && mov.actorImageData[i]->GetSize())
+				RString strThisStar = GetStar(mov.strStars, i);
+				if (!strThisStar.IsEmpty())
 				{
-					RMemoryDC mdcThumb;
-					VERIFY(LoadImage(*mov.actorImageData[i], mdcThumb, SCX(32), SCY(44)));
-					int cxImg, cyImg;
-					INT_PTR xx, yy;
-					xx = SCX(200) + SCX(30) + m_nColumnWidth + nDeltaX;
-					yy = y + SCY(LV_DETAILS_HEIGHT) - SCY(68);
+					// draw actor image
 
-					mdcThumb.GetDimensions(cxImg, cyImg);
-					BitBlt(m_mdc, xx, yy, cxImg, cyImg, mdcThumb, 0, 0, SRCCOPY);
-					
-					MakeLink(_T(""), _T("http://www.imdb.com/name/") + mov.strActorId[i], xx, cxImg, yy, cyImg, pt);
+					if (mov.actorImageData[i] && mov.actorImageData[i]->GetSize())
+					{
+						int cxImg, cyImg;
+						RMemoryDC mdcThumb;
+						VERIFY(LoadImage(*mov.actorImageData[i], mdcThumb, SCX(32), SCY(44)));
+						mdcThumb.GetDimensions(cxImg, cyImg);
+						BitBlt(m_mdc, nX, nY, cxImg, cyImg, mdcThumb, 0, 0, SRCCOPY);
+						MakeLink(_T(""), _T("http://www.imdb.com/name/") + mov.strActorId[i], nX, cxImg, nY, cyImg, pt);
+						nX += SCX(32);
+					}
+				
+					RString strStar = _T(" ") + strThisStar;
+					if (i + 1 < DBI_STAR_NUMBER && !GetStar(mov.strStars, i + 1).IsEmpty())
+						strStar += _T(", ");
+					GetTextExtentPoint32(m_mdc, strStar, &sz);
 
-					RString strStar = _T(" ") + GetStar(mov.strStars, i) + _T("  ");
-					GetTextExtentPoint32(m_mdc, strStar, &sz);	
-					nDeltaX += SCX(32) + sz.cx;
+					// draw Link to actor and actor name text
 
-					LINK *pImageLinkText = MakeLink(strStar, _T("http://www.imdb.com/name/") + mov.strActorId[i],
-						xx + 32, sz.cx, y + SCY(LV_DETAILS_HEIGHT) - SCY(54), sz.cy, pt);
-					SetTextColor(m_mdc, (pImageLinkText->state == LINKSTATE_HOVER ? m_clrLink : m_clrText));
-					TextOut(m_mdc, xx + SCX(32), y + SCY(LV_DETAILS_HEIGHT) - SCY(54), strStar);
+					if (!mov.strActorId[i].IsEmpty())
+					{
+						LINK *pImageLinkText = MakeLink(strStar, _T("http://www.imdb.com/name/") + mov.strActorId[i],
+							nX, sz.cx, y + SCY(LV_DETAILS_HEIGHT) - SCY(54), sz.cy, pt);
+						SetTextColor(m_mdc, (pImageLinkText->state == LINKSTATE_HOVER ? m_clrLink : m_clrText));
+					}
+					else
+						SetTextColor(m_mdc, m_clrText);
+					TextOut(m_mdc, nX, y + SCY(LV_DETAILS_HEIGHT) - SCY(54), strStar);
+					nX += sz.cx;
+
 				}
-
 			}
 			SelectObject(m_mdc, hPrevFont);
 		}

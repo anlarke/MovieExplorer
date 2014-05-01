@@ -51,7 +51,7 @@ void ParseFileName(RString_ strFileName, RString &strTitle, RString &strYear, IN
 	{
 		m = strTitle.Find(strUrl, 0);
 		if (m >= 0)
-			strTitle = strTitle.Left(m) + strTitle.Right(strTitle.GetLength()-(m+strUrl.GetLength()));
+			strTitle = strTitle.Left(m) + strTitle.Right(strTitle.GetLength() - (m + strUrl.GetLength()));
 	}
 
 	// replace ._ -by a space
@@ -69,7 +69,7 @@ void ParseFileName(RString_ strFileName, RString &strTitle, RString &strYear, IN
 
 	for (n = 0; (n = strTitle.Find(_T('('), n)) != -1; n++)
 	{
-		if (n+5 < strTitle.GetLength() && strTitle[n+5] == _T(')'))
+		if (n + 5 < strTitle.GetLength() && strTitle[n + 5] == _T(')'))
 		{
 			strTemp = strTitle.Mid(n + 1, 4);
 			if (StringToNumber(strTemp) > 1900)
@@ -84,8 +84,8 @@ void ParseFileName(RString_ strFileName, RString &strTitle, RString &strYear, IN
 	// remove anything between ()
 
 	for (m = 0, n = 0; (m = strTitle.Find(_T('('), n)) != -1 &&
-			(n = strTitle.Find(_T(')'), m)) != -1; m = 0, n = 0)
-		strTitle = strTitle.Left(m) + strTitle.Mid(n+1);
+		(n = strTitle.Find(_T(')'), m)) != -1; m = 0, n = 0)
+		strTitle = strTitle.Left(m) + strTitle.Mid(n + 1);
 
 	// for TV shows. Find the season and episode and remove everything following it
 
@@ -97,7 +97,7 @@ void ParseFileName(RString_ strFileName, RString &strTitle, RString &strYear, IN
 			nSeason = StringToNumber(strSeason);
 			nEpisode = StringToNumber(strEpisode);
 		}
-		
+
 		if (m >= 0)
 			strTitle = strTitle.Left(m);
 	}
@@ -130,7 +130,9 @@ void ParseFileName(RString_ strFileName, RString &strTitle, RString &strYear, IN
 				n = strTitle.GetLength();
 
 			if (m == n)
-				{m = n + 1; continue;}
+			{
+				m = n + 1; continue;
+			}
 
 			if (n - m == 4)
 			{
@@ -156,6 +158,37 @@ void ParseFileName(RString_ strFileName, RString &strTitle, RString &strYear, IN
 			strTitle = strTitle.Left(m);
 	}
 
+	//Remove episode numbers of the form XXofYY - TODO: process to return episode number
+
+	RString strOf;
+	if (GetFirstMatch(strTitle, _T("(\\d?\\d[oO][fF]\\d?\\d)"), &strOf, NULL))
+	{
+		m = strTitle.Find(strOf, 0);
+		if (m > 0)
+			strTitle = strTitle.Left(m);
+	}
+
+	// strip common movie descriptors and everything after
+
+	RString strDescriptors[] = { _T("webrip"), _T("dvdrip"), _T("dvdscr"), _T("xvid"), _T("bdrip"),
+		_T("brrip"), _T("hdtv"), _T("pdtv"), _T("box set"), _T("box-set"), _T("x264") };
+	foreach(strDescriptors, strD)
+	{
+		m = strTitle.FindNoCase(strD, 0);
+		if (m > 0)
+			strTitle = strTitle.Left(m);
+	}
+
+	// strip common tv network prefixes
+
+	RString strNetworks[] = { _T("Discovery Channel"), _T("Discovery Ch"), _T("National Geographic"), _T("NG"), _T("Ch4"), _T("HBO") };
+	foreach(strNetworks, strN)
+	{
+		m = strTitle.Find(strN, 0);
+		if (m == 0)
+			strTitle = strTitle.Right(strTitle.GetLength()-strN.GetLength());
+	}
+
 	while (strTitle.Replace(_T("  "), _T(" ")));
 	strTitle.Trim();
 
@@ -173,6 +206,8 @@ void ParseFileName(RString_ strFileName, RString &strTitle, RString &strYear, IN
 	strTitle.Replace(_T(','), _T(' '));
 	while (strTitle.Replace(_T("  "), _T(" ")));
 	strTitle.Trim();
+
+	LOG(strTitle + _T("\n"));
 
 	//TRACE0(_T("ParseFileName\n  strFileName = ") + strFileName + _T("\n  strTitle = ") +
 	//		strTitle + _T("\n  strYear = ") + strYear + _T("\n"));
