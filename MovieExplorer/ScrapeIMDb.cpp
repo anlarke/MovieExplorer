@@ -84,8 +84,8 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 		else
 		{
 			RString strURL = _T("http://www.imdb.com/find?s=tt&q=") + URLEncode(pInfo->strSearchTitle);
-			if (!pInfo->strSearchYear.IsEmpty() && !IsTVEpisode(pInfo))
-				strURL += _T("+%28") + pInfo->strSearchYear + _T("%29");
+			/*if (!pInfo->strSearchYear.IsEmpty() && !IsTVEpisode(pInfo))
+				strURL += _T("+%28") + pInfo->strSearchYear + _T("%29");*/
 
 			str = FixLineEnds(HTMLEntitiesDecode(URLToString(strURL)));
 			if (str.IsEmpty())
@@ -100,14 +100,16 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 				{
 					// 1. Try to match exact title in this century (20xx)
 					// 2. Try to match exact title
-					// 3. Try to match title partly
-					// 4. Just take the first one
+					// 3. Try to match aka title
+					// 4. Try to match title partly
+					// 5. Just take the first one
 
-					if (
-						!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/[^>]*>") + pInfo->strSearchTitle + _T("</a> \\(20"),
-						 &pInfo->strID, NULL) &&
-						!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/[^>]*>") + pInfo->strSearchTitle +
+					if (!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/[^>]*>") + pInfo->strSearchTitle + _T("</a> \\(20"),
+							&pInfo->strID, NULL) &&
+							!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/[^>]*>") + pInfo->strSearchTitle +
 								_T("</a> \\("), &pInfo->strID, NULL) &&
+							!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/[^>]*>[^<]*</a>[^<]*<br/>aka <i>\"") 
+								+ pInfo->strSearchTitle + _T("\"</i>"), &pInfo->strID, NULL) &&
 							!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/[^>]*>[^<]*?") + pInfo->strSearchTitle +
 								_T("[^<]*?</a> \\("), &pInfo->strID, NULL) &&
 							!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)"), &pInfo->strID, NULL))
@@ -116,20 +118,27 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 				else
 				{
 					// 1. Try to match exact title + year
-					// 2. Try to match exact title + (year-1)
-					// 3. Try to match exact title + (year+1)
-					// 4. Try to match year
-					// 5. Try to match exact title
-					// 6. Try to match title partly
-					// 7. Just take the first one
+					// 2. Try to match year + aka exact title
+					// 3. Try to match exact title + (year-1)
+					// 4. Try to match exact title + (year+1)
+					// 5. Try to match year
+					// 6. Try to match exact title
+					// 7. Try to match title partly
+					// 8. Just take the first one
 
 					// NOTE: don't add closing ) after year because it may have /I or /II after it
 
 					RString strYearMinusOne = NumberToString(StringToNumber(pInfo->strSearchYear) - 1);
 					RString strYearPlusOne = NumberToString(StringToNumber(pInfo->strSearchYear) + 1);
 
+					if (GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/[^>]*>[^<]*</a> ?\\(") + pInfo->strSearchYear +
+						_T("\\) ?<br/>aka <i>\"") + pInfo->strSearchTitle + _T("\"</i>"), &pInfo->strID, NULL))
+						LOG(_T("AKA with year MATCH!!!\n"));
+
 					if (!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/[^>]*>") + pInfo->strSearchTitle + _T("</a> \\(") +
 								pInfo->strSearchYear, &pInfo->strID, NULL) &&
+							!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/[^>]*>[^<]*</a> ?\\(") + pInfo->strSearchYear +
+								_T("\\) ?<br/>aka <i>\"") + pInfo->strSearchTitle + _T("\"</i>"), &pInfo->strID, NULL) &&
 							!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/[^>]*>") + pInfo->strSearchTitle + _T("</a> \\(") +
 								strYearMinusOne, &pInfo->strID, NULL) &&
 							!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/[^>]*>") + pInfo->strSearchTitle + _T("</a> \\(") +

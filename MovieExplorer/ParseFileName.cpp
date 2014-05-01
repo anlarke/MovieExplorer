@@ -207,8 +207,6 @@ void ParseFileName(RString_ strFileName, RString &strTitle, RString &strYear, IN
 	while (strTitle.Replace(_T("  "), _T(" ")));
 	strTitle.Trim();
 
-	LOG(strTitle + _T("\n"));
-
 	//TRACE0(_T("ParseFileName\n  strFileName = ") + strFileName + _T("\n  strTitle = ") +
 	//		strTitle + _T("\n  strYear = ") + strYear + _T("\n"));
 }
