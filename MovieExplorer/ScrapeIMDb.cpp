@@ -75,6 +75,8 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 			else if (pInfo->bType == DB_TYPE_TV)
 				strURL += _T("+TV");
 
+			LOG(pInfo->strSearchTitle + _T(": ") + NumberToString(pInfo->bType) + _T("\n"));
+
 			str = FixLineEnds(HTMLEntitiesDecode(URLToString(strURL)));
 			if (str.IsEmpty())
 				return DBI_STATUS_CONNERROR;
@@ -184,10 +186,10 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 	if (str.IsEmpty())
 		return DBI_STATUS_CONNERROR;
 
-	// Determine if its a movie or TV episode
+	// Determine if its a TV episode, otherwise assume its a movie
 
 	RString strType;
-	if (GetFirstMatch(str,_T("<title>[^<]*?\\((TV [Episode|Series])[^\\)]*?\\)[^<]*?</title>"), &strType, NULL))
+	if (GetFirstMatch(str,_T("<title>[^<]*?\\((TV [Episode|Series|Mini-Series])[^\\)]*?\\)[^<]*?</title>"), &strType, NULL))
 		pInfo->bType = DB_TYPE_TV;
 	else
 		pInfo->bType = DB_TYPE_MOVIE;
