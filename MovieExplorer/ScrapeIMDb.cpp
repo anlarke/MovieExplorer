@@ -85,10 +85,8 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 
 				if (!GetFirstMatch(str, _T("href=\"http://www\\.imdb\\.com/title/(tt\\d+)/[^>]*><strong>(?:The |A )?") + 
 						pInfo->strSearchTitle + _T("(?:</strong>)? ?\\((?:<strong>)?") + pInfo->strSearchYear, &pInfo->strID, NULL) &&
-
 					!GetFirstMatch(str, _T("href=\"http://www\\.imdb\\.com/title/(tt\\d+)/[^>]*>(?:<strong>)?(?:The |A )?") + 
 						pInfo->strSearchTitle + _T("(?:</strong>)? ?\\("), &pInfo->strID, NULL) &&
-
 					!GetFirstMatch(str, _T("<a href=\"http://www\\.imdb\\.com/title/(tt\\d+)/[^\"]*\"[^>]*>.+?</a>"),
 					&pInfo->strID, NULL))
 					return DBI_STATUS_UNKNOWN;
@@ -153,20 +151,15 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 
 					if (!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/[^>]*>(?:The |A )?") + pInfo->strSearchTitle
 								+ _T("</a>(?: \\(II?\\))? \\(") + pInfo->strSearchYear, &pInfo->strID, NULL) &&
-
 							!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/[^>]*>[^<]*</a> ?\\(") + pInfo->strSearchYear +
 								_T("\\) ?<br/>aka <i>\"") + pInfo->strSearchTitle + _T("\"</i>"), &pInfo->strID, NULL) &&
-
 							!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/[^>]*>(?:The |A )?") + pInfo->strSearchTitle +
 								_T("[^<]*</a>(?: \\(II?\\))? \\(") + pInfo->strSearchYear, &pInfo->strID, NULL) &&
-
 							!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/[^>]*>(?:The |A )?") + pInfo->strSearchTitle +
 								_T("[^<]*</a>(?: \\(II?\\))? \\((?:") + pInfo->strSearchYear + _T("|") +
-								strYearMinusOne + _T("|") + strYearPlusOne + _T(")"), &pInfo->strID, NULL) &&
-						
+								strYearMinusOne + _T("|") + strYearPlusOne + _T(")"), &pInfo->strID, NULL) &&	
 							!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/[^>]*>[^<]+</a>(?: \\(II?\\))? \\(") +
-								pInfo->strSearchYear, &pInfo->strID, NULL) &&
-						
+								pInfo->strSearchYear, &pInfo->strID, NULL) &&	
 							!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/[^>]*>(?:The |A)?") + pInfo->strSearchTitle +
 								_T("[^<]*</a> \\("), &pInfo->strID, NULL) &&
 							/*!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/[^>]*>[^<]*?") + pInfo->strSearchTitle +
