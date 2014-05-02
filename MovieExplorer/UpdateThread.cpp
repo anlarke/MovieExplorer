@@ -72,11 +72,12 @@ UINT CALLBACK UpdateThread(void *pParam)
 	INT_PTR nUpdatedFromWeb = 0;
 	INT_PTR nSeason = -1;
 	INT_PTR nEpisode = -1;
+	BYTE bType = DB_TYPE_UNKNOWN;
 
 	while (SendMessage(hDatabaseWnd, DBM_GETMOVIEUPDATE, (WPARAM)&mov, (LPARAM)&pOrigMov))
 	{
 		nSeason = -1; nEpisode = -1; strAirDate.Empty();
-		ParseFileName(mov.strFileName, strSearchTitle, strSearchYear, nSeason, nEpisode, strAirDate);
+		ParseFileName(mov.strFileName, strSearchTitle, strSearchYear, nSeason, nEpisode, strAirDate, bType);
 
 		foreach (servicesInUse, strServ)
 		{
@@ -154,8 +155,7 @@ UINT CALLBACK UpdateThread(void *pParam)
 				info.nSeason = nSeason;
 				info.nEpisode = nEpisode;
 				info.strAirDate = strAirDate;
-				if (IsTVEpisode(&info))
-					info.bType = DB_TYPE_TV;
+				info.bType = bType;
 				info.strID = strID;
 
 				if (strServ == _T("imdb.com"))

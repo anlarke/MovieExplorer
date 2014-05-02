@@ -70,14 +70,16 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 			RString strURL = _T("http://www.bing.com/search?q=site%3Aimdb.com+%22");
 
 			strURL += URLEncode(pInfo->strSearchTitle) + _T("%22");
-			if (!pInfo->strSearchYear.IsEmpty() && !IsTVEpisode(pInfo))
+			if (!pInfo->strSearchYear.IsEmpty() && pInfo->bType != DB_TYPE_TV)
 				strURL += _T("+%28") + pInfo->strSearchYear + _T("%29");
+			else if (pInfo->bType == DB_TYPE_TV)
+				strURL += _T("+TV");
 
 			str = FixLineEnds(HTMLEntitiesDecode(URLToString(strURL)));
 			if (str.IsEmpty())
 				return DBI_STATUS_CONNERROR;
 
-			if (!pInfo->strSearchYear.IsEmpty() && !IsTVEpisode(pInfo))
+			if (!pInfo->strSearchYear.IsEmpty() && pInfo->bType != DB_TYPE_TV)
 			{
 				// 1. try exact title and year match
 				// 2. try exact title match
@@ -106,7 +108,7 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 		else
 		{
 			RString strURL = _T("http://www.imdb.com/find?s=tt&q=") + URLEncode(pInfo->strSearchTitle);
-			/*if (!pInfo->strSearchYear.IsEmpty() && !IsTVEpisode(pInfo))
+			/*if (!pInfo->strSearchYear.IsEmpty() && pInfo->bType != DB_TYPE_TV)
 				strURL += _T("+%28") + pInfo->strSearchYear + _T("%29");*/
 
 			str = FixLineEnds(HTMLEntitiesDecode(URLToString(strURL)));

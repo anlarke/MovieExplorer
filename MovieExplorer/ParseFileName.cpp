@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "MovieExplorer.h"
 
-void ParseFileName(RString_ strFileName, RString &strTitle, RString &strYear, INT_PTR &nSeason, INT_PTR &nEpisode, RString &strAirDate)
+void ParseFileName(RString_ strFileName, RString &strTitle, RString &strYear, INT_PTR &nSeason, INT_PTR &nEpisode, RString &strAirDate, BYTE &bType)
 {
 	INT_PTR m, n;
 	RString strTemp, strSeason, strEpisode;
@@ -96,6 +96,7 @@ void ParseFileName(RString_ strFileName, RString &strTitle, RString &strYear, IN
 		{
 			nSeason = StringToNumber(strSeason);
 			nEpisode = StringToNumber(strEpisode);
+			bType = DB_TYPE_TV;
 		}
 
 		if (m >= 0)
@@ -110,6 +111,7 @@ void ParseFileName(RString_ strFileName, RString &strTitle, RString &strYear, IN
 			_T("May"), _T("Jun"), _T("Jul"), _T("Aug"), _T("Sep"), _T("Oct"), _T("Nov"), _T("Dec") };
 
 		strAirDate = strDayTmp + _T(" ") + Month[StringToNumber(strMonthTmp) - 1] + _T(". ") + strYearTmp;
+		bType = DB_TYPE_TV;
 	}
 
 	// find year not in (), but not as first word, strip anything following it
@@ -156,6 +158,7 @@ void ParseFileName(RString_ strFileName, RString &strTitle, RString &strYear, IN
 		m = strTitle.Find(strSeasons, 0);
 		if (m >= 0)
 			strTitle = strTitle.Left(m);
+		bType = DB_TYPE_TV;
 	}
 
 	//Remove episode numbers of the form XXofYY - TODO: process to return episode number
@@ -166,6 +169,7 @@ void ParseFileName(RString_ strFileName, RString &strTitle, RString &strYear, IN
 		m = strTitle.Find(strOf, 0);
 		if (m > 0)
 			strTitle = strTitle.Left(m);
+		bType = DB_TYPE_TV;
 	}
 
 	// strip common movie descriptors and everything after
@@ -182,12 +186,15 @@ void ParseFileName(RString_ strFileName, RString &strTitle, RString &strYear, IN
 	// strip common tv network prefixes
 
 	static const RString strNetworks[] = { _T("Discovery Channel"), _T("Discovery Ch"), _T("National Geographic"), _T("NG"), 
-		_T("Ch4"), _T("HBO"), _T("PBS") };
+		_T("Ch4"), _T("PBS") };
 	foreach(strNetworks, strN)
 	{
 		m = strTitle.Find(strN, 0);
 		if (m == 0)
-			strTitle = strTitle.Right(strTitle.GetLength()-strN.GetLength());
+		{
+			strTitle = strTitle.Right(strTitle.GetLength() - strN.GetLength());
+			bType = DB_TYPE_TV;
+		}
 	}
 
 	while (strTitle.Replace(_T("  "), _T(" ")));
