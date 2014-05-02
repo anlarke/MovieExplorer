@@ -4,7 +4,7 @@
 #include "OptionsDlg.h"
 
 CMainWnd::CMainWnd() : m_bShowStatusBar(false), m_bShowLog(false), m_bSizingLog(false), 
-		m_nLogHeight(0), m_hFocusWnd(NULL), m_hbrBackgr(NULL)
+		m_nLogHeight(0), m_hFocusWnd(NULL), m_hbrBackgr(NULL), m_bListView(true)
 {
 	ZeroMemory(&m_ptSizing, sizeof(POINT));
 	ZeroMemory(&m_rcSizing, sizeof(RECT));
@@ -23,9 +23,7 @@ bool CMainWnd::Create()
 			GETPREFINT(_T("MainWnd"), _T("cx")), 
 			GETPREFINT(_T("MainWnd"), _T("cy")), NULL, NULL))
 		ASSERTRETURN(false);
-
-	m_bListView = true; // Start on list view.
-
+	
 	m_bShowStatusBar = GETPREFBOOL(_T("MainWnd"), _T("ShowStatusBar"));
 	m_bShowLog = GETPREFBOOL(_T("MainWnd"), _T("ShowLog"));
 	m_nLogHeight = GETPREFINT(_T("MainWnd"), _T("LogHeight"));
@@ -44,7 +42,8 @@ bool CMainWnd::Create()
 	SendMessage(m_hWnd, WM_SETICON, (WPARAM)ICON_SMALL, (LPARAM)LoadIcon(GetModuleHandle(NULL), 
 			MAKEINTRESOURCE(IDI_MOVIEEXPLORER)));
 
-	// Set focus to list view so we can start scrolling
+	// Set focus to current view so we can start scrolling
+
 	if (m_bListView)
 		SetFocus(m_listView);
 	else
@@ -111,13 +110,14 @@ LRESULT CMainWnd::WndProc(UINT Msg, WPARAM wParam, LPARAM lParam)
 		GetClientRect(m_hWnd, &rc);
 		OnSize(0, (WORD)rc.right, (WORD)rc.bottom);
 		PostChildrenRec(m_hWnd, WM_PAINT);
-
+		return 0;
 	}
 	return RWindow::WndProc(Msg, wParam, lParam);
 }
 
 void CMainWnd::OnActivateApp(BOOL bActive, DWORD dwThreadID)
 {
+	UNREFERENCED_PARAMETER(dwThreadID);
 	if (bActive && GetDB())
 	{
 		LOG(_T("Refreshing Database...\n"));
@@ -127,6 +127,8 @@ void CMainWnd::OnActivateApp(BOOL bActive, DWORD dwThreadID)
 
 void CMainWnd::OnActivate(WORD state, bool bMinimized, HWND hWndOther)
 {
+	UNREFERENCED_PARAMETER(bMinimized);
+	UNREFERENCED_PARAMETER(hWndOther);
 	if (state == WA_INACTIVE)
 		m_hFocusWnd = GetFocus();
 	else if (m_hFocusWnd)
@@ -140,6 +142,8 @@ void CMainWnd::OnClose()
 
 void CMainWnd::OnCommand(WORD id, WORD notifyCode, HWND hWndControl)
 {
+	UNREFERENCED_PARAMETER(notifyCode);
+	UNREFERENCED_PARAMETER(hWndControl);
 	switch (id)
 	{
 		case ID_TOOLS_ZOOMIN:
@@ -210,6 +214,8 @@ void CMainWnd::OnCommand(WORD id, WORD notifyCode, HWND hWndControl)
 
 bool CMainWnd::OnCreate(CREATESTRUCT *pCS)
 {
+	UNREFERENCED_PARAMETER(pCS);
+
 	if (!m_reBar.Create<CReBar>(m_hWnd))
 		ASSERTRETURN(false);
 	if (!m_listView.Create<CListView>(m_hWnd))
@@ -233,6 +239,10 @@ void CMainWnd::OnDestroy()
 
 void CMainWnd::OnLButtonDown(DWORD keys, short x, short y)
 {
+	UNREFERENCED_PARAMETER(keys);
+	UNREFERENCED_PARAMETER(x);
+	UNREFERENCED_PARAMETER(y);
+
 	RECT rcLog;
 	GetWindowRect(m_logWnd, &rcLog);
 	POINT pt;
@@ -244,11 +254,18 @@ void CMainWnd::OnLButtonDown(DWORD keys, short x, short y)
 
 void CMainWnd::OnLButtonUp(DWORD keys, short x, short y)
 {
+	UNREFERENCED_PARAMETER(keys);
+	UNREFERENCED_PARAMETER(x);
+	UNREFERENCED_PARAMETER(y);
 	m_bSizingLog = false;
 }
 
 void CMainWnd::OnMouseMove(DWORD keys, short x, short y)
 {
+	UNREFERENCED_PARAMETER(keys);
+	UNREFERENCED_PARAMETER(x);
+	UNREFERENCED_PARAMETER(y);
+
 	RECT rcLog;
 	GetWindowRect(m_logWnd, &rcLog);
 	POINT pt;
@@ -281,6 +298,8 @@ void CMainWnd::OnMouseMove(DWORD keys, short x, short y)
 
 void CMainWnd::OnMove(short x, short y)
 {
+	UNREFERENCED_PARAMETER(x);
+	UNREFERENCED_PARAMETER(y);
 	SaveWindowPos();
 }
 
@@ -319,6 +338,7 @@ bool CMainWnd::OnSetCursor(HWND hWnd, WORD hitTest, WORD mouseMsg)
 
 void CMainWnd::OnSetFocus(HWND hWndLoseFocus)
 {
+	UNREFERENCED_PARAMETER(hWndLoseFocus);
 	if (m_bListView)
 		SetFocus(m_listView);
 	else
@@ -327,6 +347,8 @@ void CMainWnd::OnSetFocus(HWND hWndLoseFocus)
 
 void CMainWnd::OnSize(DWORD type, WORD cx, WORD cy)
 {
+	UNREFERENCED_PARAMETER(type);
+
 	SaveWindowPos();
 
 	RECT rcReBar = {0, 0, cx, m_reBar.GetHeight()};

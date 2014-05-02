@@ -14,6 +14,8 @@ void CLBEdit::OnKillFocus(HWND hWndGetFocus)
 
 LRESULT CLBEdit::OnGetDlgCode(UINT virtKey, MSG *pMsg)
 {
+	UNREFERENCED_PARAMETER(virtKey);
+	UNREFERENCED_PARAMETER(pMsg);
 	return DLGC_WANTALLKEYS;
 }
 
@@ -195,6 +197,8 @@ LRESULT CEditListBox::WndProc(UINT Msg, WPARAM wParam, LPARAM lParam)
 
 bool CEditListBox::OnCreate(CREATESTRUCT *pCS)
 {
+	UNREFERENCED_PARAMETER(pCS);
+
 	if (!m_sbHorz.Create<RScrollBar>(m_hWnd, true) ||
 			!m_sbVert.Create<RScrollBar>(m_hWnd, false) ||
 			!m_edit.Create<CLBEdit>(m_hWnd, WS_BORDER|ES_AUTOHSCROLL) ||
@@ -211,6 +215,8 @@ bool CEditListBox::OnCreate(CREATESTRUCT *pCS)
 
 void CEditListBox::OnSize(DWORD type, WORD cx, WORD cy)
 {
+	UNREFERENCED_PARAMETER(type);
+
 	m_mdc.Create(cx, cy);
 
 	// Calculate width of largest item
@@ -270,6 +276,10 @@ void CEditListBox::OnPaint(HDC hDC)
 
 void CEditListBox::OnHScroll(WORD scrollCode, WORD pos, HWND hWndScrollBar)
 {
+	UNREFERENCED_PARAMETER(scrollCode);
+	UNREFERENCED_PARAMETER(pos);
+	UNREFERENCED_PARAMETER(hWndScrollBar);
+
 	m_sbHorz.SetPos(m_sbHorz.GetTrackPos());
 	m_xOffset = m_sbHorz.GetPos();
 	Draw();
@@ -277,6 +287,10 @@ void CEditListBox::OnHScroll(WORD scrollCode, WORD pos, HWND hWndScrollBar)
 
 void CEditListBox::OnVScroll(WORD scrollCode, WORD pos, HWND hWndScrollBar)
 {
+	UNREFERENCED_PARAMETER(scrollCode);
+	UNREFERENCED_PARAMETER(pos);
+	UNREFERENCED_PARAMETER(hWndScrollBar);
+
 	m_sbVert.SetPos(m_sbVert.GetTrackPos());
 	m_yOffset = m_sbVert.GetPos();
 	Draw();
@@ -284,6 +298,9 @@ void CEditListBox::OnVScroll(WORD scrollCode, WORD pos, HWND hWndScrollBar)
 
 void CEditListBox::OnLButtonDown(DWORD keys, short x, short y)
 {
+	UNREFERENCED_PARAMETER(keys);
+	UNREFERENCED_PARAMETER(x);
+
 	SetFocus(m_hWnd);
 	int yItem = m_yOffset + y - 1;
 	INT_PTR nItem = yItem / S(m_nItemHeight);
@@ -292,6 +309,9 @@ void CEditListBox::OnLButtonDown(DWORD keys, short x, short y)
 
 void CEditListBox::OnLButtonDblClk(DWORD keys, short x, short y)
 {
+	UNREFERENCED_PARAMETER(keys);
+	UNREFERENCED_PARAMETER(x);
+
 	int yItem = m_yOffset + y - 1;
 	INT_PTR nItem = yItem / S(m_nItemHeight);
 	Edit(nItem);
@@ -299,16 +319,20 @@ void CEditListBox::OnLButtonDblClk(DWORD keys, short x, short y)
 
 void CEditListBox::OnSetFocus(HWND hWndLoseFocus)
 {
+	UNREFERENCED_PARAMETER(hWndLoseFocus);
 	Draw();
 }
 
 void CEditListBox::OnKillFocus(HWND hWndGetFocus)
 {
+	UNREFERENCED_PARAMETER(hWndGetFocus);
 	Draw();
 }
 
 void CEditListBox::OnKeyDown(UINT virtKey, WORD repCount, UINT flags)
 {
+	UNREFERENCED_PARAMETER(repCount);
+	UNREFERENCED_PARAMETER(flags);
 	if (virtKey == VK_UP)
 		SetSel(m_nSel - 1);
 	else if (virtKey == VK_DOWN)
@@ -319,11 +343,16 @@ void CEditListBox::OnKeyDown(UINT virtKey, WORD repCount, UINT flags)
 
 LRESULT CEditListBox::OnGetDlgCode(UINT virtKey, MSG *pMsg)
 {
+	UNREFERENCED_PARAMETER(virtKey);
+	UNREFERENCED_PARAMETER(pMsg);
 	return DLGC_WANTARROWS;
 }
 
 void CEditListBox::OnCommand(WORD id, WORD notifyCode, HWND hWndControl)
 {
+	UNREFERENCED_PARAMETER(id);
+	UNREFERENCED_PARAMETER(notifyCode);
+
 	if (hWndControl == m_btn)
 		PostMessage(GetParent(m_hWnd), WM_COMMAND, MAKEWPARAM(
 				(WORD)GetMenu(m_hWnd), LBN_BTNCLICKED), (LPARAM)m_hWnd);

@@ -1,6 +1,8 @@
 IDS;English;Dutch
 IDS_LANGUAGENAME;English;Nederlands
 IDS_ALL;All;Alles
+IDS_MOVIES;Movies;Films
+IDS_TV;TV;TV
 IDS_SEARCH;Search;Zoeken
 IDS_GENRES;Genre;Genre
 IDS_COUNTRIES;Country;Land
@@ -37,6 +39,7 @@ IDS_SEARCHINSTANTLY;Instantly start searching when typing in the search box;Dire
 IDS_SEARCHLITERALLY;Search literally for input;Zoek letterlijk naar invoer
 IDS_SEARCHSTORYLINE;Include movie storyline in search;Doorzoek ook het plot van de film
 IDS_NORMALIZERATINGS;Normalize ratings to scale from 1 to 10;Normaliseer beoordelingen naar schaal van 1 tot 10
+IDS_AUTOCATEGORIES;Create categories for movies and tv;Maak categorieën voor films en televisie
 IDS_DATABASE;Database;Database
 IDS_INDEXEXTENSIONS;Index files with the following extensions;Indexeer bestanden met de volgende extensies
 IDS_INDEXDIRECTORIES;Include directories in list;Voeg mappen ook toe aan lijst

@@ -34,6 +34,8 @@ bool CToolBarTreeView::Create(HWND hWndParent, DWORD style, DWORD exStyle)
 
 void CToolBarTreeView::OnSize(DWORD type, WORD cx, WORD cy)
 {
+	UNREFERENCED_PARAMETER(type);
+
 	m_mdc.Create(cx, cy);
 	Draw();
 

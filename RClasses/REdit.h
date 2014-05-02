@@ -83,6 +83,10 @@ protected:
 
 	void OnMouseWheel(WORD keys, short delta, short x, short y)
 	{
+		UNREFERENCED_PARAMETER(keys);
+		UNREFERENCED_PARAMETER(x);
+		UNREFERENCED_PARAMETER(y);
+
 		UINT nScrollLines = 3;
 		SystemParametersInfo(SPI_GETWHEELSCROLLLINES, 0, &nScrollLines, 0);
 		int nPos = GetScrollPos(m_hWnd, SB_VERT);

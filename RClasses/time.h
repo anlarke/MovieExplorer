@@ -65,13 +65,13 @@ inline bool TMToSystemTime(const tm *pTM, SYSTEMTIME *pST)
 	if (!pST || !pTM)
 		ASSERTRETURN(false);
 
-	pST->wDayOfWeek = pTM->tm_wday;
-	pST->wYear = pTM->tm_year + 1900;
-	pST->wMonth = pTM->tm_mon + 1;
-	pST->wDay = pTM->tm_mday;
-	pST->wHour = pTM->tm_hour;
-	pST->wMinute = pTM->tm_min;
-	pST->wSecond = pTM->tm_sec;
+	pST->wDayOfWeek = (WORD)pTM->tm_wday;
+	pST->wYear = (WORD)pTM->tm_year + 1900;
+	pST->wMonth = (WORD)pTM->tm_mon + 1;
+	pST->wDay = (WORD)pTM->tm_mday;
+	pST->wHour = (WORD)pTM->tm_hour;
+	pST->wMinute = (WORD)pTM->tm_min;
+	pST->wSecond = (WORD)pTM->tm_sec;
 	pST->wMilliseconds = 0;
 
 	return true;

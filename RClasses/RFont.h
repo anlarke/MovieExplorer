@@ -110,6 +110,9 @@ public:
 protected:
 	static int CALLBACK EnumFontFamExProc(const LOGFONT *pLF, const TEXTMETRIC *pTM, DWORD type, LPARAM lParam)
 	{
+		UNREFERENCED_PARAMETER(pLF);
+		UNREFERENCED_PARAMETER(pTM);
+		UNREFERENCED_PARAMETER(type);
 		*((bool*)lParam) = true;
 		return FALSE;
 	}

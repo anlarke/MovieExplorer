@@ -60,7 +60,7 @@ public:
 
 		// Create the window
 
-		WndProc<DERIVED_TYPE>((HWND)-1, -1, -1, (LPARAM)(DERIVED_TYPE*)this);
+		WndProc<DERIVED_TYPE>((HWND)-1, -1 , -1, (LPARAM)(DERIVED_TYPE*)this);
 
 		m_hWnd = CreateWindowEx(exStyle, szClassName, lpszName, style, x, y, cx, cy, hWndParent,
 				hMenuOrChildID, GetModuleHandle(NULL), pParam);
@@ -307,18 +307,27 @@ protected:
 
 	void OnActivate(WORD state, bool bMinimized, HWND hWndOther)
 	{
+		UNREFERENCED_PARAMETER(state);
+		UNREFERENCED_PARAMETER(bMinimized);
+		UNREFERENCED_PARAMETER(hWndOther);
 	}
 
 	void OnActivateApp(bool bActive, DWORD dThreadID)
 	{
+		UNREFERENCED_PARAMETER(bActive);
+		UNREFERENCED_PARAMETER(dThreadID);
 	}
 
 	void OnCaptureChanged(HWND hWndNew)
 	{
+		UNREFERENCED_PARAMETER(hWndNew);
 	}
 
 	void OnChar(UINT charCode, WORD repCount, UINT flags)
 	{
+		UNREFERENCED_PARAMETER(charCode);
+		UNREFERENCED_PARAMETER(repCount);
+		UNREFERENCED_PARAMETER(flags);
 	}
 
 	void OnClose()
@@ -327,10 +336,14 @@ protected:
 
 	void OnCommand(WORD id, WORD notifyCode, HWND hWndControl)
 	{
+		UNREFERENCED_PARAMETER(id);
+		UNREFERENCED_PARAMETER(notifyCode);
+		UNREFERENCED_PARAMETER(hWndControl);
 	}
 
 	bool OnCreate(CREATESTRUCT *pCS)
 	{
+		UNREFERENCED_PARAMETER(pCS);
 		return true;
 	}
 
@@ -355,6 +368,8 @@ protected:
 
 	void OnDrawItem(UINT_PTR id, DRAWITEMSTRUCT *pDIS)
 	{
+		UNREFERENCED_PARAMETER(id);
+		UNREFERENCED_PARAMETER(pDIS);
 	}
 
 	LRESULT OnGetDlgCode(UINT virtKey, MSG *pMsg)
@@ -364,30 +379,48 @@ protected:
 
 	void OnHScroll(WORD scrollCode, WORD pos, HWND hWndScrollBar)
 	{
+		UNREFERENCED_PARAMETER(scrollCode);
+		UNREFERENCED_PARAMETER(pos);
+		UNREFERENCED_PARAMETER(hWndScrollBar);
 	}
 
 	void OnKeyDown(UINT virtKey, WORD repCount, UINT flags)
 	{
+		UNREFERENCED_PARAMETER(virtKey);
+		UNREFERENCED_PARAMETER(repCount);
+		UNREFERENCED_PARAMETER(flags);
 	}
 
 	void OnKillFocus(HWND hWndGetFocus)
 	{
+		UNREFERENCED_PARAMETER(hWndGetFocus);
 	}
 
 	void OnLButtonDblClk(DWORD keys, short x, short y)
 	{
+		UNREFERENCED_PARAMETER(keys);
+		UNREFERENCED_PARAMETER(x);
+		UNREFERENCED_PARAMETER(y);
 	}
 
 	void OnLButtonDown(DWORD keys, short x, short y)
 	{
+		UNREFERENCED_PARAMETER(keys);
+		UNREFERENCED_PARAMETER(x);
+		UNREFERENCED_PARAMETER(y);
 	}
 
 	void OnLButtonUp(DWORD keys, short x, short y)
 	{
+		UNREFERENCED_PARAMETER(keys);
+		UNREFERENCED_PARAMETER(x);
+		UNREFERENCED_PARAMETER(y);
 	}
 
 	void OnMeasureItem(UINT_PTR id, MEASUREITEMSTRUCT *pMIS)
 	{
+		UNREFERENCED_PARAMETER(id);
+		UNREFERENCED_PARAMETER(pMIS);
 	}
 
 	void OnMouseLeave()
@@ -396,14 +429,23 @@ protected:
 
 	void OnMouseMove(DWORD keys, short x, short y)
 	{
+		UNREFERENCED_PARAMETER(keys);
+		UNREFERENCED_PARAMETER(x);
+		UNREFERENCED_PARAMETER(y);
 	}
 
 	void OnMouseWheel(WORD keys, short delta, short x, short y)
 	{
+		UNREFERENCED_PARAMETER(keys);
+		UNREFERENCED_PARAMETER(delta);
+		UNREFERENCED_PARAMETER(x);
+		UNREFERENCED_PARAMETER(y);
 	}
 
 	void OnMove(short x, short y)
 	{
+		UNREFERENCED_PARAMETER(x);
+		UNREFERENCED_PARAMETER(y);
 	}
 
 	LRESULT OnNotify(UINT_PTR id, NMHDR *pNMH)
@@ -413,6 +455,7 @@ protected:
 
 	void OnPaint(HDC hDC)
 	{
+		UNREFERENCED_PARAMETER(hDC);
 	}
 
 	void OnPrefChanged()
@@ -430,10 +473,13 @@ protected:
 
 	void OnSetFocus(HWND hWndLoseFocus)
 	{
+		UNREFERENCED_PARAMETER(hWndLoseFocus);
 	}
 
 	void OnSetFont(HFONT hFont, bool bRedraw)
 	{
+		UNREFERENCED_PARAMETER(hFont);
+		UNREFERENCED_PARAMETER(bRedraw);
 	}
 
 	LRESULT OnSetText(const TCHAR *lpszText)
@@ -443,22 +489,33 @@ protected:
 
 	void OnSize(DWORD type, WORD cx, WORD cy)
 	{
+		UNREFERENCED_PARAMETER(type);
+		UNREFERENCED_PARAMETER(cx);
+		UNREFERENCED_PARAMETER(cy);
 	}
 
 	void OnSizing(DWORD side, RECT *pRect)
 	{
+		UNREFERENCED_PARAMETER(side);
+		UNREFERENCED_PARAMETER(pRect);
 	}
 
 	void OnTimer(UINT_PTR nIDEvent)
 	{
+		UNREFERENCED_PARAMETER(nIDEvent);
 	}
 
 	void OnTouch(WORD nInputs, HTOUCHINPUT hTouchInput)
 	{
+		UNREFERENCED_PARAMETER(nInputs);
+		UNREFERENCED_PARAMETER(hTouchInput);
 	}
 
 	void OnVScroll(WORD scrollCode, WORD pos, HWND hWndScrollBar)
 	{
+		UNREFERENCED_PARAMETER(scrollCode);
+		UNREFERENCED_PARAMETER(pos);
+		UNREFERENCED_PARAMETER(hWndScrollBar);
 	}
 
 	HWND m_hWnd;

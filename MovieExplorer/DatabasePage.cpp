@@ -282,6 +282,8 @@ bool CDatabasePage::OnCreate(CREATESTRUCT *pCS)
 
 void CDatabasePage::OnSize(DWORD type, WORD cx, WORD cy)
 {
+	UNREFERENCED_PARAMETER(type);
+	UNREFERENCED_PARAMETER(cy);
 	int y = DUY(4);
 	MoveWindow(m_grpDatabase, DUX(4), y, cx - DUX(8), DUY(70));
 	y += DUY(12);

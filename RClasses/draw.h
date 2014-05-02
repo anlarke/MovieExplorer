@@ -100,7 +100,7 @@ inline bool DrawRectGradientV(HDC hDC, int x, int y, int cx, int cy, COLORREF cl
 		if (alphaTop == alphaBottom)
 			alpha = alphaTop;
 		else
-			alpha = (i * alphaBottom + ((cy-1) - i) * alphaTop) / (cy-1);
+			alpha = (BYTE)((i * alphaBottom + ((cy-1) - i) * alphaTop) / (cy-1));
 
 		if (clrTop == clrBottom)
 			clr = clrTop;
@@ -148,7 +148,7 @@ inline bool DrawRectGradientH(HDC hDC, int x, int y, int cx, int cy, COLORREF cl
 		if (alphaLeft == alphaRight)
 			alpha = alphaLeft;
 		else
-			alpha = ((cx-1) == 0 ? 0 : (i * alphaRight + ((cx-1) - i) * alphaLeft) / (cx-1));
+			alpha = (BYTE)((cx-1) == 0 ? 0 : (i * alphaRight + ((cx-1) - i) * alphaLeft) / (cx-1));
 
 		if (clrLeft == clrRight)
 			clr = clrLeft;
@@ -359,7 +359,7 @@ inline bool DrawRoundedRectGradientV(HDC hDC, int x, int y, int cx, int cy, int 
 		if (alphaTop == alphaBottom)
 			alpha = alphaTop;
 		else
-			alpha = (j * alphaBottom + ((cy-1) - j) * alphaTop) / (cy-1);
+			alpha = (BYTE)((j * alphaBottom + ((cy-1) - j) * alphaTop) / (cy-1));
 
 		if (clrTop == clrBottom)
 			clr = clrTop;
@@ -414,7 +414,7 @@ inline bool DrawRoundedRectGradientH(HDC hDC, int x, int y, int cx, int cy, int 
 		if (alphaLeft == alphaRight)
 			alpha = alphaLeft;
 		else
-			alpha = (i * alphaRight + ((cx-1) - i) * alphaLeft) / (cx-1);
+			alpha = (BYTE)((i * alphaRight + ((cx-1) - i) * alphaLeft) / (cx-1));
 
 		if (clrLeft == clrRight)
 			clr = clrLeft;
@@ -843,7 +843,7 @@ inline bool LoadImage(const BYTE *pData, INT_PTR nDataLen, RMemoryDC &mdc, int c
 		mdc.Create(cx, cy);
 		WICRect rc = {0, 0, cx, cy};
 
-		if (cx == cxImg && cy == cyImg)
+		if (cx == (int)cxImg && cy == (int)cyImg)
 			return SUCCEEDED(pConverter->CopyPixels(&rc, cx * 4, cx * cy * 4, (BYTE*)mdc.GetPixels()));
 
 		RComPtr<IWICBitmapScaler> pScaler;

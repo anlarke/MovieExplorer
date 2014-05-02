@@ -17,6 +17,8 @@ CGridView::~CGridView()
 
 bool CGridView::OnCreate(CREATESTRUCT *pCS)
 {
+	UNREFERENCED_PARAMETER(pCS);
+
 	if (!m_sb.Create<CScrollBar>(m_hWnd, false))
 		ASSERTRETURN(false);
 
@@ -94,6 +96,7 @@ bool CGridView::OnSetCursor(HWND hWnd, WORD hitTest, WORD mouseMsg)
 
 void CGridView::OnSize(DWORD type, WORD cx, WORD cy)
 {
+	UNREFERENCED_PARAMETER(type);
 	VERIFY(m_mdc.Create(cx, cy));
 
 	if (cx == 0 || cy == 0)
@@ -136,6 +139,9 @@ LRESULT CGridView::WndProc(UINT Msg, WPARAM wParam, LPARAM lParam)
 
 void CGridView::OnVScroll(WORD scrollCode, WORD pos, HWND hWndScrollBar)
 {
+	UNREFERENCED_PARAMETER(pos);
+	UNREFERENCED_PARAMETER(hWndScrollBar);
+
 	switch (scrollCode)
 	{
 	case SB_PAGEUP:
@@ -164,6 +170,10 @@ void CGridView::OnVScroll(WORD scrollCode, WORD pos, HWND hWndScrollBar)
 
 void CGridView::OnMouseWheel(WORD keys, short delta, short x, short y)
 {
+	UNREFERENCED_PARAMETER(keys);
+	UNREFERENCED_PARAMETER(x);
+	UNREFERENCED_PARAMETER(y);
+
 	UINT nScrollLines = 3;
 	SystemParametersInfo(SPI_GETWHEELSCROLLLINES, 0, &nScrollLines, 0);
 
@@ -210,7 +220,7 @@ void CGridView::Draw()
 
 	// Calculate index of first movie and the draw offset
 
-	INT_PTR nStart = m_sb.GetPos() / SCY(GV_POSTER_HEIGHT);
+	int nStart = m_sb.GetPos() / SCY(GV_POSTER_HEIGHT);
 	int y = (int)-(m_sb.GetPos() - nStart * SCY(GV_POSTER_HEIGHT));
 
 	// Draw the movies
@@ -218,14 +228,14 @@ void CGridView::Draw()
 	//HFONT hPrevFont;
 	RString str, strTitle, strDate;
 
-	for (INT_PTR row = nStart; row < nRows && y < cy; row++)
+	for (int row = nStart; row < nRows && y < cy; row++)
 	{
 
-		for (INT_PTR col = 0; col < m_nColumns && (row * m_nColumns + col) < GetDB()->m_movies; col++)
+		for (int col = 0; col < m_nColumns && (row * m_nColumns + col) < GetDB()->m_movies; col++)
 		{
 			DBMOVIE& mov = *GetDB()->m_movies[row * m_nColumns + col];
-			DBDIRECTORY& dir = *mov.pDirectory;
-			DBCATEGORY& cat = *dir.pCategory;
+			//DBDIRECTORY& dir = *mov.pDirectory;
+			//DBCATEGORY& cat = *dir.pCategory;
 
 			// draw poster
 
@@ -273,24 +283,26 @@ void CGridView::Draw()
 
 void CGridView::OnMouseMove(DWORD keys, short x, short y)
 {
+	UNREFERENCED_PARAMETER(keys);
+
 	// Determine movie above which we're hovering
 
 	bool bDraw = false;
 	int nRows = (int)ceil(((float)GetDB()->m_movies / (float)m_nColumns));
-	int nHeight = (int)(nRows * SCY(GV_POSTER_HEIGHT));
-	INT_PTR nStart = m_sb.GetPos() / SCY(GV_POSTER_HEIGHT);
+	//int nHeight = (int)(nRows * SCY(GV_POSTER_HEIGHT));
+	int nStart = m_sb.GetPos() / SCY(GV_POSTER_HEIGHT);
 	int nYRow = (int)-(m_sb.GetPos() - nStart * SCY(GV_POSTER_HEIGHT));
 	INT_PTR nHoverMov = -1;
 
 
 	int cxImg = 200, cyImg = 300;
-	for (INT_PTR row = nStart; row < nRows ; row++)
+	for (int row = nStart; row < nRows ; row++)
 	{
 
-		for (INT_PTR col = 0; col < m_nColumns && (row * m_nColumns + col) < GetDB()->m_movies; col++)
+		for (int col = 0; col < m_nColumns && (row * m_nColumns + col) < GetDB()->m_movies; col++)
 		{
-			INT_PTR nX = SCX(15) + col * SCX(cxImg);
-			INT_PTR nY = nYRow + SCY(15);
+			int nX = SCX(15) + col * SCX(cxImg);
+			int nY = nYRow + SCY(15);
 			RECT rcItem = { nX, nY, nX+SCX(cxImg), nY+SCY(cyImg) };
 			if (PtInRect(&rcItem, x, y))
 			{
@@ -322,6 +334,8 @@ void CGridView::OnMouseMove(DWORD keys, short x, short y)
 
 void CGridView::OnKeyDown(UINT virtKey, WORD repCount, UINT flags)
 {
+	UNREFERENCED_PARAMETER(repCount);
+	UNREFERENCED_PARAMETER(flags);
 	switch (virtKey)
 	{
 
@@ -352,6 +366,9 @@ void CGridView::OnKeyDown(UINT virtKey, WORD repCount, UINT flags)
 
 void CGridView::OnLButtonDown(DWORD keys, short x, short y)
 {
+	UNREFERENCED_PARAMETER(keys);
+	UNREFERENCED_PARAMETER(x);
+	UNREFERENCED_PARAMETER(y);
 
 	RObArray<RString> keywords;
 	SetFocus(m_hWnd);

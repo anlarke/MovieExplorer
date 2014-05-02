@@ -66,6 +66,8 @@ protected:
 
 	void OnSize(DWORD type, WORD cx, WORD cy)
 	{
+		UNREFERENCED_PARAMETER(type);
+
 		m_mdc.Create(cx, cy);
 
 		if (cx == 0 || cy == 0)
@@ -82,6 +84,8 @@ protected:
 
 	void OnMouseMove(DWORD keys, short x, short y)
 	{
+		UNREFERENCED_PARAMETER(keys);
+
 		RECT rc;
 		GetClientRect(m_hWnd, &rc);
 
@@ -109,6 +113,10 @@ protected:
 
 	void OnLButtonDown(DWORD keys, short x, short y)
 	{
+		UNREFERENCED_PARAMETER(keys);
+		UNREFERENCED_PARAMETER(x);
+		UNREFERENCED_PARAMETER(y);
+
 		if (m_state != CTBBSTATE_CHECKED)
 			m_state = CTBBSTATE_PRESSED;
 
@@ -122,6 +130,8 @@ protected:
 
 	void OnLButtonUp(DWORD keys, short x, short y)
 	{
+		UNREFERENCED_PARAMETER(keys);
+
 		RECT rc;
 		GetClientRect(m_hWnd, &rc);
 

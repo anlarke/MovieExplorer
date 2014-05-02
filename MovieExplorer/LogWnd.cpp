@@ -12,6 +12,8 @@ CLogWnd::~CLogWnd()
 
 bool CLogWnd::Write(const TCHAR* lpszText, UINT_PTR type /*= 0*/)
 {
+	UNREFERENCED_PARAMETER(type);
+
 	if (!IsWindow(m_hWnd))
 		ASSERTRETURN(false);
 
@@ -26,6 +28,7 @@ bool CLogWnd::Write(const TCHAR* lpszText, UINT_PTR type /*= 0*/)
 
 HBRUSH CLogWnd::OnCtlColorStatic(HDC hDC, HWND hWnd)
 {
+	UNREFERENCED_PARAMETER(hWnd);
 	SetBkMode(hDC, TRANSPARENT);
 	SetTextColor(hDC, m_clrText);
 	return m_hbrBackgr;
@@ -33,6 +36,8 @@ HBRUSH CLogWnd::OnCtlColorStatic(HDC hDC, HWND hWnd)
 
 bool CLogWnd::OnCreate(CREATESTRUCT *pCS)
 {
+	UNREFERENCED_PARAMETER(pCS);
+
 	if (!m_edit.Create<REditFF>(m_hWnd, ES_MULTILINE|ES_READONLY|ES_AUTOHSCROLL|
 			ES_AUTOVSCROLL/*|WS_VSCROLL*/))
 		ASSERTRETURN(false);
@@ -84,6 +89,8 @@ void CLogWnd::OnScaleChanged()
 
 void CLogWnd::OnSize(DWORD type, WORD cx, WORD cy)
 {
+	UNREFERENCED_PARAMETER(type);
+
 	MoveWindow(m_edit, 0, SCY(1), cx, cy - SCY(1));
 
 	PostMessage(m_hWnd, WM_PAINT);

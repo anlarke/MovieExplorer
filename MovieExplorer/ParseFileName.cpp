@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "MovieExplorer.h"
 
-void ParseFileName(RString_ strFileName, RString &strTitle, RString &strYear, INT_PTR &nSeason, INT_PTR &nEpisode, RString &strAirDate)
+void ParseFileName(RString_ strFileName, RString &strTitle, RString &strYear, INT_PTR &nSeason, INT_PTR &nEpisode, RString &strAirDate, BYTE &bType)
 {
 	INT_PTR m, n;
 	RString strTemp, strSeason, strEpisode;
@@ -51,7 +51,7 @@ void ParseFileName(RString_ strFileName, RString &strTitle, RString &strYear, IN
 	{
 		m = strTitle.Find(strUrl, 0);
 		if (m >= 0)
-			strTitle = strTitle.Left(m) + strTitle.Right(strTitle.GetLength()-(m+strUrl.GetLength()));
+			strTitle = strTitle.Left(m) + strTitle.Right(strTitle.GetLength() - (m + strUrl.GetLength()));
 	}
 
 	// replace ._ -by a space
@@ -69,7 +69,7 @@ void ParseFileName(RString_ strFileName, RString &strTitle, RString &strYear, IN
 
 	for (n = 0; (n = strTitle.Find(_T('('), n)) != -1; n++)
 	{
-		if (n+5 < strTitle.GetLength() && strTitle[n+5] == _T(')'))
+		if (n + 5 < strTitle.GetLength() && strTitle[n + 5] == _T(')'))
 		{
 			strTemp = strTitle.Mid(n + 1, 4);
 			if (StringToNumber(strTemp) > 1900)
@@ -84,8 +84,8 @@ void ParseFileName(RString_ strFileName, RString &strTitle, RString &strYear, IN
 	// remove anything between ()
 
 	for (m = 0, n = 0; (m = strTitle.Find(_T('('), n)) != -1 &&
-			(n = strTitle.Find(_T(')'), m)) != -1; m = 0, n = 0)
-		strTitle = strTitle.Left(m) + strTitle.Mid(n+1);
+		(n = strTitle.Find(_T(')'), m)) != -1; m = 0, n = 0)
+		strTitle = strTitle.Left(m) + strTitle.Mid(n + 1);
 
 	// for TV shows. Find the season and episode and remove everything following it
 
@@ -96,8 +96,9 @@ void ParseFileName(RString_ strFileName, RString &strTitle, RString &strYear, IN
 		{
 			nSeason = StringToNumber(strSeason);
 			nEpisode = StringToNumber(strEpisode);
+			bType = DB_TYPE_TV;
 		}
-		
+
 		if (m >= 0)
 			strTitle = strTitle.Left(m);
 	}
@@ -110,6 +111,7 @@ void ParseFileName(RString_ strFileName, RString &strTitle, RString &strYear, IN
 			_T("May"), _T("Jun"), _T("Jul"), _T("Aug"), _T("Sep"), _T("Oct"), _T("Nov"), _T("Dec") };
 
 		strAirDate = strDayTmp + _T(" ") + Month[StringToNumber(strMonthTmp) - 1] + _T(". ") + strYearTmp;
+		bType = DB_TYPE_TV;
 	}
 
 	// find year not in (), but not as first word, strip anything following it
@@ -122,18 +124,17 @@ void ParseFileName(RString_ strFileName, RString &strTitle, RString &strYear, IN
 	if (strYear.IsEmpty())
 	{
 		m = 0;
-		while (true)
+		while (m < strTitle.GetLength())
 		{
-			if (m >= strTitle.GetLength())
-				break;
-
 			n = strTitle.Find(_T(' '), m);
 
 			if (n == -1)
 				n = strTitle.GetLength();
 
 			if (m == n)
-				{m = n + 1; continue;}
+			{
+				m = n + 1; continue;
+			}
 
 			if (n - m == 4)
 			{
@@ -157,6 +158,43 @@ void ParseFileName(RString_ strFileName, RString &strTitle, RString &strYear, IN
 		m = strTitle.Find(strSeasons, 0);
 		if (m >= 0)
 			strTitle = strTitle.Left(m);
+		bType = DB_TYPE_TV;
+	}
+
+	//Remove episode numbers of the form XXofYY - TODO: process to return episode number
+
+	RString strOf;
+	if (GetFirstMatch(strTitle, _T("(\\d?\\d[oO][fF]\\d?\\d)"), &strOf, NULL))
+	{
+		m = strTitle.Find(strOf, 0);
+		if (m > 0)
+			strTitle = strTitle.Left(m);
+		bType = DB_TYPE_TV;
+	}
+
+	// strip common movie descriptors and everything after
+
+	static const RString strDescriptors[] = { _T("webrip"), _T("dvdrip"), _T("dvdscr"), _T("xvid"), _T("bdrip"),
+		_T("brrip"), _T("hdtv"), _T("pdtv"), _T("box set"), _T("box-set"), _T("x264") };
+	foreach(strDescriptors, strD)
+	{
+		m = strTitle.FindNoCase(strD, 0);
+		if (m > 0)
+			strTitle = strTitle.Left(m);
+	}
+
+	// strip common tv network prefixes
+
+	static const RString strNetworks[] = { _T("Discovery Channel"), _T("Discovery Ch"), _T("National Geographic"), _T("NG"), 
+		_T("Ch4"), _T("PBS") };
+	foreach(strNetworks, strN)
+	{
+		m = strTitle.Find(strN, 0);
+		if (m == 0)
+		{
+			strTitle = strTitle.Right(strTitle.GetLength() - strN.GetLength());
+			bType = DB_TYPE_TV;
+		}
 	}
 
 	while (strTitle.Replace(_T("  "), _T(" ")));

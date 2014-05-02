@@ -70,7 +70,6 @@ public:
 				hWndParent, (HMENU)id, GetModuleHandle(NULL), pParam);
 
 		ASSERTRETURN(m_hWnd != NULL);
-
 		return true;
 	}
 
@@ -117,6 +116,7 @@ protected:
 
 	void OnChar(UINT charCode, WORD repCount, UINT flags)
 	{
+		UNREFERENCED_PARAMETER(repCount);
 		CallWindowProc(m_lpfnPrevWndProc, m_hWnd, WM_CHAR, (WPARAM)charCode, (LPARAM)flags);
 	}
 
@@ -172,6 +172,7 @@ protected:
 
 	void OnKeyDown(UINT virtKey, WORD repCount, UINT flags)
 	{
+		UNREFERENCED_PARAMETER(repCount);
 		CallWindowProc(m_lpfnPrevWndProc, m_hWnd, WM_KEYDOWN, (WPARAM)virtKey, (LPARAM)flags);
 	}
 
@@ -313,6 +314,7 @@ protected:
 
 	bool OnEraseBkgnd(HDC hDC)
 	{
+		UNREFERENCED_PARAMETER(hDC);
 		return true;
 	}
 

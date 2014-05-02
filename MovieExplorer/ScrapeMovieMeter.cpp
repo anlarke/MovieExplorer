@@ -23,6 +23,12 @@ DWORD ScrapeMovieMeter(DBINFO *pInfo)
 	pInfo->nVotes = 0;
 	pInfo->nMetascore = -1;
 	pInfo->posterData.SetSize(0);
+	pInfo->bType = DB_TYPE_UNKNOWN;
+	for (int i = 0; i < DBI_STAR_NUMBER; i++)
+	{
+		pInfo->actorImageData[i] = NULL;
+		pInfo->strActorId[i].Empty();
+	}
 	//pInfo->status = DBI_STATUS_NONE;
 	//pInfo->timestamp = 0;
 

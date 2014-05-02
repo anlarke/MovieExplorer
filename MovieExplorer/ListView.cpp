@@ -49,12 +49,15 @@ CListView::~CListView()
 
 void CListView::OnCommand(WORD id, WORD notifyCode, HWND hWndControl)
 {
+	UNREFERENCED_PARAMETER(id);
+	UNREFERENCED_PARAMETER(notifyCode);
+
 	if (m_nHoverMov < 0 || m_nHoverMov >= GetDB()->m_movies)
 		return;
 
 	DBMOVIE& mov = *GetDB()->m_movies[m_nHoverMov];
 	DBDIRECTORY& dir = *mov.pDirectory;
-	DBCATEGORY& cat = *dir.pCategory;
+	//DBCATEGORY& cat = *dir.pCategory;
 
 	if (hWndControl == m_btnPlay)
 	{
@@ -83,8 +86,8 @@ void CListView::OnCommand(WORD id, WORD notifyCode, HWND hWndControl)
 
 				foreach(fileInfos, fi)
 				{
-
 					// See if extension is in the list of valid ones
+
 					if (strIndexExtensions.FindNoCase(_T("|") + GetFileExt(fi.strName) + _T("|")) == -1)
 						continue;
 
@@ -212,6 +215,8 @@ void CListView::OnCommand(WORD id, WORD notifyCode, HWND hWndControl)
 
 bool CListView::OnCreate(CREATESTRUCT *pCS)
 {
+	UNREFERENCED_PARAMETER(pCS);
+
 	if (!m_sb.Create<CScrollBar>(m_hWnd, false))
 		ASSERTRETURN(false);
 
@@ -245,6 +250,8 @@ bool CListView::OnCreate(CREATESTRUCT *pCS)
 
 void CListView::OnLButtonDown(DWORD keys, short x, short y)
 {
+	UNREFERENCED_PARAMETER(keys);
+
 	SetFocus(m_hWnd);
 
 	foreach (m_links, link)
@@ -256,6 +263,10 @@ void CListView::OnLButtonDown(DWORD keys, short x, short y)
 
 void CListView::OnLButtonDblClk(DWORD keys, short x, short y)
 {
+	UNREFERENCED_PARAMETER(keys);
+	UNREFERENCED_PARAMETER(x);
+	UNREFERENCED_PARAMETER(y);
+
 	// Play movie on double click
 
 	SetFocus(m_hWnd);
@@ -264,6 +275,8 @@ void CListView::OnLButtonDblClk(DWORD keys, short x, short y)
 
 void CListView::OnMouseMove(DWORD keys, short x, short y)
 {
+	UNREFERENCED_PARAMETER(keys);
+
 	bool bDraw = false;
 
 	foreach (m_links, link)
@@ -316,6 +329,10 @@ void CListView::OnMouseMove(DWORD keys, short x, short y)
 
 void CListView::OnMouseWheel(WORD keys, short delta, short x, short y)
 {
+	UNREFERENCED_PARAMETER(keys);
+	UNREFERENCED_PARAMETER(x);
+	UNREFERENCED_PARAMETER(y);
+
 	UINT nScrollLines = 3;
 	SystemParametersInfo(SPI_GETWHEELSCROLLLINES, 0, &nScrollLines, 0);
 
@@ -328,6 +345,9 @@ void CListView::OnMouseWheel(WORD keys, short delta, short x, short y)
 
 void CListView::OnRButtonDown(DWORD keys, short x, short y)
 {
+	UNREFERENCED_PARAMETER(keys);
+	UNREFERENCED_PARAMETER(x);
+	UNREFERENCED_PARAMETER(y);
 	SetFocus(m_hWnd);
 }
 
@@ -520,6 +540,7 @@ bool CListView::OnSetCursor(HWND hWnd, WORD hitTest, WORD mouseMsg)
 
 void CListView::OnSize(DWORD type, WORD cx, WORD cy)
 {
+	UNREFERENCED_PARAMETER(type);
 	VERIFY(m_mdc.Create(cx, cy));
 
 	if (cx == 0 || cy == 0)
@@ -530,6 +551,8 @@ void CListView::OnSize(DWORD type, WORD cx, WORD cy)
 
 void CListView::OnTouch(WORD nInputs, HTOUCHINPUT hTouchInput)
 {
+	UNREFERENCED_PARAMETER(nInputs);
+
 	TOUCHINPUT ti;
 	GetTouchInputInfo(hTouchInput, 1, &ti, sizeof(TOUCHINPUT));
 
@@ -600,6 +623,9 @@ void CListView::OnTimer(UINT_PTR nIDEvent)
 
 void CListView::OnVScroll(WORD scrollCode, WORD pos, HWND hWndScrollBar)
 {
+	UNREFERENCED_PARAMETER(pos);
+	UNREFERENCED_PARAMETER(hWndScrollBar);
+
 	switch (scrollCode)
 	{
 	case SB_PAGEUP:
@@ -628,6 +654,8 @@ void CListView::OnVScroll(WORD scrollCode, WORD pos, HWND hWndScrollBar)
 
 void CListView::OnKeyDown(UINT virtKey, WORD repCount, UINT flags)
 {
+	UNREFERENCED_PARAMETER(repCount);
+	UNREFERENCED_PARAMETER(flags);
 	switch (virtKey)
 	{
 		case VK_PRIOR:
@@ -657,6 +685,19 @@ void CListView::OnKeyDown(UINT virtKey, WORD repCount, UINT flags)
 void CListView::GoToItem(int item)
 {
 	m_sb.SetPos(item * SCY(LV_DETAILS_HEIGHT));
+}
+
+CListView::LINK* CListView::MakeLink(RString strText, RString strUrl, INT_PTR x, int cx, INT_PTR y, int cy, POINT pt)
+{
+	LINK *pLink = m_links.AddNew();
+	pLink->strText = strText;
+	pLink->strURL = strUrl;
+	pLink->rc.x = x;
+	pLink->rc.cx = cx;
+	pLink->rc.y = y;
+	pLink->rc.cy = cy;
+	pLink->state = (PtInRect(&pLink->rc, pt) ? LINKSTATE_HOVER : LINKSTATE_NORMAL);
+	return (pLink);
 }
 
 LRESULT CListView::WndProc(UINT Msg, WPARAM wParam, LPARAM lParam)
@@ -896,56 +937,109 @@ void CListView::Draw()
 			SelectObject(m_mdc, hPrevFont);
 		}
 		
-		// draw stars
+		// draw stars names and pictures
 
+		SIZE sz;
 		if (!mov.strStars.IsEmpty())
 		{
+			// Stars: label
+
 			hPrevFont = (HFONT)SelectObject(m_mdc, m_fntTextBold);
 			SetTextColor(m_mdc, m_clrText);
-			TextOut(m_mdc, SCX(200) + SCX(35), y + SCY(LV_DETAILS_HEIGHT) - SCY(72), 
-					GETSTR(IDS_STARS) + _T(":"));
+			TextOut(m_mdc, SCX(200) + SCX(35), y + SCY(LV_DETAILS_HEIGHT) - SCY(54),
+				GETSTR(IDS_STARS) + _T(":"));
 			SelectObject(m_mdc, hPrevFont);
 
 			hPrevFont = (HFONT)SelectObject(m_mdc, m_fntText);
 			SetTextColor(m_mdc, m_clrText);
-			TextOut(m_mdc, SCX(200) + SCX(35) + m_nColumnWidth + SCX(10), 
-					y + SCY(LV_DETAILS_HEIGHT) - SCY(72), PrettyList(mov.strStars));
+			
+			// draw actor images and names with links
+
+			int nX = SCX(200)+ SCX(32) + m_nColumnWidth;
+			INT_PTR nY = y + SCY(LV_DETAILS_HEIGHT) - SCY(68);
+			for (int i = 0; i < DBI_STAR_NUMBER; i++)
+			{
+				RString strThisStar = GetStar(mov.strStars, i);
+				if (!strThisStar.IsEmpty())
+				{
+					// draw actor image
+
+					if (mov.actorImageData[i] && mov.actorImageData[i]->GetSize())
+					{
+						int cxImg, cyImg;
+						RMemoryDC mdcThumb;
+						VERIFY(LoadImage(*mov.actorImageData[i], mdcThumb, SCX(32), SCY(44)));
+						mdcThumb.GetDimensions(cxImg, cyImg);
+						BitBlt(m_mdc, nX, nY, cxImg, cyImg, mdcThumb, 0, 0, SRCCOPY);
+						MakeLink(_T(""), _T("http://www.imdb.com/name/") + mov.strActorId[i], nX, cxImg, nY, cyImg, pt);
+						nX += SCX(32);
+					}
+				
+					RString strStar = _T(" ") + strThisStar;
+					if (i + 1 < DBI_STAR_NUMBER && !GetStar(mov.strStars, i + 1).IsEmpty())
+						strStar += _T(", ");
+					GetTextExtentPoint32(m_mdc, strStar, &sz);
+
+					// draw Link to actor and actor name text
+
+					if (!mov.strActorId[i].IsEmpty())
+					{
+						LINK *pImageLinkText = MakeLink(strStar, _T("http://www.imdb.com/name/") + mov.strActorId[i],
+							nX, sz.cx, y + SCY(LV_DETAILS_HEIGHT) - SCY(54), sz.cy, pt);
+						SetTextColor(m_mdc, (pImageLinkText->state == LINKSTATE_HOVER ? m_clrLink : m_clrText));
+					}
+					else
+						SetTextColor(m_mdc, m_clrText);
+					TextOut(m_mdc, nX, y + SCY(LV_DETAILS_HEIGHT) - SCY(54), strStar);
+					nX += sz.cx;
+
+				}
+			}
 			SelectObject(m_mdc, hPrevFont);
 		}
-
-		// draw category (and directory)
-
-		hPrevFont = (HFONT)SelectObject(m_mdc, m_fntTextBold);
-		SetTextColor(m_mdc, m_clrText);
-		TextOut(m_mdc, SCX(200) + SCX(35), y + SCY(LV_DETAILS_HEIGHT) - SCY(52), 
-				GETSTR(IDS_CATEGORY) + _T(":"));
-		SelectObject(m_mdc, hPrevFont);
-
-		hPrevFont = (HFONT)SelectObject(m_mdc, m_fntText);
-		SetTextColor(m_mdc, m_clrText);
-		TextOut(m_mdc, SCX(200) + SCX(35) + m_nColumnWidth + SCX(10), 
-				y + SCY(LV_DETAILS_HEIGHT) - SCY(52), cat.strName + _T(" ["));
-		SIZE sz;
-		GetTextExtentPoint32(m_mdc, cat.strName + _T(" ["), &sz);
-		TextOut(m_mdc, SCX(200) + SCX(35) + m_nColumnWidth + SCX(10) + sz.cx, 
-				y + SCY(LV_DETAILS_HEIGHT) - SCY(52), dir.strPath + _T("]"));
-		SelectObject(m_mdc, hPrevFont);
 
 		// draw file/entry
 
 		hPrevFont = (HFONT)SelectObject(m_mdc, m_fntTextBold);
 		SetTextColor(m_mdc, m_clrText);
-		TextOut(m_mdc, SCX(200) + SCX(35), y + SCY(LV_DETAILS_HEIGHT) - SCY(34), 
+		TextOut(m_mdc, SCX(200) + SCX(35), y + SCY(LV_DETAILS_HEIGHT) - SCY(20), 
 				GETSTR(IDS_FILE) + _T(":"));
 		SelectObject(m_mdc, hPrevFont);
 
 		hPrevFont = (HFONT)SelectObject(m_mdc, m_fntText);
 		SetTextColor(m_mdc, m_clrText);
+		GetTextExtentPoint32(m_mdc, GETSTR(IDS_FILE) + _T(":"), &sz);
+		int nOffset = sz.cx;
+		RString strPrintFileName = mov.strFileName +
+			(mov.fileSize != 0 ? _T(" [") + SizeToString(mov.fileSize) +
+			_T("]") : _T(""));
 		TextOut(m_mdc, SCX(200) + SCX(35) + m_nColumnWidth + SCX(10),
-				y + SCY(LV_DETAILS_HEIGHT) - SCY(34), mov.strFileName + 
-				(mov.fileSize != 0 ? _T(" [") + SizeToString(mov.fileSize) + 
-				_T("]") : _T("")));
+				y + SCY(LV_DETAILS_HEIGHT) - SCY(20), strPrintFileName);
+		GetTextExtentPoint32(m_mdc, strPrintFileName, &sz);
+		nOffset += sz.cx;
 		SelectObject(m_mdc, hPrevFont);
+
+
+		// draw category (and directory)
+		
+		hPrevFont = (HFONT)SelectObject(m_mdc, m_fntTextBold);
+		SetTextColor(m_mdc, m_clrText);
+		TextOut(m_mdc, SCX(200) + SCX(35) + m_nColumnWidth + nOffset + SCX(30), y + SCY(LV_DETAILS_HEIGHT) - SCY(20),
+		GETSTR(IDS_CATEGORY) + _T(":"));
+		GetTextExtentPoint32(m_mdc, GETSTR(IDS_CATEGORY) + _T(":"), &sz);
+		nOffset += sz.cx;
+		SelectObject(m_mdc, hPrevFont);
+
+		hPrevFont = (HFONT)SelectObject(m_mdc, m_fntText);
+		SetTextColor(m_mdc, m_clrText);
+		TextOut(m_mdc, SCX(200) + SCX(35) + m_nColumnWidth + nOffset + SCX(40),
+		y + SCY(LV_DETAILS_HEIGHT) - SCY(20), cat.strName );
+	/*	GetTextExtentPoint32(m_mdc, cat.strName + _T(" ["), &sz);
+		TextOut(m_mdc, SCX(200) + SCX(35) + m_nColumnWidth + SCX(10) + sz.cx,
+		y + SCY(LV_DETAILS_HEIGHT) - SCY(52), dir.strPath + _T("]"));*/
+		SelectObject(m_mdc, hPrevFont);
+		
+
 
 		// draw rating
 
@@ -1056,6 +1150,7 @@ void CListView::Draw()
 			pLink->rc.y = y + SCY(48);
 			pLink->rc.cy = sz.cy;
 			pLink->state = (PtInRect(&pLink->rc, pt) ? LINKSTATE_HOVER : LINKSTATE_NORMAL);
+			
 			SetTextColor(m_mdc, (pLink->state == LINKSTATE_HOVER ? m_clrLink : m_clrText));
 			TextOut(m_mdc, pLink->rc.x, pLink->rc.y, pLink->strText);
 			SelectObject(m_mdc, hPrevFont);
@@ -1064,16 +1159,12 @@ void CListView::Draw()
 
 			if (mov.nMetascore >= 0 && m_strRatingServ == _T("imdb.com"))
 			{
-				LINK *pMetascoreLink = m_links.AddNew();
-				pMetascoreLink->strText = _T("Metascore:");
-				pMetascoreLink->strURL = _T("http://www.imdb.com/title/") + mov.strIMDbID + _T("/criticreviews");
 				hPrevFont = (HFONT)SelectObject(m_mdc, m_fntText);
-				GetTextExtentPoint32(m_mdc, pMetascoreLink->strText, &sz);
-				pMetascoreLink->rc.x = cx - sz.cx - SCX(50);
-				pMetascoreLink->rc.cx = sz.cx;
-				pMetascoreLink->rc.y = y + SCY(73);
-				pMetascoreLink->rc.cy = sz.cy;
-				pMetascoreLink->state = (PtInRect(&pMetascoreLink->rc, pt) ? LINKSTATE_HOVER : LINKSTATE_NORMAL);
+				GetTextExtentPoint32(m_mdc, _T("Metascore"), &sz);
+
+				LINK *pMetascoreLink = MakeLink(_T("Metascore:"), _T("http://www.imdb.com/title/") + mov.strIMDbID + _T("/criticreviews"),
+					cx - sz.cx - SCX(50), sz.cx, y + SCY(73), sz.cy, pt);
+
 				SetTextColor(m_mdc, (pMetascoreLink->state == LINKSTATE_HOVER ? m_clrLink : m_clrText));
 				TextOut(m_mdc, pMetascoreLink->rc.x, pMetascoreLink->rc.y, pMetascoreLink->strText);
 				SelectObject(m_mdc, hPrevFont);
@@ -1104,14 +1195,9 @@ void CListView::Draw()
 
 				FillSolidRect(m_mdc, nRectStart , nRectStartY, SCX(24), SCY(24), clrRect);
 
-				LINK *pMetascoreLink2 = m_links.AddNew();
-				pMetascoreLink2->strText = NumberToString(mov.nMetascore);
-				pMetascoreLink2->strURL = _T("http://www.imdb.com/title/") + mov.strIMDbID + _T("/criticreviews");
-				pMetascoreLink2->rc.x = nRectStart;
-				pMetascoreLink2->rc.cx = SCX(24);
-				pMetascoreLink2->rc.y = nRectStartY;
-				pMetascoreLink2->rc.cy = SCY(24);
-				pMetascoreLink2->state = (PtInRect(&pMetascoreLink2->rc, pt) ? LINKSTATE_HOVER : LINKSTATE_NORMAL);
+				LINK *pMetascoreLink2 = MakeLink(NumberToString(mov.nMetascore), _T("http://www.imdb.com/title/") + mov.strIMDbID +
+					_T("/criticreviews"), nRectStart, SCX(24), nRectStartY, SCY(24), pt);
+
 				SetTextColor(m_mdc, m_clrBackgr);
 				TextOut(m_mdc, nRectMiddle - nTextMiddle, nRectMiddleY - nTextMiddleY, pMetascoreLink2->strText);
 				SelectObject(m_mdc, hPrevFont);
@@ -1148,16 +1234,10 @@ void CListView::Draw()
 				TextOut(m_mdc, x, y + SCY(66), str);
 				SelectObject(m_mdc, hPrevFont);
 
-				LINK *pLink = m_links.AddNew();
-				pLink->strText = _T("IMDb");
-				pLink->strURL = _T("http://www.imdb.com/title/") + mov.strIMDbID + _T("/");
 				hPrevFont = (HFONT)SelectObject(m_mdc, m_fntText);
-				GetTextExtentPoint32(m_mdc, pLink->strText , &sz);
-				pLink->rc.x = x - sz.cx;
-				pLink->rc.cx = sz.cx;
-				pLink->rc.y = y + SCY(66);
-				pLink->rc.cy = sz.cy;
-				pLink->state = (PtInRect(&pLink->rc, pt) ? LINKSTATE_HOVER : LINKSTATE_NORMAL);
+				GetTextExtentPoint32(m_mdc, _T("IMDb") , &sz);
+				LINK *pLink = MakeLink(_T("IMDb"), _T("http://www.imdb.com/title/") + mov.strIMDbID + _T("/"),
+					x - sz.cx, sz.cx, y + SCY(66), sz.cy, pt);
 				SetTextColor(m_mdc, (pLink->state == LINKSTATE_HOVER ? m_clrLink : m_clrText));
 				TextOut(m_mdc, pLink->rc.x, pLink->rc.y, pLink->strText);
 				SelectObject(m_mdc, hPrevFont);

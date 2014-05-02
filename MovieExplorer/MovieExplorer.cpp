@@ -24,6 +24,9 @@ RThemeMgr2* GetThemeMgr() {ASSERTRETURN(g_pThemeMgr);}
 CDatabase* g_pDB = NULL;
 CDatabase* GetDB() {ASSERTRETURN(g_pDB);}
 
+ImageHash* g_pHash = NULL;
+ImageHash* GetImageHash() { ASSERTRETURN(g_pHash); }
+
 HWND g_hMainWnd = NULL;
 HWND GetMainWnd() {return g_hMainWnd;} // can be NULL
 
@@ -155,6 +158,9 @@ void Run()
 
 	CDatabase db;
 	g_pDB = &db;
+
+	ImageHash dbHash;
+	g_pHash = &dbHash;
 
 	// Create and show main window
 
@@ -296,6 +302,11 @@ void Run()
 
 int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow)
 {
+	UNREFERENCED_PARAMETER(hInstance);
+	UNREFERENCED_PARAMETER(hPrevInstance);
+	UNREFERENCED_PARAMETER(lpCmdLine);
+	UNREFERENCED_PARAMETER(nCmdShow);
+
 	// Component initialization
 
 	DEBUG_INIT();

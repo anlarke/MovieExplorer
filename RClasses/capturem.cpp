@@ -11,6 +11,7 @@ REvent g_eQuit;
 
 UINT CALLBACK CapThr(void *pParam)
 {
+	UNREFERENCED_PARAMETER(pParam);
 	POINT ptScreen, ptScreenPrev = {0, 0}, ptClient;
 	INT_PTR i;
 	HWND hWnd;

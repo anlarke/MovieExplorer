@@ -40,4 +40,5 @@ protected:
 	COLORREF m_clrNormalText, m_clrNormalText2, m_clrHighlightText, m_clrHighlightText2,
 			m_clrSelectedText, m_clrSelectedText2;
 	HMENU m_hMenu;
+	UINT m_nAutoCategories;
 };

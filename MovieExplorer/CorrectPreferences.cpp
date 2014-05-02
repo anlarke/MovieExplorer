@@ -69,8 +69,9 @@ bool CorrectPreferences()
 	prefMgr.SetBool(_T("ViewType"), false, false);
 	prefMgr.SetBool(_T("ShowHiddenMovies"), false, false);
 	prefMgr.SetInt(_T("SortBy"), 0, false);
-	prefMgr.SetBool(_T("IMDbUseBingSeach"), true, false);
+	prefMgr.SetBool(_T("IMDbUseBingSearch"), true, false);
 	prefMgr.SetBool(_T("IMDbUseOriginalTitle"), false, false);
+	prefMgr.SetBool(_T("AutoCategories"), true, false);
 
 	prefMgr.SetInt(_T("TouchScrollElapse"), 10, false);
 	prefMgr.SetFloat(_T("TouchScrollCoeff"), 0.95f, false);
