@@ -4,7 +4,6 @@
 #include "ParseFileName.h"
 #include "ScrapeIMDb.h"
 #include "ScrapeMovieMeter.h"
-#include <mutex>
 
 UINT CALLBACK UpdateThread(void *pParam)
 {
