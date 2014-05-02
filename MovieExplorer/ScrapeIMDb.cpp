@@ -75,8 +75,6 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 			else if (pInfo->bType == DB_TYPE_TV)
 				strURL += _T("+TV");
 
-			LOG(pInfo->strSearchTitle + _T(": ") + NumberToString(pInfo->bType) + _T("\n"));
-
 			str = FixLineEnds(HTMLEntitiesDecode(URLToString(strURL)));
 			if (str.IsEmpty())
 				return DBI_STATUS_CONNERROR;
