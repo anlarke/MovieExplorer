@@ -170,7 +170,7 @@ void ParseFileName(RString_ strFileName, RString &strTitle, RString &strYear, IN
 
 	// strip common movie descriptors and everything after
 
-	RString strDescriptors[] = { _T("webrip"), _T("dvdrip"), _T("dvdscr"), _T("xvid"), _T("bdrip"),
+	static const RString strDescriptors[] = { _T("webrip"), _T("dvdrip"), _T("dvdscr"), _T("xvid"), _T("bdrip"),
 		_T("brrip"), _T("hdtv"), _T("pdtv"), _T("box set"), _T("box-set"), _T("x264") };
 	foreach(strDescriptors, strD)
 	{
@@ -181,7 +181,8 @@ void ParseFileName(RString_ strFileName, RString &strTitle, RString &strYear, IN
 
 	// strip common tv network prefixes
 
-	RString strNetworks[] = { _T("Discovery Channel"), _T("Discovery Ch"), _T("National Geographic"), _T("NG"), _T("Ch4"), _T("HBO") };
+	static const RString strNetworks[] = { _T("Discovery Channel"), _T("Discovery Ch"), _T("National Geographic"), _T("NG"), 
+		_T("Ch4"), _T("HBO"), _T("PBS") };
 	foreach(strNetworks, strN)
 	{
 		m = strTitle.Find(strN, 0);
