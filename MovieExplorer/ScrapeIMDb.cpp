@@ -67,9 +67,9 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 	{
 		if (bUseBingSearch)
 		{
-			RString strURL = _T("http://www.bing.com/search?q=site%3Aimdb.com+");
+			RString strURL = _T("http://www.bing.com/search?q=site%3Aimdb.com+%22");
 
-			strURL += URLEncode(pInfo->strSearchTitle);
+			strURL += URLEncode(pInfo->strSearchTitle) + _T("%22");
 			if (!pInfo->strSearchYear.IsEmpty() && !IsTVEpisode(pInfo))
 				strURL += _T("+%28") + pInfo->strSearchYear + _T("%29");
 
@@ -77,9 +77,33 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 			if (str.IsEmpty())
 				return DBI_STATUS_CONNERROR;
 
-			if (!GetFirstMatch(str, _T("<a href=\"http://www\\.imdb\\.com/title/(tt\\d+)/[^\"]*\"[^>]*>.+?</a>"),
+			if (!pInfo->strSearchYear.IsEmpty() && !IsTVEpisode(pInfo))
+			{
+				// 1. try exact title and year match
+				// 2. try exact title match
+				// 3. take the first one
+
+				if (!GetFirstMatch(str, _T("href=\"http://www\\.imdb\\.com/title/(tt\\d+)/[^>]*><strong>(?:The |A )?") + 
+						pInfo->strSearchTitle + _T("(?:</strong>)? ?\\((?:<strong>)?") + pInfo->strSearchYear, &pInfo->strID, NULL) &&
+
+					!GetFirstMatch(str, _T("href=\"http://www\\.imdb\\.com/title/(tt\\d+)/[^>]*>(?:<strong>)?(?:The |A )?") + 
+						pInfo->strSearchTitle + _T("(?:</strong>)? ?\\("), &pInfo->strID, NULL) &&
+
+					!GetFirstMatch(str, _T("<a href=\"http://www\\.imdb\\.com/title/(tt\\d+)/[^\"]*\"[^>]*>.+?</a>"),
 					&pInfo->strID, NULL))
-				return DBI_STATUS_UNKNOWN;
+					return DBI_STATUS_UNKNOWN;
+			}
+			else
+			{
+				// 1. try exact title match
+				// 2. take the first one
+
+				if (!GetFirstMatch(str, _T("href=\"http://www\\.imdb\\.com/title/(tt\\d+)/[^>]*><strong>(?:The |A )?") + 
+							pInfo->strSearchTitle + _T("(?:</strong>)? \\("), &pInfo->strID, NULL) &&
+						!GetFirstMatch(str, _T("<a href=\"http://www\\.imdb\\.com/title/(tt\\d+)/[^\"]*\"[^>]*>.+?</a>"),
+							&pInfo->strID, NULL))
+					return DBI_STATUS_UNKNOWN;
+			}
 		}
 		else
 		{
@@ -96,59 +120,57 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 
 			if (strTemp == _T("Find - IMDb")) // received search results
 			{
-				if (pInfo->strSearchYear.IsEmpty())
+				if (pInfo->strSearchYear.IsEmpty() || !pInfo->strAirDate.IsEmpty())
 				{
-					// 1. Try to match exact title in this century (20xx)
-					// 2. Try to match exact title
-					// 3. Try to match aka title
-					// 4. Try to match title partly
-					// 5. Just take the first one
+					// 1. Try to match exact title (allow trailing characters and 'A' or 'The')
+					// 2. Try to match aka title
+					// #3. Try to match title partly
+					// 4. Just take the first one
 
-					if (!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/[^>]*>") + pInfo->strSearchTitle + _T("</a> \\(20"),
-							&pInfo->strID, NULL) &&
-							!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/[^>]*>") + pInfo->strSearchTitle +
-								_T("</a> \\("), &pInfo->strID, NULL) &&
+					if (!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/[^>]*>(?:The |A )?") + pInfo->strSearchTitle +
+								_T("[^<]*</a> \\("), &pInfo->strID, NULL) &&
 							!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/[^>]*>[^<]*</a>[^<]*<br/>aka <i>\"") 
 								+ pInfo->strSearchTitle + _T("\"</i>"), &pInfo->strID, NULL) &&
-							!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/[^>]*>[^<]*?") + pInfo->strSearchTitle +
-								_T("[^<]*?</a> \\("), &pInfo->strID, NULL) &&
+						/*	!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/[^>]*>[^<]*?") + pInfo->strSearchTitle +
+								_T("[^<]*?</a> \\("), &pInfo->strID, NULL) &&*/
 							!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)"), &pInfo->strID, NULL))
 						return DBI_STATUS_UNKNOWN;
 				}
 				else
 				{
-					// 1. Try to match exact title + year
+					// 1. Try to match exact title + year (the, a, I, II)
 					// 2. Try to match year + aka exact title
-					// 3. Try to match exact title + (year-1)
-					// 4. Try to match exact title + (year+1)
-					// 5. Try to match year
-					// 6. Try to match exact title
-					// 7. Try to match title partly
-					// 8. Just take the first one
+					// 3. Try to match exact title + year (allow trailing characters, the, a, I, II)
+					// 4. Try to match exact title + (year +-1) (allow trailing charcters, the, a, I, II)
+					// 5. Try to match the year (I,II)
+					// 6. Try to match exact title (allow trailing, the, a)
+					// 7. Just take the first one
 
 					// NOTE: don't add closing ) after year because it may have /I or /II after it
 
 					RString strYearMinusOne = NumberToString(StringToNumber(pInfo->strSearchYear) - 1);
 					RString strYearPlusOne = NumberToString(StringToNumber(pInfo->strSearchYear) + 1);
 
-					if (GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/[^>]*>[^<]*</a> ?\\(") + pInfo->strSearchYear +
-						_T("\\) ?<br/>aka <i>\"") + pInfo->strSearchTitle + _T("\"</i>"), &pInfo->strID, NULL))
-						LOG(_T("AKA with year MATCH!!!\n"));
+					if (!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/[^>]*>(?:The |A )?") + pInfo->strSearchTitle
+								+ _T("</a>(?: \\(II?\\))? \\(") + pInfo->strSearchYear, &pInfo->strID, NULL) &&
 
-					if (!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/[^>]*>") + pInfo->strSearchTitle + _T("</a> \\(") +
-								pInfo->strSearchYear, &pInfo->strID, NULL) &&
 							!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/[^>]*>[^<]*</a> ?\\(") + pInfo->strSearchYear +
 								_T("\\) ?<br/>aka <i>\"") + pInfo->strSearchTitle + _T("\"</i>"), &pInfo->strID, NULL) &&
-							!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/[^>]*>") + pInfo->strSearchTitle + _T("</a> \\(") +
-								strYearMinusOne, &pInfo->strID, NULL) &&
-							!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/[^>]*>") + pInfo->strSearchTitle + _T("</a> \\(") +
-								strYearPlusOne, &pInfo->strID, NULL) &&
-							!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/[^>]*>[^<]+</a> \\(") +
+
+							!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/[^>]*>(?:The |A )?") + pInfo->strSearchTitle +
+								_T("[^<]*</a>(?: \\(II?\\))? \\(") + pInfo->strSearchYear, &pInfo->strID, NULL) &&
+
+							!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/[^>]*>(?:The |A )?") + pInfo->strSearchTitle +
+								_T("[^<]*</a>(?: \\(II?\\))? \\((?:") + pInfo->strSearchYear + _T("|") +
+								strYearMinusOne + _T("|") + strYearPlusOne + _T(")"), &pInfo->strID, NULL) &&
+						
+							!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/[^>]*>[^<]+</a>(?: \\(II?\\))? \\(") +
 								pInfo->strSearchYear, &pInfo->strID, NULL) &&
-							!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/[^>]*>") + pInfo->strSearchTitle +
-								_T("</a> \\("), &pInfo->strID, NULL) &&
-							!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/[^>]*>[^<]*?") + pInfo->strSearchTitle +
-								_T("[^<]*?</a> \\("), &pInfo->strID, NULL) &&
+						
+							!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/[^>]*>(?:The |A)?") + pInfo->strSearchTitle +
+								_T("[^<]*</a> \\("), &pInfo->strID, NULL) &&
+							/*!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)/[^>]*>[^<]*?") + pInfo->strSearchTitle +
+								_T("[^<]*?</a> \\("), &pInfo->strID, NULL) &&*/
 							!GetFirstMatch(str, _T("href=\"/title/(tt\\d+)"), &pInfo->strID, NULL))
 						return DBI_STATUS_UNKNOWN;
 				}
