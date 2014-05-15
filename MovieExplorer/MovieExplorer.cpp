@@ -44,6 +44,24 @@ void Status(const TCHAR *lpszText)
 	SendMessage(g_hMainWnd, WM_STATUS_WRITE, (WPARAM)lpszText);
 }
 
+void LoadLanguageTranslation(UINT nLanguageId, RString strLanguageFilePath)
+{
+	HRSRC hResInfo = FindResource(NULL, MAKEINTRESOURCE(nLanguageId), _T("XMLFile"));
+	if (hResInfo)
+	{
+		HGLOBAL hResData = LoadResource(NULL, hResInfo);
+		if (hResData)
+		{
+			DataToFile((const BYTE*)LockResource(hResData),
+				SizeofResource(GetModuleHandle(NULL), hResInfo),
+				CorrectPath(_T("Languages\\Greek.xml")));
+			UnlockResource(hResData);
+		}
+	}
+
+}
+
+
 void Run()
 {
 	// NOTE: Not using global objects, because otherwise their constructors are called before the 
@@ -86,44 +104,10 @@ void Run()
 	if (!DirectoryExists(CorrectPath(_T("Languages"))))
 		CreateDirectory(CorrectPath(_T("Languages")));
 
-	HRSRC hResInfo = FindResource(NULL, MAKEINTRESOURCE(IDT_CROATIAN), _T("XMLFile"));
-	if (hResInfo)
-	{
-		HGLOBAL hResData = LoadResource(NULL, hResInfo);
-		if (hResData)
-		{
-			DataToFile((const BYTE*)LockResource(hResData), 
-					SizeofResource(GetModuleHandle(NULL), hResInfo), 
-					CorrectPath(_T("Languages\\Croatian.xml")));
-			UnlockResource(hResData);
-		}
-	}
-
-	hResInfo = FindResource(NULL, MAKEINTRESOURCE(IDT_ITALIAN), _T("XMLFile"));
-	if (hResInfo)
-	{
-		HGLOBAL hResData = LoadResource(NULL, hResInfo);
-		if (hResData)
-		{
-			DataToFile((const BYTE*)LockResource(hResData), 
-					SizeofResource(GetModuleHandle(NULL), hResInfo), 
-					CorrectPath(_T("Languages\\Italian.xml")));
-			UnlockResource(hResData);
-		}
-	}
-
-	hResInfo = FindResource(NULL, MAKEINTRESOURCE(IDT_GREEK), _T("XMLFile"));
-	if (hResInfo)
-	{
-		HGLOBAL hResData = LoadResource(NULL, hResInfo);
-		if (hResData)
-		{
-			DataToFile((const BYTE*)LockResource(hResData), 
-					SizeofResource(GetModuleHandle(NULL), hResInfo), 
-					CorrectPath(_T("Languages\\Greek.xml")));
-			UnlockResource(hResData);
-		}
-	}
+	LoadLanguageTranslation(IDT_CROATIAN, _T("Languages\\Croatian.xml"));
+	LoadLanguageTranslation(IDT_ITALIAN, _T("Languages\\Italian.xml"));
+	LoadLanguageTranslation(IDT_GREEK, _T("Languages\\Greek.xml"));
+	LoadLanguageTranslation(IDT_FRENCH, _T("Languages\\French.xml"));
 
 	// Load language strings
 

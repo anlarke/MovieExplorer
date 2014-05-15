@@ -55,3 +55,4 @@
 #define IDT_CROATIAN		401
 #define IDT_ITALIAN			402
 #define IDT_GREEK			403
+#define IDT_FRENCH			404
