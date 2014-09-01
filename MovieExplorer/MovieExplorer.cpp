@@ -54,7 +54,7 @@ void LoadLanguageTranslation(UINT nLanguageId, RString strLanguageFilePath)
 		{
 			DataToFile((const BYTE*)LockResource(hResData),
 				SizeofResource(GetModuleHandle(NULL), hResInfo),
-				CorrectPath(_T("Languages\\Greek.xml")));
+				CorrectPath(strLanguageFilePath));
 			UnlockResource(hResData);
 		}
 	}
@@ -99,15 +99,17 @@ void Run()
 		return;
 	}
 
-	// Copy translations to disk
+	// Create translations file on disk
 
 	if (!DirectoryExists(CorrectPath(_T("Languages"))))
 		CreateDirectory(CorrectPath(_T("Languages")));
 
-	LoadLanguageTranslation(IDT_CROATIAN, _T("Languages\\Croatian.xml"));
-	LoadLanguageTranslation(IDT_ITALIAN, _T("Languages\\Italian.xml"));
-	LoadLanguageTranslation(IDT_GREEK, _T("Languages\\Greek.xml"));
 	LoadLanguageTranslation(IDT_FRENCH, _T("Languages\\French.xml"));
+
+//  Desactivated because current translation file are containing only 76 sentences and current versions needs 93 sentences
+//	LoadLanguageTranslation(IDT_CROATIAN, _T("Languages\\Croatian.xml"));
+//	LoadLanguageTranslation(IDT_GREEK, _T("Languages\\Greek.xml"));
+//	LoadLanguageTranslation(IDT_ITALIAN, _T("Languages\\Italian.xml"));
 
 	// Load language strings
 

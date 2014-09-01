@@ -1,8 +1,8 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <LanguageFile applicationID="MOVIEEXPLORER083">
 	<EnglishName>French</EnglishName>
 	<Name>Français</Name>
-	<Author />
+	<Author>Duby</Author>
 	<Strings>
 		<S0001>Français</S0001>
 		<S0002>Tout</S0002>
@@ -14,7 +14,7 @@
 		<S0008>À l'affiche</S0008>
 		<S0009>Categorie</S0009>
 		<S0010>Directeur</S0010>
-		<S0011>Auteurs</S0011>
+		<S0011>Auteur</S0011>
 		<S0012>Étoiles</S0012>
 		<S0013>Fichier</S0013>
 		<S0014>Entrée</S0014>
@@ -24,11 +24,11 @@
 		<S0018>Barre de status : [Ctrl]+[S]</S0018>
 		<S0019>Log : [Ctrl]+[L]</S0019>
 		<S0020>Options : [Ctrl]+[O]</S0020>
-		<S0021>Quitter : [Alt] + [F4]</S0021>
+		<S0021>Quitter : [Alt]+[F4]</S0021>
 		<S0022 />
-		<S0023>En attente, les informations du film sont récupérées...</S0023>
-		<S0024>Le film n'a pas été trouvé dans la base %SERVICENAME%, spécifiez manuellement le ID.</S0024>
-		<S0025>Malheureusement, une erreur de connexion s'est produite avec le serveurs.</S0025>
+		<S0023>Veuillez attendre, les informations du film sont récupérées...</S0023>
+		<S0024>Le film n'a pas été trouvé dans la base %SERVICENAME%, spécifiez manuellement son ID.</S0024>
+		<S0025>Malheureusement, une erreur de connexion s'est produite avec le serveur.</S0025>
 		<S0026>Une erreur empêche la récupération des informations du film.</S0026>
 		<S0027>et</S0027>
 		<S0028>votes</S0028>
@@ -40,16 +40,16 @@
 		<S0034>Interface</S0034>
 		<S0035>Langue</S0035>
 		<S0036>Thème</S0036>
-		<S0037>Recherche instantannée en inscrivant dans la boite de texte</S0037>
-		<S0038>Chercher litérallement pour l'entrée</S0038>
-		<S0039>Inclure le scénario dans la recherche</S0039>
-		<S0040>Adapter l'évaluation sur une échelle de 1 à 10</S0040>
-		<S0041>Créer des catégories pour films et séries télé</S0041>
+		<S0037>Recherche instantanée lors de l'écriture dans la zone de recherche</S0037>
+		<S0038>Chercher exactement la saisie</S0038>
+		<S0039>Chercher aussi dans le résumé</S0039>
+		<S0040>Ajuster la note sur une échelle de 1 à 10</S0040>
+		<S0041>Créer des catégories pour Films et Séries Télé</S0041>
 		<S0042>Base de données</S0042>
 		<S0043>Indexer les fichiers avec les extensions suivantes</S0043>
 		<S0044>Inclure les répertoires dans la liste</S0044>
 		<S0045>Utiliser seulement</S0045>
-		<S0046>L'information maximumale de l'âge (semaines)</S0046>
+		<S0046>Age maximum des informations (semaines)</S0046>
 		<S0047>Service d'information</S0047>
 		<S0048>Titre</S0048>
 		<S0049>Année</S0049>
@@ -61,7 +61,7 @@
 		<S0055>Catégories</S0055>
 		<S0056>Répertoires</S0056>
 		<S0057>Dossier/Fichier</S0057>
-		<S0058>Ex: C:\User\Videos\Film\</S0058>
+		<S0058>Doit être accessible sur</S0058>
 		<S0059>Truc : Vous pouvez spécifier un fichier texte (*.txt) contenant la liste des films séparés par un saut de ligne.</S0059>
 		<S0060>Éditer le film</S0060>
 		<S0061>Identification</S0061>
@@ -88,7 +88,7 @@
 		<S0082>Préférences</S0082>
 		<S0083>Voir/Cacher les «vu»</S0083>
 		<S0084>Trier</S0084>
-		<S0085>Alterner la vu</S0085>
+		<S0085>Alterner la vue</S0085>
 		<S0086>Titre</S0086>
 		<S0087>Titre (desc)</S0087>
 		<S0088>Année</S0088>
