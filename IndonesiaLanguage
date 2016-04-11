@@ -1,0 +1,101 @@
+ï»¿<?xml version="1.0" encoding="UTF-8"?>
+<LanguageFile applicationID="MOVIEEXPLORER083">
+	<EnglishName>Indonesia</EnglishName>
+	<Name>Indonesia</Name>
+	<Author />
+	<Strings>
+		<S0001>Indonesia</S0001>
+		<S0002>Semua</S0002>
+		<S0003>Film</S0003>
+		<S0004>TV</S0004>
+		<S0005>Cari</S0005>
+		<S0006>Jenis</S0006>
+		<S0007>Negara</S0007>
+		<S0008>Waktu Tayang</S0008>
+		<S0009>Kategori</S0009>
+		<S0010>Direktur</S0010>
+		<S0011>Penulis</S0011>
+		<S0012>Bintang</S0012>
+		<S0013>File</S0013>
+		<S0014>Entry</S0014>
+		<S0015>Perbesar Ctrl + ScrlUp</S0015>
+		<S0016>Perkecil	Ctrl + ScrlDn</S0016>
+		<S0017>Reset	 Perbesar Ctrl + 0</S0017>
+		<S0018>Status bar	Ctrl + S</S0018>
+		<S0019>Log	 Ctrl + L</S0019>
+		<S0020>Opsi ...	Ctrl + O</S0020>
+		<S0021>Keluar	Alt + F4</S0021>
+		<S0022 />
+		<S0023>Harap tunggu, informasi film yang sedang diambil ...</S0023>
+		<S0024>Gagal menemukan film di %SERVICENAME% database, isikan ID secara manual.</S0024>
+		<S0025>Sayang sekali, kesalahan sambungan terjadi saat mengambil informasi film.</S0025>
+		<S0026>kesalahan saat mengambil data film.</S0026>
+		<S0027>dan</S0027>
+		<S0028>Voting</S0028>
+		<S0029>OK</S0029>
+		<S0030>Batal</S0030>
+		<S0031>Jalankan</S0031>
+		<S0032>Opsi</S0032>
+		<S0033>Umum</S0033>
+		<S0034>Tampilan</S0034>
+		<S0035>Bahasa</S0035>
+		<S0036>Tema</S0036>
+		<S0037>Memulai pencarian saat mengetik di kotak pencarian</S0037>
+		<S0038>Cari harfiah untuk input</S0038>
+		<S0039>Sertakan sinopsis film dalam pencarian</S0039>
+		<S0040>Menormalkan peringkat untuk skala dari 1 ke 10</S0040>
+		<S0041>Membuat kategori untuk film dan tv</S0041>
+		<S0042>Database</S0042>
+		<S0043>File indeks dengan ekstensi berikut</S0043>
+		<S0044>Sertakan direktori dalam daftar</S0044>
+		<S0045>hanya gunakan</S0045>
+		<S0046>Usia Informasi film maksimum (minggu)</S0046>
+		<S0047>Layanan Informasi</S0047>
+		<S0048>Judul</S0048>
+		<S0049>Tahun</S0049>
+		<S0050>Sinopsis</S0050>
+		<S0051>Poster</S0051>
+		<S0052>Peringkat</S0052>
+		<S0053>Kombinasi</S0053>
+		<S0054>None</S0054>
+		<S0055>Kategori</S0055>
+		<S0056>Direktori</S0056>
+		<S0057>Folder/File</S0057>
+		<S0058>Hanya tersedia di</S0058>
+		<S0059>Tip: Anda juga dapat menentukan file teks plain (* .txt) yang berisi daftar film dipisahkan oleh jeda baris.</S0059>
+		<S0060>Edit Film</S0060>
+		<S0061>Identifikasi</S0061>
+		<S0062>Informasi</S0062>
+		<S0063>Nama File</S0063>
+		<S0064>Ukuran File</S0064>
+		<S0065>Pilihan properties</S0065>
+		<S0066>Saya telah melihat film ini</S0066>
+		<S0067>Sembunyikan Film ini</S0067>
+		<S0068>Apakah Anda yakin ingin menyembunyikan film ini?</S0068>
+		<S0069>Apakah Anda yakin ingin menghapus permanen file ini dari komputer?</S0069>
+		<S0070>Apakah Anda yakin ingin menghapus permanen direktori ini dari komputer?</S0070>
+		<S0071>File tidak ditemukan</S0071>
+		<S0072>Siap</S0072>
+		<S0073>Loading database</S0073>
+		<S0074>Mengumpulkan dan memperbarui informasi film</S0074>
+		<S0075>Sinkronisasi File pada Disk</S0075>
+		<S0076>Mainkan</S0076>
+		<S0077>Directori</S0077>
+		<S0078>Dilihat</S0078>
+		<S0079>Edit</S0079>
+		<S0080>Sembunyikan</S0080>
+		<S0081>Hapus</S0081>
+		<S0082>Preferensi</S0082>
+		<S0083>Tampil/Tanpa Dilihat</S0083>
+		<S0084>Urutkan</S0084>
+		<S0085>Ubah Tampilan</S0085>
+		<S0086>Judul</S0086>
+		<S0087>Judul (descending)</S0087>
+		<S0088>Tahun</S0088>
+		<S0089>Tahun (descending)</S0089>
+		<S0090>Peringkat</S0090>
+		<S0091>Peringkat (descending)</S0091>
+		<S0092>Waktu File</S0092>
+		<S0093>Waktu File (descending)</S0093>
+	</Strings>
+</LanguageFile>
