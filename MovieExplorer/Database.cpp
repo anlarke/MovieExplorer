@@ -795,6 +795,15 @@ void CDatabase::SetOnlyMovies(bool bFlag)
 	m_bShowOnlyMovies = bFlag;
 }
 
+float scoreDiff(DBMOVIE *pMov)
+{
+	if (pMov->nMetascore >= 0)
+	{
+		return(pMov->fRating - ((float)pMov->nMetascore / 10.0));
+	}
+	else
+		return(0);
+}
 void CDatabase::Filter()
 {
 	m_movies.SetSize(0);

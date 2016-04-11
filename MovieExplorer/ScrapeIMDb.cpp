@@ -95,11 +95,10 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 			}
 			else
 			{
-				// 1. try exact title match
+				// 1. try exact title match (allow trailing characters)
 				// 2. take the first one
-
 				if (!GetFirstMatch(str, _T("href=\"http://www\\.imdb\\.com/title/(tt\\d+)/[^>]*><strong>(?:The |A )?") + 
-							pInfo->strSearchTitle + _T("(?:</strong>)? \\("), &pInfo->strID, NULL) &&
+							pInfo->strSearchTitle + _T("(?:</strong>)?[^\\(]*?\\("), &pInfo->strID, NULL) &&
 						!GetFirstMatch(str, _T("<a href=\"http://www\\.imdb\\.com/title/(tt\\d+)/[^\"]*\"[^>]*>.+?</a>"),
 							&pInfo->strID, NULL))
 					return DBI_STATUS_UNKNOWN;
@@ -259,8 +258,12 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 
 	// Get Metacritic rating
 
-	if (GetFirstMatch(str, _T("Metascore[ \\t]*:[ \\t]*<[^>]+>[ \\t]*(1?\\d?\\d)/100"), &strTemp, NULL))
+	if (GetFirstMatch(str, _T("metacriticScore[^<]+?<span>(1?\\d?\\d)</span>"), &strTemp, NULL))
 		pInfo->nMetascore = StringToNumber(strTemp);
+
+
+	//if (GetFirstMatch(str, _T("Metascore[ \\t]*:[ \\t]*<[^>]+>[ \\t]*(1?\\d?\\d)/100"), &strTemp, NULL))
+	//	pInfo->nMetascore = StringToNumber(strTemp);
 
 	// Get votes
 

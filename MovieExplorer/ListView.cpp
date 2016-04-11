@@ -837,20 +837,22 @@ void CListView::Draw()
 		else
 		{
 			strTitle = mov.strTitle.IsEmpty() ? mov.strFileName : mov.strTitle;
-			str = (mov.strEpisodeName.IsEmpty() ? mov.strTitle : (mov.strEpisodeName +
-				(strDate.IsEmpty() ? _T("") : _T(" (") + strDate + _T(")"))));
+			if (!strDate.IsEmpty())
+				strTitle = strTitle + _T(" (") + strDate + _T(")");
 
-			TextOut(m_mdc, SCX(200) + SCX(35), y + SCY(14), str);
+			TextOut(m_mdc, SCX(200) + SCX(35), y + SCY(14), strTitle);
 			SelectObject(m_mdc, hPrevFont);
 
-			
+			str.Empty();
+			if (mov.nSeason >= 0)
+				str =  _T("Season ") + NumberToString(mov.nSeason);
+			if (mov.nEpisode >= 0)
+				str = str + _T(" Episode ") + NumberToString(mov.nEpisode) + _T(": ");
+			str = str +  _T("\"") + mov.strEpisodeName + _T("\"");
+
 			hPrevFont = (HFONT)SelectObject(m_mdc, m_fntTextBold);
 			SetTextColor(m_mdc, m_clrTitle);
-			str = strTitle;
-			if (mov.nSeason >= 0)
-				str = str + _T(": Season ") + NumberToString(mov.nSeason);
-			if(mov.nEpisode >= 0)
-				str = str + _T(" Episode ") + NumberToString(mov.nEpisode);
+			
 			TextOut(m_mdc, SCX(200) + SCX(35), y + SCY(40), str);
 			SelectObject(m_mdc, hPrevFont);
 			
