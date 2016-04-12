@@ -278,7 +278,7 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 
 	// Get votes
 
-	if (GetFirstMatch(str, _T("<span itemprop=\"ratingCount\">([^<]+?)</span>"), &strTemp, NULL))
+	if (GetFirstMatch(str, _T("\"ratingCount\">([^<]+?)</span>"), &strTemp, NULL))
 	{
 		strTemp.Replace(_T(","), _T(""));
 		pInfo->nVotes = StringToNumber(strTemp);
