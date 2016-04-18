@@ -200,7 +200,8 @@ void CListView::OnCommand(WORD id, WORD notifyCode, HWND hWndControl)
 				if (MessageBox(GetMainWnd(), GETSTR(IDS_SURETODELETEDIRECTORY),
 					_T("Movie Explorer"), MB_ICONQUESTION | MB_YESNO) == IDYES)
 				{
-					RemoveDirectory(strFilePath, true); // Delete directory, all subdirectories, and files.
+					DeleteDirectoryAndAllSubfolders(strFilePath);
+					//RemoveDirectory(strFilePath, true); // Delete directory, all subdirectories, and files.
 					LOG(_T("Deleted Directory: ") + mov.strFileName + _T("\n"));
 					GetDB()->SyncAndUpdate();
 				}
