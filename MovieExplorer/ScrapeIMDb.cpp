@@ -272,8 +272,10 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 	pInfo->fRatingMax = 10.0f;
 
 	// Get Metacritic rating
-
+	
 	if (GetFirstMatch(str, _T("metacriticScore[^<]+?<span>(1?\\d?\\d)</span>"), &strTemp, NULL))
+		pInfo->nMetascore = StringToNumber(strTemp);
+	else if (GetFirstMatch(str, _T("Metascore[ \\t]*:[ \\t]*<[^>]+>[ \\t]*(1?\\d?\\d)/100"), &strTemp, NULL))
 		pInfo->nMetascore = StringToNumber(strTemp);
 
 	// Get votes
