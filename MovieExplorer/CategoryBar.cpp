@@ -193,6 +193,9 @@ void CCategoryBar::FilterDB()
 	else if (m_nAutoCategories > CB_TV_BUTTON && m_buttons[CB_TV_BUTTON].state == CTBBSTATE_SELECTED)
 		GetDB()->SetOnlyTV(true);
 	GetDB()->FilterByCategories(categories);
+
+	SendMessage(GetMainWnd(), WM_LISTVIEW_ITEM, 0); //Reset scroll bar to start
+
 }
 
 void CCategoryBar::PrepareDraw()

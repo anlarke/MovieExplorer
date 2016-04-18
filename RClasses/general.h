@@ -10,6 +10,8 @@
 #define CHARSET_UTF8		4
 #define CHARSET_UTF16		CHARSET_UTF16LE
 
+#include <strsafe.h>
+
 inline RString GetAppPath()
 {
 	RString str;
@@ -94,36 +96,23 @@ inline RString GetDir(RString_ strFilePath)
 	return strDir;
 }
 
-inline bool RemoveDirectory(const TCHAR* lpszPathName, bool bDeleteContents)
+
+inline LONG DeleteDirectoryAndAllSubfolders(const TCHAR* lpszDirectory)
 {
-	if (!bDeleteContents)
-		return RemoveDirectory(lpszPathName) != FALSE;
-	
-	RString strPathName(lpszPathName);
-	WIN32_FIND_DATA ffd;
-	HANDLE hFindFile = FindFirstFile(strPathName + _T("\\*.*"), &ffd);
+	TCHAR szDir[MAX_PATH + 1];  // +1 for the double null terminate
+	SHFILEOPSTRUCTW fos = { 0 };
 
-	if (hFindFile != INVALID_HANDLE_VALUE)
-	{
-		do
-		{
-			if (_tcscmp(ffd.cFileName, _T(".")) == 0 || _tcscmp(ffd.cFileName, _T("..")) == 0)
-				continue;
-			
-			if (ffd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
-				if (!RemoveDirectory(strPathName + _T("\\") + ffd.cFileName, true))
-					{FindClose(hFindFile); return false;}
+	StringCchCopy(szDir, MAX_PATH, lpszDirectory);
+	int len = lstrlenW(szDir);
+	szDir[len + 1] = 0; // double null terminate for SHFileOperation
 
-			if (!DeleteFile(strPathName + _T("\\") + ffd.cFileName))
-				{FindClose(hFindFile); return false;}
-
-		} while (FindNextFile(hFindFile, &ffd));
-
-		FindClose(hFindFile);
-	}
-
-	return RemoveDirectory(lpszPathName) != FALSE;
+	// delete the folder and everything inside
+	fos.wFunc = FO_DELETE;
+	fos.pFrom = szDir;
+	fos.fFlags = FOF_NO_UI;
+	return SHFileOperation(&fos);
 }
+
 
 inline RString GetComputerName()
 {

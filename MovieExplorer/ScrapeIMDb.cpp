@@ -57,7 +57,7 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 	}
 
 	RRegEx regex, regex2;
-	RString str, strSeasonPage, strEpisodePage, strTemp, strTemp2;
+	RString str, strOriginal, strSeasonPage, strEpisodePage, strTemp, strTemp2;
 	RString strSeasonTmp, strEpisodeTmp;
 	const TCHAR *p, *pEnd;
 
@@ -95,11 +95,10 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 			}
 			else
 			{
-				// 1. try exact title match
+				// 1. try exact title match (allow trailing characters)
 				// 2. take the first one
-
 				if (!GetFirstMatch(str, _T("href=\"http://www\\.imdb\\.com/title/(tt\\d+)/[^>]*><strong>(?:The |A )?") + 
-							pInfo->strSearchTitle + _T("(?:</strong>)? \\("), &pInfo->strID, NULL) &&
+							pInfo->strSearchTitle + _T("(?:</strong>)?[^\\(]*?\\("), &pInfo->strID, NULL) &&
 						!GetFirstMatch(str, _T("<a href=\"http://www\\.imdb\\.com/title/(tt\\d+)/[^\"]*\"[^>]*>.+?</a>"),
 							&pInfo->strID, NULL))
 					return DBI_STATUS_UNKNOWN;
@@ -210,6 +209,7 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 				strEpisodePage = FixLineEnds(HTMLEntitiesDecode(URLToString(_T("http://www.imdb.com/title/") + strTmpID + _T("/"))));
 				if (!strEpisodePage.IsEmpty())
 				{
+					strOriginal = str;
 					str = strEpisodePage;
 					pInfo->strID = strTmpID;
 				}
@@ -231,6 +231,7 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 				strEpisodePage = FixLineEnds(HTMLEntitiesDecode(URLToString(_T("http://www.imdb.com/title/") + strTmpID + _T("/"))));
 				if (!strEpisodePage.IsEmpty())
 				{
+					strOriginal = str;
 					str = strEpisodePage;
 					pInfo->strID = strTmpID;
 				}
@@ -248,6 +249,19 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 			strTemp = strTemp + _T(".") + strTemp2; // take the server's default cropping and resizing
 			URLToData(strTemp, pInfo->posterData);
 		}
+		else
+		{
+			//didn't find a poster, so if it's a tv show check original show page also
+			if (pInfo->bType == DB_TYPE_TV && !strOriginal.IsEmpty())
+			{
+				if (GetFirstMatch(strOriginal, _T("title=\"[^\"]*?Poster\"[^>]*?(http://ia\\.media-imdb\\.com/images/M/[^\"]+?_V1\\.?_[^\"]*?)\\.([^\"]+?)\""),
+					&strTemp, &strTemp2, NULL))
+				{
+					strTemp = strTemp + _T(".") + strTemp2; // take the server's default cropping and resizing
+					URLToData(strTemp, pInfo->posterData);
+				}
+			}
+		}
 	}
 
 	// Get rating
@@ -258,13 +272,15 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 	pInfo->fRatingMax = 10.0f;
 
 	// Get Metacritic rating
-
-	if (GetFirstMatch(str, _T("Metascore[ \\t]*:[ \\t]*<[^>]+>[ \\t]*(1?\\d?\\d)/100"), &strTemp, NULL))
+	
+	if (GetFirstMatch(str, _T("metacriticScore[^<]+?<span>(1?\\d?\\d)</span>"), &strTemp, NULL))
+		pInfo->nMetascore = StringToNumber(strTemp);
+	else if (GetFirstMatch(str, _T("Metascore[ \\t]*:[ \\t]*<[^>]+>[ \\t]*(1?\\d?\\d)/100"), &strTemp, NULL))
 		pInfo->nMetascore = StringToNumber(strTemp);
 
 	// Get votes
 
-	if (GetFirstMatch(str, _T("<span itemprop=\"ratingCount\">([^<]+?)</span>"), &strTemp, NULL))
+	if (GetFirstMatch(str, _T("\"ratingCount\">([^<]+?)</span>"), &strTemp, NULL))
 	{
 		strTemp.Replace(_T(","), _T(""));
 		pInfo->nVotes = StringToNumber(strTemp);
