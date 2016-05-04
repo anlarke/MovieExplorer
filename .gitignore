@@ -16,6 +16,8 @@ local.properties
 .settings/
 .loadpath
 
+*.VC.db
+
 # External tool builders
 .externalToolBuilders/
 
@@ -213,3 +215,4 @@ pip-log.txt
 
 #Mr Developer
 .mr.developer.cfg
+MovieExplorer/VS2015/MovieExplorer.VC.VC.opendb

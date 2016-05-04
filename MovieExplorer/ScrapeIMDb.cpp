@@ -315,7 +315,7 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 	}
 
 	if (bUseOriginalTitle)
-		GetFirstMatch(str, _T(">[^<]*?\"([^<]*?)\"[^<]*?<i>\\(original title\\)</i>"),
+		GetFirstMatch(str, _T("originalTitle\">([^<]*?)<"),
 			&pInfo->strTitle, NULL);
 
 	if (pInfo->strTitle.GetLength() >= 2 && pInfo->strTitle.Left(2) == _T("A "))
