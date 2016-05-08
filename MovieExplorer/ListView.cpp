@@ -534,12 +534,12 @@ bool CListView::OnSetCursor(HWND hWnd, WORD hitTest, WORD mouseMsg)
 	{
 		if (PtInRect(&link.rc, pt))
 		{
-			STATUS(link.strURL);
+			STATUS(link.strURL);  //display url in the status bar if we're over a link
 			SetCursor(LoadCursor(NULL, IDC_HAND));
 			return true;
 		}
 	}
-	STATUS(GETSTR(IDS_READY));  
+	STATUS(GETSTR(IDS_READY));		//no link url to display. set back to "Ready"
 	return RWindow::OnSetCursor(hWnd, hitTest, mouseMsg);
 }
 
