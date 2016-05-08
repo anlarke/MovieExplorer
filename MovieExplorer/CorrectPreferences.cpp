@@ -72,6 +72,7 @@ bool CorrectPreferences()
 	prefMgr.SetBool(_T("IMDbUseBingSearch"), true, false);
 	prefMgr.SetBool(_T("IMDbUseOriginalTitle"), false, false);
 	prefMgr.SetBool(_T("AutoCategories"), true, false);
+	prefMgr.SetBool(_T("HideUserCategories"), false, false);
 
 	prefMgr.SetInt(_T("TouchScrollElapse"), 10, false);
 	prefMgr.SetFloat(_T("TouchScrollCoeff"), 0.95f, false);

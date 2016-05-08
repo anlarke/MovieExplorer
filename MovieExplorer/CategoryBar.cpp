@@ -518,14 +518,16 @@ void CCategoryBar::Update(bool bResetSelections /*= false*/)
 	}
 
 	// Update category buttons
-
-	for (INT_PTR i = m_nAutoCategories; i < m_buttons-1; ++i)
+	if (!GETPREFBOOL(_T("HideUserCategories")))
 	{
-		BUTTON &button = m_buttons[i];
-		ZeroMemory(&button.rc, sizeof(RECT));
-		button.state = CTBBSTATE_NORMAL;
-		button.strText = GetDB()->m_categories[i-m_nAutoCategories].strName;
-		button.strText2 = _T("(") + NumberToString(movieCounts[i-m_nAutoCategories]) + _T(")");
+		for (INT_PTR i = m_nAutoCategories; i < m_buttons - 1; ++i)
+		{
+			BUTTON &button = m_buttons[i];
+			ZeroMemory(&button.rc, sizeof(RECT));
+			button.state = CTBBSTATE_NORMAL;
+			button.strText = GetDB()->m_categories[i - m_nAutoCategories].strName;
+			button.strText2 = _T("(") + NumberToString(movieCounts[i - m_nAutoCategories]) + _T(")");
+		}
 	}
 
 	// Update menu button

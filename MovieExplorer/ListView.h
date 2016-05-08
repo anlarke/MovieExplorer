@@ -53,6 +53,8 @@ protected:
 	int m_nTouchScrollElapse;
 	double m_dTouchScrollCoeff;
 
+	bool m_bHideUserCategories;
+
 	LINK* MakeLink(RString strText, RString strUrl, INT_PTR x, int cx, INT_PTR cy, int y, POINT pt);
 
 	static const COLORREF m_clrGood = RGB(102, 204, 51);

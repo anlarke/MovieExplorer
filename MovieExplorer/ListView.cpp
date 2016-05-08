@@ -449,6 +449,8 @@ void CListView::OnPrefChanged()
 	m_nTouchScrollElapse = GETPREFINT(_T("TouchScrollElapse"));
 	m_dTouchScrollCoeff = GETPREFFLOAT(_T("TouchScrollCoeff"));
 
+	m_bHideUserCategories = GETPREFBOOL(_T("HideUserCategories"));
+
 	OnScaleChanged();
 }
 
@@ -532,10 +534,12 @@ bool CListView::OnSetCursor(HWND hWnd, WORD hitTest, WORD mouseMsg)
 	{
 		if (PtInRect(&link.rc, pt))
 		{
+			STATUS(link.strURL);
 			SetCursor(LoadCursor(NULL, IDC_HAND));
 			return true;
 		}
 	}
+	STATUS(GETSTR(IDS_READY));  
 	return RWindow::OnSetCursor(hWnd, hitTest, mouseMsg);
 }
 
@@ -1024,25 +1028,28 @@ void CListView::Draw()
 
 
 		// draw category (and directory)
-		
-		hPrevFont = (HFONT)SelectObject(m_mdc, m_fntTextBold);
-		SetTextColor(m_mdc, m_clrText);
-		TextOut(m_mdc, SCX(200) + SCX(35) + m_nColumnWidth + nOffset + SCX(30), y + SCY(LV_DETAILS_HEIGHT) - SCY(20),
-		GETSTR(IDS_CATEGORY) + _T(":"));
-		GetTextExtentPoint32(m_mdc, GETSTR(IDS_CATEGORY) + _T(":"), &sz);
-		nOffset += sz.cx;
-		SelectObject(m_mdc, hPrevFont);
 
-		hPrevFont = (HFONT)SelectObject(m_mdc, m_fntText);
-		SetTextColor(m_mdc, m_clrText);
-		TextOut(m_mdc, SCX(200) + SCX(35) + m_nColumnWidth + nOffset + SCX(40),
-		y + SCY(LV_DETAILS_HEIGHT) - SCY(20), cat.strName );
-	/*	GetTextExtentPoint32(m_mdc, cat.strName + _T(" ["), &sz);
-		TextOut(m_mdc, SCX(200) + SCX(35) + m_nColumnWidth + SCX(10) + sz.cx,
-		y + SCY(LV_DETAILS_HEIGHT) - SCY(52), dir.strPath + _T("]"));*/
-		SelectObject(m_mdc, hPrevFont);
-		
+		if (!m_bHideUserCategories)
+		{
 
+			hPrevFont = (HFONT)SelectObject(m_mdc, m_fntTextBold);
+			SetTextColor(m_mdc, m_clrText);
+			TextOut(m_mdc, SCX(200) + SCX(35) + m_nColumnWidth + nOffset + SCX(30), y + SCY(LV_DETAILS_HEIGHT) - SCY(20),
+				GETSTR(IDS_CATEGORY) + _T(":"));
+			GetTextExtentPoint32(m_mdc, GETSTR(IDS_CATEGORY) + _T(":"), &sz);
+			nOffset += sz.cx;
+			SelectObject(m_mdc, hPrevFont);
+
+			hPrevFont = (HFONT)SelectObject(m_mdc, m_fntText);
+			SetTextColor(m_mdc, m_clrText);
+			TextOut(m_mdc, SCX(200) + SCX(35) + m_nColumnWidth + nOffset + SCX(40),
+				y + SCY(LV_DETAILS_HEIGHT) - SCY(20), cat.strName);
+			/*	GetTextExtentPoint32(m_mdc, cat.strName + _T(" ["), &sz);
+				TextOut(m_mdc, SCX(200) + SCX(35) + m_nColumnWidth + SCX(10) + sz.cx,
+				y + SCY(LV_DETAILS_HEIGHT) - SCY(52), dir.strPath + _T("]"));*/
+			SelectObject(m_mdc, hPrevFont);
+
+		}
 
 		// draw rating
 
