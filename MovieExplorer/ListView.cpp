@@ -978,7 +978,8 @@ void CListView::Draw()
 						VERIFY(LoadImage(*mov.actorImageData[i], mdcThumb, SCX(32), SCY(44)));
 						mdcThumb.GetDimensions(cxImg, cyImg);
 						BitBlt(m_mdc, nX, nY, cxImg, cyImg, mdcThumb, 0, 0, SRCCOPY);
-						MakeLink(_T(""), _T("http://www.imdb.com/name/") + mov.strActorId[i], nX, cxImg, nY, cyImg, pt);
+						if(!mov.strActorId[i].IsEmpty())
+							MakeLink(_T(""), _T("http://www.imdb.com/name/") + mov.strActorId[i], nX, cxImg, nY, cyImg, pt);
 						nX += SCX(32);
 					}
 				
