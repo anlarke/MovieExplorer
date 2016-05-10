@@ -3,6 +3,7 @@
 #include "ListView.h"
 #include "EditDlg.h"
 #include "ToolTip.h"
+#include "Resume.h"
 
 #define LV_SMALL_STAR_SIZE		16
 #define LV_LARGE_STAR_SIZE		24
@@ -47,6 +48,7 @@ CListView::~CListView()
 {
 }
 
+
 void CListView::OnCommand(WORD id, WORD notifyCode, HWND hWndControl)
 {
 	UNREFERENCED_PARAMETER(id);
@@ -67,9 +69,13 @@ void CListView::OnCommand(WORD id, WORD notifyCode, HWND hWndControl)
 			// If it's a file open it. If it's a directory open the first video file inside
 			// with a valid extension not containing 'sample'. Otherwise open the directory
 			// so user can choose the file manually.
+			
+			resume.CloseVlc();
+			resume.ReadVlcResumeFile();
 
 			if (FileExists(strFilePath))
-				ShellExecute(HWND_DESKTOP, _T("open"), strFilePath, NULL, NULL, SW_SHOW);
+				resume.LaunchVlc(strFilePath);
+				//ShellExecute(HWND_DESKTOP, _T("open"), strFilePath, NULL, NULL, SW_SHOW);
 			else if (DirectoryExists(strFilePath))
 			{
 				// Create easy to search list of extensions
@@ -96,7 +102,8 @@ void CListView::OnCommand(WORD id, WORD notifyCode, HWND hWndControl)
 						RString strMoviePath = CorrectPath(strFilePath + _T("\\") + fi.strName);
 						if (FileExists(strMoviePath))
 						{
-							ShellExecute(HWND_DESKTOP, _T("open"), strMoviePath, NULL, NULL, SW_SHOW);
+							resume.LaunchVlc(strMoviePath);
+							//ShellExecute(HWND_DESKTOP, _T("open"), strMoviePath, NULL, NULL, SW_SHOW);
 							bFileFound = true;
 							break;
 						}
@@ -122,7 +129,8 @@ void CListView::OnCommand(WORD id, WORD notifyCode, HWND hWndControl)
 						RString strMoviePath = CorrectPath(strFilePath + _T("\\") + fi.strName);
 						if (FileExists(strMoviePath))
 						{
-							ShellExecute(HWND_DESKTOP, _T("open"), strMoviePath, NULL, NULL, SW_SHOW);
+							resume.LaunchVlc(strMoviePath);
+							//ShellExecute(HWND_DESKTOP, _T("open"), strMoviePath, NULL, NULL, SW_SHOW);
 							bFileFound = true;
 							break;
 						}
