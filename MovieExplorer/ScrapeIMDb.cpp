@@ -325,7 +325,9 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 
 	// Get runtime
 
-	GetFirstMatch(str, _T("(\\d+ min\\b)"), &pInfo->strRuntime, NULL);
+	//GetFirstMatch(str, _T("(\\d+ min\\b)"), &pInfo->strRuntime, NULL);
+	GetFirstMatch(str, _T("datetime=\"PT(\\d+)M"), &pInfo->strRuntime, NULL);
+
 
 	// Get directors
 

@@ -40,6 +40,21 @@ RString PrettyList(RString str)
 	return strResult;
 }
 
+RString PrettyTime(RString strTime)
+{
+	RString strReturn = _T("");
+	int nTime = StringToNumber(strTime);
+	int nHours, nMinutes;
+
+	nHours = nTime / 60;
+	nMinutes = nTime % 60;
+
+	strReturn += (nHours > 0) ? (NumberToString(nHours) + _T("h ")) : (_T(""));
+	strReturn += (nMinutes > 0) ? (NumberToString(nMinutes) + _T("min")) : (_T(""));
+	return(strReturn);
+		
+}
+
 CListView::CListView() : m_nHoverMov(-1), m_bScrolling(false), m_bCaptureM(false)
 {
 }
@@ -883,7 +898,7 @@ void CListView::Draw()
 		if (mov.nSeason < 0)
 			TextOut(m_mdc, SCX(200) + SCX(35), y + SCY(48), mov.strCountries);
 		TextOut(m_mdc, SCX(200) + SCX(35), y + SCY(66), mov.strGenres);
-		TextOut(m_mdc, SCX(200) + SCX(35), y + SCY(84), mov.strRuntime);
+		TextOut(m_mdc, SCX(200) + SCX(35), y + SCY(84), PrettyTime(mov.strRuntime));
 		SelectObject(m_mdc, hPrevFont);
 
 		// draw storyline
