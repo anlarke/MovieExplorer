@@ -87,6 +87,19 @@ int Resume::GetTime(RString str)
 	return 0; 
 }
 
+void Resume::UpdateResumeTimes()
+{
+	//foreach entry in the vlc list, 
+	//update resume time in database
+
+	for (int i = 0; i < size; i++)
+	{
+		RString tempMovieStr = movies[i];
+		tempMovieStr.Replace(_T("\\\\"), _T("\\"));
+		GetDB()->UpdateResumeTime(tempMovieStr, times[i]);
+	}
+}
+
 void Resume::CloseVlc()
 {
 	HWND h = find_main_window(processInfo.dwProcessId);
@@ -96,10 +109,10 @@ void Resume::CloseVlc()
 }
 
 
-void Resume::LaunchVlc(RString strFilePath)
+void Resume::LaunchVlc(RString strFilePath, UINT64 resumeTime)
 {
 	RString path = _T("C:\\Program Files (x86)\\VideoLAN\\VLC\\vlc.exe ");
-	RString cmd = path + strFilePath + _T(" --play-and-exit --start-time=") + NumberToString(GetTime(strFilePath));
+	RString cmd = path + strFilePath + _T(" --play-and-exit --start-time=") + NumberToString((INT64)resumeTime);  // NumberToString(GetTime(strFilePath));
 
 	TCHAR* param = new TCHAR[cmd.GetLength() + 1];
 	_tcscpy(param, cmd);

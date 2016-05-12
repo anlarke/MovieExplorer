@@ -16,8 +16,9 @@ class Resume
 		Resume();
 		bool ReadVlcResumeFile();
 		int GetTime(RString str);
+		void UpdateResumeTimes();
 		void CloseVlc();
-		void LaunchVlc(RString strFileName);
+		void LaunchVlc(RString strFileName, UINT64 resumeTime);
 
 	private:
 		static BOOL is_main_window(HWND handle);

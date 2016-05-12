@@ -72,9 +72,10 @@ void CListView::OnCommand(WORD id, WORD notifyCode, HWND hWndControl)
 			
 			resume.CloseVlc();
 			resume.ReadVlcResumeFile();
+			resume.UpdateResumeTimes();
 
 			if (FileExists(strFilePath))
-				resume.LaunchVlc(strFilePath);
+				resume.LaunchVlc(strFilePath, mov.resumeTime);
 				//ShellExecute(HWND_DESKTOP, _T("open"), strFilePath, NULL, NULL, SW_SHOW);
 			else if (DirectoryExists(strFilePath))
 			{
@@ -102,7 +103,7 @@ void CListView::OnCommand(WORD id, WORD notifyCode, HWND hWndControl)
 						RString strMoviePath = CorrectPath(strFilePath + _T("\\") + fi.strName);
 						if (FileExists(strMoviePath))
 						{
-							resume.LaunchVlc(strMoviePath);
+							resume.LaunchVlc(strMoviePath, mov.resumeTime);
 							//ShellExecute(HWND_DESKTOP, _T("open"), strMoviePath, NULL, NULL, SW_SHOW);
 							bFileFound = true;
 							break;
@@ -129,7 +130,7 @@ void CListView::OnCommand(WORD id, WORD notifyCode, HWND hWndControl)
 						RString strMoviePath = CorrectPath(strFilePath + _T("\\") + fi.strName);
 						if (FileExists(strMoviePath))
 						{
-							resume.LaunchVlc(strMoviePath);
+							resume.LaunchVlc(strMoviePath, mov.resumeTime);
 							//ShellExecute(HWND_DESKTOP, _T("open"), strMoviePath, NULL, NULL, SW_SHOW);
 							bFileFound = true;
 							break;

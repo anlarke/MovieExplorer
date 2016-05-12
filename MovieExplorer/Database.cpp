@@ -57,6 +57,7 @@ void ClearMovie(DBMOVIE *pMovie)
 	pMovie->bUpdated = false;
 	pMovie->fileSize = 0;
 	pMovie->fileTime = 0;
+	pMovie->resumeTime = 0;
 	pMovie->fIMDbRating = 0.0f;
 	pMovie->fIMDbRatingMax = 0.0f;
 	pMovie->fRating = 0.0f;
@@ -360,6 +361,7 @@ bool CDatabase::Load(RString_ strFilePath)
 				pMov->strFileName = lpsz;
 				pMov->fileSize = StringToNumber64(pFileTag->GetProperty(_T("size")));
 				pMov->fileTime = StringToNumber64(pFileTag->GetProperty(_T("time")));
+				pMov->resumeTime = StringToNumber64(pFileTag->GetProperty(_T("resumeTime")));
 				pMov->bHide = ((RString)pFileTag->GetProperty(_T("hide")) == _T("true"));
 				pMov->bSeen = ((RString)pFileTag->GetProperty(_T("seen")) == _T("true"));
 				pMov->strIMDbID = pFileTag->GetProperty(_T("imdb.com"));
@@ -449,6 +451,8 @@ bool CDatabase::Save()
 					pFileTag->SetProperty(_T("size"), NumberToString((INT64)mov.fileSize));
 				if (mov.fileTime != 0)
 					pFileTag->SetProperty(_T("time"), NumberToString((INT64)mov.fileTime));
+				if (mov.resumeTime >= 0)
+					pFileTag->SetProperty(_T("resumeTime"), NumberToString((INT64)mov.resumeTime));
 				if (mov.bSeen)
 					pFileTag->SetProperty(_T("seen"), _T("true"));
 				if (mov.bHide)
@@ -624,6 +628,33 @@ void CDatabase::SyncAndUpdate()
 
 	Filter();
 	Update();
+}
+
+void CDatabase::UpdateResumeTime(RString strFilePath, UINT64 resumeTime)
+//takes an input file path and resumeTime.
+//finds the database movie record corresponding to that file path and
+//updates its resumeTime.
+{
+	OutputDebugString(_T("Input: ") + strFilePath + _T("\n"));
+	foreach(m_categories, cat)
+	{
+		foreach(cat.directories, dir)
+		{
+			foreach(dir.movies, mov)
+			{
+				RString strPath = CorrectPath(dir.strPath + _T("\\") + mov.strFileName);
+				OutputDebugString(strPath + _T("\n"));
+				
+
+				if (strPath == strFilePath)
+				{
+					OutputDebugString(_T("Path Match! ->") + strPath + _T("\n"));
+					mov.resumeTime = resumeTime;
+					return;
+				}
+			}
+		}
+	}
 }
 
 void CDatabase::Update()

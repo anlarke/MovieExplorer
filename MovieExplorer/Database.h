@@ -60,11 +60,11 @@ struct DBMOVIE
 	RArray<BYTE> posterData;
 	RArray<BYTE>* actorImageData[DBI_STAR_NUMBER];
 	RString strActorId[DBI_STAR_NUMBER];
-	UINT64 fileSize, fileTime;
+	UINT64 fileSize, fileTime, resumeTime;
 	bool bSeen, bHide, bUpdated; // would be great to eliminate bUpdated...
 	DBDIRECTORY *pDirectory;
 };
-
+ 
 struct DBINFO
 {
 	RString strServiceName, strID, strIMDbID, strTitle, strYear, strGenres, strCountries, strRuntime, 
@@ -106,6 +106,7 @@ public:
 	void Unload();
 	bool Save();
 	void SyncAndUpdate();
+	void UpdateResumeTime(RString strFilePath, UINT64 resumeTime);
 	void Update();
 	void Update(DBMOVIE *pMov);
 	void CancelUpdate();
