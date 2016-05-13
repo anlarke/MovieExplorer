@@ -52,10 +52,10 @@ struct DBDIRECTORY
 
 struct DBMOVIE
 {
-	RString strFileName, strIMDbID, strMovieMeterID, strTitle, strYear, strCountries, strGenres, 
-			strRuntime, strStoryline, strDirectors, strWriters, strStars, strEpisodeName, strAirDate;
+	RString strFileName, strIMDbID, strMovieMeterID, strTitle, strYear, strCountries, strGenres, strContentRating,
+			strStoryline, strDirectors, strWriters, strStars, strEpisodeName, strAirDate;
 	float fRating, fRatingMax, fIMDbRating, fIMDbRatingMax;
-	INT_PTR nVotes, nIMDbVotes, nYear, nMetascore, nSeason, nEpisode;
+	INT_PTR nVotes, nIMDbVotes, nYear, nMetascore, nSeason, nEpisode, nRuntime;
 	BYTE bType;
 	RArray<BYTE> posterData;
 	RArray<BYTE>* actorImageData[DBI_STAR_NUMBER];
@@ -67,11 +67,11 @@ struct DBMOVIE
  
 struct DBINFO
 {
-	RString strServiceName, strID, strIMDbID, strTitle, strYear, strGenres, strCountries, strRuntime, 
+	RString strServiceName, strID, strIMDbID, strTitle, strYear, strGenres, strContentRating, strCountries,  
 			strStoryline, strDirectors, strWriters, strStars, strSearchTitle, strSearchYear, 
 			strFileName, strEpisodeName, strAirDate;
 	float fRating, fRatingMax, fIMDbRating, fIMDbRatingMax;
-	INT_PTR nVotes, nIMDbVotes, nMetascore, nSeason, nEpisode;
+	INT_PTR nVotes, nIMDbVotes, nMetascore, nSeason, nEpisode, nRuntime;
 	BYTE bType;
 	RArray<BYTE> posterData;
 	RArray<BYTE>* actorImageData[DBI_STAR_NUMBER];

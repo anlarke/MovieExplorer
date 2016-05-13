@@ -16,11 +16,12 @@ DWORD ScrapeMovieMeter(DBINFO *pInfo)
 	if (!pInfo || pInfo->strSearchTitle.IsEmpty() || pInfo->strServiceName != _T("moviemeter.nl"))
 		{ASSERT(false); return DBI_STATUS_SCRAPEERROR;}
 
-	pInfo->strTitle = pInfo->strYear = pInfo->strGenres = pInfo->strCountries = pInfo->strRuntime = 
+	pInfo->strTitle = pInfo->strYear = pInfo->strGenres = pInfo->strCountries = pInfo->strContentRating = 
 			pInfo->strStoryline = pInfo->strDirectors = pInfo->strWriters = pInfo->strStars = 
 			pInfo->strStars = (const TCHAR*)NULL;
 	pInfo->fRating = pInfo->fRatingMax = 0.0f;
 	pInfo->nVotes = 0;
+	pInfo->nRuntime = 0;
 	pInfo->nMetascore = -1;
 	pInfo->posterData.SetSize(0);
 	pInfo->bType = DB_TYPE_UNKNOWN;
@@ -85,19 +86,21 @@ DWORD ScrapeMovieMeter(DBINFO *pInfo)
 	//
 	// Extract description
 	//
-
+	RString strRuntime;
 	GetFirstMatch(str, _T(">([^<]*)<br /><span itemprop=\"genre\">(.*?)</span><br />(.*?)<br /></p>")
 			_T("<p>geregisseerd door (.*?)<br />met (.*?)<p itemprop=\"description\">(.*?)</p>"), 
-			&pInfo->strCountries, &pInfo->strGenres, &pInfo->strRuntime, &pInfo->strDirectors, 
+			&pInfo->strCountries, &pInfo->strGenres, &strRuntime, &pInfo->strDirectors, 
 			&pInfo->strStars, &pInfo->strStoryline, NULL);
 
+	
 	pInfo->strCountries = StripTags(pInfo->strCountries);
 	pInfo->strCountries.Replace(_T(" / "), _T("|"));
 
 	pInfo->strGenres = StripTags(pInfo->strGenres);
 	pInfo->strGenres.Replace(_T(" / "), _T("|"));
 
-	pInfo->strRuntime = StripTags(pInfo->strRuntime);
+	strRuntime = StripTags(strRuntime);
+	pInfo->nRuntime = StringToNumber(strRuntime);
 
 	pInfo->strDirectors = StripTags(pInfo->strDirectors);
 	pInfo->strDirectors.Replace(_T(", "), _T("|"));

@@ -24,6 +24,7 @@ void ClearInfo(DBINFO *pInfo)
 	pInfo->bType = DB_TYPE_UNKNOWN;
 	pInfo->nVotes = 0;
 	pInfo->nIMDbVotes = 0;
+	pInfo->nRuntime = 0;
 	pInfo->posterData.SetSize(0);
 	for (int i = 0; i < DBI_STAR_NUMBER; i++)
 	{
@@ -35,9 +36,9 @@ void ClearInfo(DBINFO *pInfo)
 	pInfo->strDirectors.Empty();
 	pInfo->strFileName.Empty();
 	pInfo->strGenres.Empty();
+	pInfo->strContentRating.Empty();
 	pInfo->strID.Empty();
 	pInfo->strIMDbID.Empty();
-	pInfo->strRuntime.Empty();
 	pInfo->strSearchTitle.Empty();
 	pInfo->strSearchYear.Empty();
 	pInfo->strServiceName.Empty();
@@ -82,9 +83,10 @@ void ClearMovie(DBMOVIE *pMovie)
 	pMovie->strDirectors.Empty();
 	pMovie->strFileName.Empty();
 	pMovie->strGenres.Empty();
+	pMovie->strContentRating.Empty();
 	pMovie->strIMDbID.Empty();
 	pMovie->strMovieMeterID.Empty();
-	pMovie->strRuntime.Empty();
+	pMovie->nRuntime = 0;
 	pMovie->strStars.Empty();
 	pMovie->strStoryline.Empty();
 	pMovie->strTitle.Empty();
@@ -100,8 +102,9 @@ void TagToInfo(RXMLTag *pTag, DBINFO *pInfo)
 	pInfo->strTitle = pTag->GetChildContent(_T("Title"));
 	pInfo->strYear = pTag->GetChildContent(_T("Year"));
 	pInfo->strGenres = pTag->GetChildContent(_T("Genres"));
+	pInfo->strContentRating = pTag->GetChildContent(_T("ContentRating"));
 	pInfo->strCountries = pTag->GetChildContent(_T("Countries"));
-	pInfo->strRuntime = pTag->GetChildContent(_T("Runtime"));
+	pInfo->nRuntime = StringToNumber(pTag->GetChildContent(_T("Runtime")));
 	pInfo->strStoryline = pTag->GetChildContent(_T("Storyline"));
 	pInfo->strDirectors = pTag->GetChildContent(_T("Directors"));
 	pInfo->strWriters = pTag->GetChildContent(_T("Writers"));
@@ -135,8 +138,9 @@ void InfoToTag(DBINFO *pInfo, RXMLTag *pTag)
 	pTag->AddChild(_T("Title"))->SetContent(pInfo->strTitle);
 	pTag->AddChild(_T("Year"))->SetContent(pInfo->strYear);
 	pTag->AddChild(_T("Genres"))->SetContent(pInfo->strGenres);
+	pTag->AddChild(_T("ContentRating"))->SetContent(pInfo->strContentRating);
 	pTag->AddChild(_T("Countries"))->SetContent(pInfo->strCountries);
-	pTag->AddChild(_T("Runtime"))->SetContent(pInfo->strRuntime);
+	pTag->AddChild(_T("Runtime"))->SetContent(NumberToString(pInfo->nRuntime));
 	pTag->AddChild(_T("Storyline"))->SetContent(pInfo->strStoryline);
 	pTag->AddChild(_T("Directors"))->SetContent(pInfo->strDirectors);
 	pTag->AddChild(_T("Writers"))->SetContent(pInfo->strWriters);
@@ -891,6 +895,7 @@ void CDatabase::Filter()
 								mov.strEpisodeName.FindNoCase(strKeyword) != -1 ||
 								mov.strYear.FindNoCase(strKeyword) != -1 ||
 								mov.strGenres.FindNoCase(strKeyword) != -1 ||
+								mov.strContentRating.FindNoCase(strKeyword) != -1 ||
 								mov.strCountries.FindNoCase(strKeyword) != -1 ||
 								mov.strDirectors.FindNoCase(strKeyword) != -1 ||
 								mov.strWriters.FindNoCase(strKeyword) != -1 ||
@@ -923,6 +928,7 @@ void CDatabase::Filter()
 						foreach (m_filterKeywords, strKeyword)
 						{
 							if (mov.strGenres.FindNoCase(strKeyword) != -1 ||
+									mov.strContentRating.FindNoCase(strKeyword) != -1 ||
 									mov.strAirDate.FindNoCase(strKeyword) != -1 ||
 									mov.strCountries.FindNoCase(strKeyword) != -1 ||
 									mov.strDirectors.FindNoCase(strKeyword) != -1 ||

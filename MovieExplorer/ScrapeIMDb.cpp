@@ -326,8 +326,9 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 	// Get runtime
 
 	//GetFirstMatch(str, _T("(\\d+ min\\b)"), &pInfo->strRuntime, NULL);
-	GetFirstMatch(str, _T("datetime=\"PT(\\d+)M"), &pInfo->strRuntime, NULL);
-
+	RString strRuntime;
+	GetFirstMatch(str, _T("datetime=\"PT(\\d+)M"), &strRuntime, NULL);
+	pInfo->nRuntime = StringToNumber(strRuntime);
 
 	// Get directors
 
@@ -389,6 +390,10 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 			pInfo->strGenres += regex.GetMatch(1) + _T("|");
 		pInfo->strGenres.Trim(_T("|"));
 	}
+
+	// Get content rating
+
+	GetFirstMatch(str, _T("\"contentRating\" content=\"([^\"]*?)\""), &pInfo->strContentRating);
 
 	// Get countries
 	

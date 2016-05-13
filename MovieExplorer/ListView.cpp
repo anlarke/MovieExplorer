@@ -40,10 +40,9 @@ RString PrettyList(RString str)
 	return strResult;
 }
 
-RString PrettyTime(RString strTime)
+RString PrettyTime(int nTime)
 {
 	RString strReturn = _T("");
-	int nTime = StringToNumber(strTime);
 	int nHours, nMinutes;
 
 	nHours = nTime / 60;
@@ -816,7 +815,7 @@ void CListView::Draw()
 
 	for (INT_PTR i = nStart; i < GetDB()->m_movies && y < cy; ++i, y += SCY(LV_DETAILS_HEIGHT))
 	{
-		RECT rcItem = {0, y, cx, y + SCY(LV_DETAILS_HEIGHT)};
+		RECT rcItem = { 0, y, cx, y + SCY(LV_DETAILS_HEIGHT) };
 
 		if (i & 0x1)
 			DrawRect(m_mdc, 0, y, cx, SCY(LV_DETAILS_HEIGHT), m_clrBackgrAlt);
@@ -834,19 +833,19 @@ void CListView::Draw()
 			VERIFY(LoadImage(mov.posterData, mdcPoster, SCX(200), SCY(300)));
 			int cxImg, cyImg;
 			mdcPoster.GetDimensions(cxImg, cyImg);
-			m_sprShadow.Draw(m_mdc, SCX(15)-2*SCX(1), y + SCY(15)-2*SCY(1), 
-					cxImg+5*SCX(1), cyImg+5*SCY(1));
+			m_sprShadow.Draw(m_mdc, SCX(15) - 2 * SCX(1), y + SCY(15) - 2 * SCY(1),
+				cxImg + 5 * SCX(1), cyImg + 5 * SCY(1));
 			BitBlt(m_mdc, SCX(15), y + SCY(15), cxImg, cyImg, mdcPoster, 0, 0, SRCCOPY);
 		}
 		else
 		{
-			m_sprShadow.Draw(m_mdc, SCX(15)-2*SCX(1), y + SCY(15)-2*SCY(1), 
-					SCX(200)+5*SCX(1), SCY(300)+5*SCY(1));
+			m_sprShadow.Draw(m_mdc, SCX(15) - 2 * SCX(1), y + SCY(15) - 2 * SCY(1),
+				SCX(200) + 5 * SCX(1), SCY(300) + 5 * SCY(1));
 			FillSolidRect(m_mdc, SCX(15), y + SCY(15), SCX(200), SCX(300), m_clrBackgr);
 		}
 
 		// draw title and year
-		
+
 		hPrevFont = (HFONT)SelectObject(m_mdc, m_fntTitle);
 		SetTextColor(m_mdc, m_clrTitle);
 
@@ -855,7 +854,7 @@ void CListView::Draw()
 			strDate = mov.strAirDate;
 		else if (!mov.strYear.IsEmpty())
 			strDate = mov.strYear;
-		
+
 		if (mov.strEpisodeName.IsEmpty())
 		{
 			strTitle = (mov.strTitle.IsEmpty() ? mov.strFileName : (mov.strTitle +
@@ -874,31 +873,51 @@ void CListView::Draw()
 
 			str.Empty();
 			if (mov.nSeason >= 0)
-				str =  _T("Season ") + NumberToString(mov.nSeason);
+				str = _T("Season ") + NumberToString(mov.nSeason);
 			if (mov.nEpisode >= 0)
 				str = str + _T(" Episode ") + NumberToString(mov.nEpisode) + _T(": ");
-			str = str +  _T("\"") + mov.strEpisodeName + _T("\"");
+			str = str + _T("\"") + mov.strEpisodeName + _T("\"");
 
 			hPrevFont = (HFONT)SelectObject(m_mdc, m_fntTextBold);
 			SetTextColor(m_mdc, m_clrTitle);
-			
+
 			TextOut(m_mdc, SCX(200) + SCX(35), y + SCY(40), str);
 			SelectObject(m_mdc, hPrevFont);
-			
+
 		}
 
-		// draw genres, countries and runtime
+		// draw genres, countries and content rating
 
 		mov.strCountries.Replace(_T("|"), _T("/"));
 		mov.strGenres.Replace(_T("|"), _T("/"));
-		mov.strRuntime.Replace(_T("|"), _T("/"));
-		
+
 		hPrevFont = (HFONT)SelectObject(m_mdc, m_fntText);
 		SetTextColor(m_mdc, m_clrText);
 		if (mov.nSeason < 0)
 			TextOut(m_mdc, SCX(200) + SCX(35), y + SCY(48), mov.strCountries);
 		TextOut(m_mdc, SCX(200) + SCX(35), y + SCY(66), mov.strGenres);
-		TextOut(m_mdc, SCX(200) + SCX(35), y + SCY(84), PrettyTime(mov.strRuntime));
+
+		SIZE szT;
+		int nOffsetT = 0;
+		if (mov.nRuntime > 0)
+		{
+			RString strPrettyTime = PrettyTime(mov.nRuntime);
+			GetTextExtentPoint32(m_mdc, strPrettyTime, &szT);
+			TextOut(m_mdc, SCX(200) + SCX(35), y + SCY(84), strPrettyTime);
+			nOffsetT = szT.cx + SCX(10);
+		}
+
+		if (!mov.strContentRating.IsEmpty() && mov.strContentRating != _T("NOT RATED"))
+		{
+			GetTextExtentPoint32(m_mdc, mov.strContentRating, &szT);
+			TextOut(m_mdc, SCX(200) + SCX(35) + nOffsetT, y + SCY(84), mov.strContentRating);
+			nOffsetT += szT.cx + SCX(10);
+		}
+
+		// draw % of movie seen if not 0. Returns to 0 when finished.
+		if(mov.nRuntime != 0 && mov.resumeTime > 0)
+			TextOut(m_mdc, SCX(200) + SCX(35) + nOffsetT, y + SCY(84), 
+				NumberToString((INT64)((double)mov.resumeTime / ((double)mov.nRuntime * 60.0) * 100.0)) + _T("%"));
 		SelectObject(m_mdc, hPrevFont);
 
 		// draw storyline
