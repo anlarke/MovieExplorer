@@ -24,6 +24,15 @@
 
 #define TOUCH_SCROLL_TIMER_ID	1
 
+bool IsValidId(RString id)
+{
+	if (!id.IsEmpty() && id != _T("unknown") &&
+		id != _T("scrapeError") && id != _T("connError"))
+		return true;
+	else
+		return false;
+}
+
 RString PrettyList(RString str)
 {
 	RString strResult;
@@ -1097,7 +1106,9 @@ void CListView::Draw()
 
 		// draw rating
 
-		if (mov.fRating != 0.0f)
+		//if (mov.fRating != 0.0f)
+		if( (m_strRatingServ == _T("imdb.com") && IsValidId(mov.strIMDbID)) ||
+			(m_strRatingServ == _T("moviemeter.nl") && IsValidId(mov.strMovieMeterID)))
 		{
 			float fRating = mov.fRating;
 			float fRatingMax = mov.fRatingMax;
@@ -1163,18 +1174,21 @@ void CListView::Draw()
 			TextOut(m_mdc, x, y + SCY(48), str);
 			SelectObject(m_mdc, hPrevFont);
 
-			if (fRatingMax <= 5.0f)
-				_stprintf(str.GetBuffer(32), _T("%.2f"), fRating);
-			else
-				_stprintf(str.GetBuffer(32), _T("%.1f"), fRating);
-			str.ReleaseBuffer();
-			str.Replace(_T("."), GetDecimalSep());
-			hPrevFont = (HFONT)SelectObject(m_mdc, m_fntTextBold);
-			GetTextExtentPoint32(m_mdc, str, &sz);
-			x -= sz.cx;
-			SetTextColor(m_mdc, m_clrText);
-			TextOut(m_mdc, x, y + SCY(48), str);
-			SelectObject(m_mdc, hPrevFont);
+			if (mov.nVotes > 0)
+			{
+				if (fRatingMax <= 5.0f)
+					_stprintf(str.GetBuffer(32), _T("%.2f"), fRating);
+				else
+					_stprintf(str.GetBuffer(32), _T("%.1f"), fRating);
+				str.ReleaseBuffer();
+				str.Replace(_T("."), GetDecimalSep());
+				hPrevFont = (HFONT)SelectObject(m_mdc, m_fntTextBold);
+				GetTextExtentPoint32(m_mdc, str, &sz);
+				x -= sz.cx;
+				SetTextColor(m_mdc, m_clrText);
+				TextOut(m_mdc, x, y + SCY(48), str);
+				SelectObject(m_mdc, hPrevFont);
+			}
 
 			str = _T(": ");
 			hPrevFont = (HFONT)SelectObject(m_mdc, m_fntText);

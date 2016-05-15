@@ -639,7 +639,6 @@ void CDatabase::UpdateResumeTime(RString strFilePath, UINT64 resumeTime)
 //finds the database movie record corresponding to that file path and
 //updates its resumeTime.
 {
-	OutputDebugString(_T("Input: ") + strFilePath + _T("\n"));
 	foreach(m_categories, cat)
 	{
 		foreach(cat.directories, dir)
@@ -647,12 +646,9 @@ void CDatabase::UpdateResumeTime(RString strFilePath, UINT64 resumeTime)
 			foreach(dir.movies, mov)
 			{
 				RString strPath = CorrectPath(dir.strPath + _T("\\") + mov.strFileName);
-				OutputDebugString(strPath + _T("\n"));
-				
-
 				if (strPath == strFilePath)
 				{
-					OutputDebugString(_T("Path Match! ->") + strPath + _T("\n"));
+					//Path match
 					mov.resumeTime = resumeTime;
 					return;
 				}

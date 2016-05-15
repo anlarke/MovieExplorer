@@ -104,8 +104,6 @@ void Resume::CloseVlc()
 {
 	HWND h = find_main_window(processInfo.dwProcessId);
 	SendMessage(h, WM_CLOSE, NULL, NULL);
-//	CloseHandle(processInfo.hThread);
-//	CloseHandle(processInfo.hProcess);
 }
 
 

@@ -371,13 +371,14 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 	}
 
 
-	// Get storyline
+	// Get storyline (using top summary storyline)
 
-	if (GetFirstMatch(str, _T("<h2>Storyline</h2>.*?<p>(.*?) *(?:<em class=\"nobr\">|</p>)"), &strTemp, NULL))
+	//if (GetFirstMatch(str, _T("<h2>Storyline</h2>.*?<p>(.*?) *(?:<em class=\"nobr\">|</p>)"), &strTemp, NULL))
+	if (GetFirstMatch(str, _T("itemprop=\"description\">$[\\s\\t]*([^<]+?)<"), &strTemp, NULL))
 	{
-		VERIFY(regex.Create(_T("<[^>]+>")));
-		pInfo->strStoryline = regex.Replace(strTemp, _T(""));
-		pInfo->strStoryline = FixLineEnds(pInfo->strStoryline, _T(""));
+		//VERIFY(regex.Create(_T("<[^>]+>")));
+		//pInfo->strStoryline = regex.Replace(strTemp, _T(""));
+		pInfo->strStoryline = FixLineEnds(strTemp, _T(""));
 	}
 
 	// Get genres
