@@ -55,6 +55,7 @@ protected:
 	double m_dTouchScrollCoeff;
 
 	bool m_bHideUserCategories;
+	bool m_bUseVlc;
 
 	Resume resume;
 

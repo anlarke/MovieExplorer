@@ -84,6 +84,7 @@ void CListView::OnCommand(WORD id, WORD notifyCode, HWND hWndControl)
 	DBDIRECTORY& dir = *mov.pDirectory;
 	//DBCATEGORY& cat = *dir.pCategory;
 
+
 	if (hWndControl == m_btnPlay)
 	{
 		RString strFilePath = CorrectPath(dir.strPath + _T("\\") + mov.strFileName, true);
@@ -93,13 +94,18 @@ void CListView::OnCommand(WORD id, WORD notifyCode, HWND hWndControl)
 			// with a valid extension not containing 'sample'. Otherwise open the directory
 			// so user can choose the file manually.
 			
-			resume.CloseVlc();
-			resume.ReadVlcResumeFile();
-			resume.UpdateResumeTimes();
+			if (m_bUseVlc)
+			{
+				resume.CloseVlc();
+				resume.ReadVlcResumeFile();
+				resume.UpdateResumeTimes();
+			}
 
 			if (FileExists(strFilePath))
-				resume.LaunchVlc(strFilePath, mov.resumeTime);
-				//ShellExecute(HWND_DESKTOP, _T("open"), strFilePath, NULL, NULL, SW_SHOW);
+				if(m_bUseVlc)
+					resume.LaunchVlc(strFilePath, mov.resumeTime);
+				else
+					ShellExecute(HWND_DESKTOP, _T("open"), strFilePath, NULL, NULL, SW_SHOW);
 			else if (DirectoryExists(strFilePath))
 			{
 				// Create easy to search list of extensions
@@ -126,8 +132,10 @@ void CListView::OnCommand(WORD id, WORD notifyCode, HWND hWndControl)
 						RString strMoviePath = CorrectPath(strFilePath + _T("\\") + fi.strName);
 						if (FileExists(strMoviePath))
 						{
-							resume.LaunchVlc(strMoviePath, mov.resumeTime);
-							//ShellExecute(HWND_DESKTOP, _T("open"), strMoviePath, NULL, NULL, SW_SHOW);
+							if(m_bUseVlc)
+								resume.LaunchVlc(strMoviePath, mov.resumeTime);
+							else
+								ShellExecute(HWND_DESKTOP, _T("open"), strMoviePath, NULL, NULL, SW_SHOW);
 							bFileFound = true;
 							break;
 						}
@@ -153,8 +161,10 @@ void CListView::OnCommand(WORD id, WORD notifyCode, HWND hWndControl)
 						RString strMoviePath = CorrectPath(strFilePath + _T("\\") + fi.strName);
 						if (FileExists(strMoviePath))
 						{
-							resume.LaunchVlc(strMoviePath, mov.resumeTime);
-							//ShellExecute(HWND_DESKTOP, _T("open"), strMoviePath, NULL, NULL, SW_SHOW);
+							if(m_bUseVlc)
+								resume.LaunchVlc(strMoviePath, mov.resumeTime);
+							else
+								ShellExecute(HWND_DESKTOP, _T("open"), strMoviePath, NULL, NULL, SW_SHOW);
 							bFileFound = true;
 							break;
 						}
@@ -180,7 +190,12 @@ void CListView::OnCommand(WORD id, WORD notifyCode, HWND hWndControl)
 			RString strFilePath = CorrectPath(dir.strPath + _T("\\") + mov.strFileName);
 
 			if (DirectoryExists(strFilePath))
-				ShellExecute(HWND_DESKTOP, _T("open"), strFilePath, NULL, NULL, SW_SHOW);
+			{
+				if (m_bUseVlc)
+					resume.LaunchVlc(strFilePath, mov.resumeTime);
+				else
+					ShellExecute(HWND_DESKTOP, _T("open"), strFilePath, NULL, NULL, SW_SHOW);
+			}
 			else if (DirectoryExists(strDirPath))
 				ShellExecute(HWND_DESKTOP, _T("open"), strDirPath, NULL, NULL, SW_SHOW);
 		}
@@ -480,8 +495,13 @@ void CListView::OnPrefChanged()
 
 	m_nTouchScrollElapse = GETPREFINT(_T("TouchScrollElapse"));
 	m_dTouchScrollCoeff = GETPREFFLOAT(_T("TouchScrollCoeff"));
+	
+	
+	//Advanced options
 
 	m_bHideUserCategories = GETPREFBOOL(_T("HideUserCategories"));
+	m_bUseVlc = GETPREFBOOL(_T("UseVlc"));
+
 
 	OnScaleChanged();
 }
@@ -924,11 +944,13 @@ void CListView::Draw()
 		}
 
 		// draw % of movie seen if not 0. Returns to 0 when finished.
-		if(mov.nRuntime != 0 && mov.resumeTime > 0)
-			TextOut(m_mdc, SCX(200) + SCX(35) + nOffsetT, y + SCY(84), 
-				NumberToString((INT64)((double)mov.resumeTime / ((double)mov.nRuntime * 60.0) * 100.0)) + _T("%"));
-		SelectObject(m_mdc, hPrevFont);
-
+		if (m_bUseVlc)
+		{
+			if (mov.nRuntime != 0 && mov.resumeTime > 0)
+				TextOut(m_mdc, SCX(200) + SCX(35) + nOffsetT, y + SCY(84),
+					NumberToString((INT64)((double)mov.resumeTime / ((double)mov.nRuntime * 60.0) * 100.0)) + _T("%"));
+			SelectObject(m_mdc, hPrevFont);
+		}
 		// draw storyline
 
 		hPrevFont = (HFONT)SelectObject(m_mdc, m_fntText);

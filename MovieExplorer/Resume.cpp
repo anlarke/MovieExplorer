@@ -22,6 +22,8 @@ Resume::Resume()
 bool Resume::ReadVlcResumeFile()
 {
 
+	Sleep(100); //wait for VLC to write file (TODO: make threaded)
+
 	//get username
 	TCHAR username[UNLEN + 1];
 	DWORD username_len = UNLEN + 1;

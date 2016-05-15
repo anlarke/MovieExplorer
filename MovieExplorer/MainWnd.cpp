@@ -119,10 +119,15 @@ LRESULT CMainWnd::WndProc(UINT Msg, WPARAM wParam, LPARAM lParam)
 void CMainWnd::OnActivateApp(BOOL bActive, DWORD dwThreadID)
 {
 	UNREFERENCED_PARAMETER(dwThreadID);
-	Resume resume;
-	resume.ReadVlcResumeFile();
-	resume.UpdateResumeTimes();
+
 	
+	if (GETPREFBOOL(_T("UseVlc")))
+	{
+		Resume resume;
+		resume.ReadVlcResumeFile();
+		resume.UpdateResumeTimes();
+	}
+
 	if (bActive && GetDB())
 	{
 		LOG(_T("Refreshing Database...\n"));
