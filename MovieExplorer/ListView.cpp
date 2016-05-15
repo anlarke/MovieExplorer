@@ -1174,7 +1174,7 @@ void CListView::Draw()
 			TextOut(m_mdc, x, y + SCY(48), str);
 			SelectObject(m_mdc, hPrevFont);
 
-			if (mov.nVotes > 0)
+			if (!(mov.nVotes == 0 && mov.fRating == 0 ))
 			{
 				if (fRatingMax <= 5.0f)
 					_stprintf(str.GetBuffer(32), _T("%.2f"), fRating);
