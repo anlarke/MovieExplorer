@@ -9,6 +9,62 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // General functions
 
+RString GetFileNameFromDirectory(RString strDirectory, RString strFileName)
+{
+	// Return the name of the first video file inside
+	// with a valid extension not containing 'sample'.
+
+
+	// Create easy to search list of extensions
+
+	RString strIndexExtensions = GETPREFSTR(_T("Database"), _T("IndexExtensions"));
+	strIndexExtensions = _T("|") + strIndexExtensions + _T("|");
+
+	RString strPath = CorrectPath(strDirectory);
+	RObArray<FILEINFO> fileInfos = EnumFiles(strPath, _T("*"));
+
+
+	// Check for exact filename matches with directory name first
+
+	foreach(fileInfos, fi)
+	{
+		// See if extension is in the list of valid ones
+
+		if (strIndexExtensions.FindNoCase(_T("|") + GetFileExt(fi.strName) + _T("|")) == -1)
+			continue;
+
+		if (fi.strName.FindNoCase(strFileName) >= 0)
+		{
+			RString strMoviePath = CorrectPath(strDirectory + _T("\\") + fi.strName);
+			if (FileExists(strMoviePath))
+				return(fi.strName);
+		}
+	}
+
+	// No exact matches so try all files with the correct extension not containing "sample".
+
+	foreach(fileInfos, fi)
+	{
+		// See if extension is in the list of valid ones
+
+		if (strIndexExtensions.FindNoCase(_T("|") + GetFileExt(fi.strName) + _T("|")) == -1)
+			continue;
+
+		// Make sure its not the 'sample' video
+
+		if (fi.strName.FindNoCase(_T("sample")) >= 0)
+			continue;
+
+		RString strMoviePath = CorrectPath(strDirectory + _T("\\") + fi.strName);
+		if (FileExists(strMoviePath))
+			return fi.strName;
+	}
+
+	// We didn't find the movie in the directory so return NULL
+
+	return NULL;
+}
+
 void ClearInfo(DBINFO *pInfo)
 {
 	ASSERT(pInfo);
@@ -548,7 +604,7 @@ void CDatabase::SyncAndUpdate()
 
 					pMov = NULL;
 					foreach (dir.movies, mov)
-						if (_tcsicmp(mov.strFileName, fi.strName) == 0)
+						if (_tcsicmp(GetDirectoryName(mov.strFileName), fi.strName) == 0)
 							pMov = &mov;
 
 					if (!pMov)
@@ -558,10 +614,29 @@ void CDatabase::SyncAndUpdate()
 						pMov->pDirectory = &dir;
 						++nAdded;
 					}
+					
+					// If it's a directory get the actual filename in the directory. 
+				
+					if (fi.bDirectory)
+					{
+						RString strFilePath = CorrectPath(dir.strPath + _T("\\") + fi.strName);
+						RString strFileName = GetFileNameFromDirectory(strFilePath, fi.strName);
+						if (strFileName && !strFileName.IsEmpty())
+						{
+							pMov->strFileName = fi.strName + _T("\\") + strFileName;
+							pMov->fileSize = FileSize(strFilePath + _T("\\") + strFileName);
+							pMov->fileTime = fi.lastWriteTime;
+						}
 
-					pMov->strFileName = fi.strName;
-					pMov->fileSize = fi.size;
-					pMov->fileTime = fi.lastWriteTime;
+					}
+					else
+					{
+
+						pMov->strFileName = fi.strName;
+						pMov->fileSize = fi.size;
+						pMov->fileTime = fi.lastWriteTime;
+					}
+					
 				}
 			}
 			else if (FileExists(strPath)) // it's a movie list

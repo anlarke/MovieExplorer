@@ -400,7 +400,7 @@ void CCategoryBar::Draw()
 				SetTextColor(m_mdc, m_clrSelectedText2);
 				TextOut(m_mdc, pButton->rc.x + CB_TEXTMARGIN + sz.cx, (cy - sz.cy) / 2 - SCY(1), pButton->strText2);
 			}
-		}
+		} 
 	}
 
 	Invalidate(m_hWnd);

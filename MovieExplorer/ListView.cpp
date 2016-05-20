@@ -59,9 +59,10 @@ RString PrettyTime(int nTime)
 
 	strReturn += (nHours > 0) ? (NumberToString(nHours) + _T("h ")) : (_T(""));
 	strReturn += (nMinutes > 0) ? (NumberToString(nMinutes) + _T("min")) : (_T(""));
-	return(strReturn);
-		
+	return(strReturn);	
 }
+
+
 
 CListView::CListView() : m_nHoverMov(-1), m_bScrolling(false), m_bCaptureM(false)
 {
@@ -86,7 +87,7 @@ void CListView::OnCommand(WORD id, WORD notifyCode, HWND hWndControl)
 
 
 	if (hWndControl == m_btnPlay)
-	{
+	{ 
 		RString strFilePath = CorrectPath(dir.strPath + _T("\\") + mov.strFileName, true);
 		if (dir.strComputerName == GetComputerName())
 		{
@@ -97,83 +98,14 @@ void CListView::OnCommand(WORD id, WORD notifyCode, HWND hWndControl)
 			if (m_bUseVlc)
 			{
 				resume.CloseVlc();
-				resume.ReadVlcResumeFile();
-				resume.UpdateResumeTimes();
+				resume.ReadThread();
 			}
 
 			if (FileExists(strFilePath))
-				if(m_bUseVlc)
+			{
+				if (m_bUseVlc)
 					resume.LaunchVlc(strFilePath, mov.resumeTime);
 				else
-					ShellExecute(HWND_DESKTOP, _T("open"), strFilePath, NULL, NULL, SW_SHOW);
-			else if (DirectoryExists(strFilePath))
-			{
-				// Create easy to search list of extensions
-
-				RString strIndexExtensions = GETPREFSTR(_T("Database"), _T("IndexExtensions"));
-				strIndexExtensions = _T("|") + strIndexExtensions + _T("|");
-
-				RString strPath = CorrectPath(strFilePath);
-				RObArray<FILEINFO> fileInfos = EnumFiles(strPath, _T("*"));
-
-				bool bFileFound = false;
-
-				// Check for exact filename matches with directory name first
-
-				foreach(fileInfos, fi)
-				{
-					// See if extension is in the list of valid ones
-
-					if (strIndexExtensions.FindNoCase(_T("|") + GetFileExt(fi.strName) + _T("|")) == -1)
-						continue;
-
-					if (fi.strName.FindNoCase(mov.strFileName) >= 0)
-					{
-						RString strMoviePath = CorrectPath(strFilePath + _T("\\") + fi.strName);
-						if (FileExists(strMoviePath))
-						{
-							if(m_bUseVlc)
-								resume.LaunchVlc(strMoviePath, mov.resumeTime);
-							else
-								ShellExecute(HWND_DESKTOP, _T("open"), strMoviePath, NULL, NULL, SW_SHOW);
-							bFileFound = true;
-							break;
-						}
-					}
-				}
-
-				if (!bFileFound)
-				{
-					// No exact matches so try all files with the correct extension not containing "sample".
-
-					foreach(fileInfos, fi)
-					{
-						// See if extension is in the list of valid ones
-
-						if (strIndexExtensions.FindNoCase(_T("|") + GetFileExt(fi.strName) + _T("|")) == -1)
-							continue;
-
-						// Make sure its not the 'sample' video
-
-						if (fi.strName.FindNoCase(_T("sample")) >= 0)
-							continue;
-
-						RString strMoviePath = CorrectPath(strFilePath + _T("\\") + fi.strName);
-						if (FileExists(strMoviePath))
-						{
-							if(m_bUseVlc)
-								resume.LaunchVlc(strMoviePath, mov.resumeTime);
-							else
-								ShellExecute(HWND_DESKTOP, _T("open"), strMoviePath, NULL, NULL, SW_SHOW);
-							bFileFound = true;
-							break;
-						}
-					}
-				}
-				
-				// We didn't find the movie in the directory so just open it
-
-				if (!bFileFound)
 					ShellExecute(HWND_DESKTOP, _T("open"), strFilePath, NULL, NULL, SW_SHOW);
 			}
 		}
@@ -187,15 +119,10 @@ void CListView::OnCommand(WORD id, WORD notifyCode, HWND hWndControl)
 			// a file, open the directory the file is in.
 
 			RString strDirPath = CorrectPath(dir.strPath);
-			RString strFilePath = CorrectPath(dir.strPath + _T("\\") + mov.strFileName);
+			RString strFilePath = CorrectPath(dir.strPath + _T("\\") + GetDirectoryName(mov.strFileName));
 
 			if (DirectoryExists(strFilePath))
-			{
-				if (m_bUseVlc)
-					resume.LaunchVlc(strFilePath, mov.resumeTime);
-				else
-					ShellExecute(HWND_DESKTOP, _T("open"), strFilePath, NULL, NULL, SW_SHOW);
-			}
+				ShellExecute(HWND_DESKTOP, _T("open"), strFilePath, NULL, NULL, SW_SHOW);
 			else if (DirectoryExists(strDirPath))
 				ShellExecute(HWND_DESKTOP, _T("open"), strDirPath, NULL, NULL, SW_SHOW);
 		}
@@ -230,7 +157,7 @@ void CListView::OnCommand(WORD id, WORD notifyCode, HWND hWndControl)
 		if (dir.strComputerName == GetComputerName())
 		{
 			RString strDirPath = CorrectPath(dir.strPath);
-			RString strFilePath = CorrectPath(dir.strPath + _T("\\") + mov.strFileName);
+			RString strFilePath = CorrectPath(dir.strPath + _T("\\") + GetDirectoryName(mov.strFileName));
 
 			if (FileExists(strFilePath))
 			{
@@ -582,16 +509,23 @@ bool CListView::OnSetCursor(HWND hWnd, WORD hitTest, WORD mouseMsg)
 	POINT pt;
 	GetCursorPos(&pt);
 	ScreenToClient(m_hWnd, &pt);
+	static bool wasOverLink = false;
+
 	foreach (m_links, link)
 	{
 		if (PtInRect(&link.rc, pt))
 		{
 			STATUS(link.strURL);  //display url in the status bar if we're over a link
 			SetCursor(LoadCursor(NULL, IDC_HAND));
+			wasOverLink = true;
 			return true;
 		}
 	}
-	STATUS(GETSTR(IDS_READY));		//no link url to display. set back to "Ready"
+
+	if (wasOverLink) {
+		STATUS(GETSTR(IDS_READY));		//no link url to display. set back to "Ready"
+		wasOverLink = false;
+	}
 	return RWindow::OnSetCursor(hWnd, hitTest, mouseMsg);
 }
 
@@ -1092,7 +1026,7 @@ void CListView::Draw()
 		SetTextColor(m_mdc, m_clrText);
 		GetTextExtentPoint32(m_mdc, GETSTR(IDS_FILE) + _T(":"), &sz);
 		int nOffset = sz.cx;
-		RString strPrintFileName = mov.strFileName +
+		RString strPrintFileName = GetFileName(mov.strFileName) +
 			(mov.fileSize != 0 ? _T(" [") + SizeToString(mov.fileSize) +
 			_T("]") : _T(""));
 		TextOut(m_mdc, SCX(200) + SCX(35) + m_nColumnWidth + SCX(10),

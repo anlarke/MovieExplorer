@@ -14,7 +14,8 @@ class Resume
 		int size;
 
 		Resume();
-		bool ReadVlcResumeFile();
+		void ReadThread();
+		void ReadVlcResumeFile();
 		int GetTime(RString str);
 		void UpdateResumeTimes();
 		void CloseVlc();

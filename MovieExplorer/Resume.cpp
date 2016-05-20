@@ -3,13 +3,13 @@
 #include "Resume.h"
 #include <Windows.h>
 #include <lmcons.h>
+#include <thread>
 
 
 struct handle_data {
 	unsigned long process_id;
 	HWND best_handle;
 };
-
 
 Resume::Resume()
 {
@@ -18,8 +18,19 @@ Resume::Resume()
 
 }
 
+void foo()
+{
+	OutputDebugString(_T("hello"));
+}
 
-bool Resume::ReadVlcResumeFile()
+void Resume::ReadThread()
+{
+	//std::thread first ([=] {ReadVlcResumeFile(); });
+	//std::thread first(foo);
+	ReadVlcResumeFile();
+}
+
+void Resume::ReadVlcResumeFile()
 {
 
 	Sleep(100); //wait for VLC to write file (TODO: make threaded)
@@ -39,7 +50,7 @@ bool Resume::ReadVlcResumeFile()
 
 	//read VLC resume file into str
 	if (!FileToString(strFilePath, strVlcFile))
-		return false;
+		return;
 
 	if (GetFirstMatch(strVlcFile, _T("list=([^$]*?$)"), &strTemp))
 	{
@@ -71,6 +82,8 @@ bool Resume::ReadVlcResumeFile()
 		for(int i=0; i<strTimes.GetSize(); i++)
 			times[i] = StringToNumber(strTimes[i])/1000;  //milliseconds to seconds
 	}
+
+	UpdateResumeTimes();
 }
 
 int Resume::GetTime(RString str)
@@ -111,8 +124,8 @@ void Resume::CloseVlc()
 
 void Resume::LaunchVlc(RString strFilePath, UINT64 resumeTime)
 {
-	RString path = _T("C:\\Program Files (x86)\\VideoLAN\\VLC\\vlc.exe ");
-	RString cmd = path + strFilePath + _T(" --play-and-exit --start-time=") + NumberToString((INT64)resumeTime);  // NumberToString(GetTime(strFilePath));
+	RString path = GETPREFSTR(_T("Resume"), _T("VlcPath"));   //default set in CorrectPreferences is default VLC 64bit path
+	RString cmd = path + _T(" \"") + strFilePath + _T("\" --play-and-exit --start-time=") + NumberToString((INT64)resumeTime);  // NumberToString(GetTime(strFilePath));
 
 	TCHAR* param = new TCHAR[cmd.GetLength() + 1];
 	_tcscpy(param, cmd);
