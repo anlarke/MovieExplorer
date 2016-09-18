@@ -247,6 +247,7 @@
     <ClInclude Include="..\ParseFileName.h" />
     <ClInclude Include="..\ReBar.h" />
     <ClInclude Include="..\resource.h" />
+    <ClInclude Include="..\Resume.h" />
     <ClInclude Include="..\ScrapeIMDb.h" />
     <ClInclude Include="..\ScrapeMovieMeter.h" />
     <ClInclude Include="..\ScrollBar.h" />
@@ -280,6 +281,7 @@
     <ClCompile Include="..\OptionsDlg.cpp" />
     <ClCompile Include="..\ParseFileName.cpp" />
     <ClCompile Include="..\ReBar.cpp" />
+    <ClCompile Include="..\Resume.cpp" />
     <ClCompile Include="..\ScrapeIMDb.cpp" />
     <ClCompile Include="..\ScrapeMovieMeter.cpp" />
     <ClCompile Include="..\ScrollBar.cpp" />

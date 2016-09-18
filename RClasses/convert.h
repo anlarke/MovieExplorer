@@ -280,12 +280,33 @@ inline bool URLToData(RString strURL, RArray<BYTE>& data, bool& bUTF8)
 	data.SetSize(0);
 	bUTF8 = false;
 
-	// Extract server and object name
+	// Https or Http
 
-	if (strURL.GetLength() < 7 || !strURL.Left(7).Equals(_T("http://")))
+	if (strURL.GetLength() < 8)
 		return false;
 
-	strURL.Replace(_T("http://"), _T(""));
+	bool bNormal = strURL.Left(7).Equals(_T("http://"));
+	bool bSecure = strURL.Left(8).Equals(_T("https://"));
+	if (!bSecure && !bNormal)
+		return false;
+
+	// Extract server and object name
+
+	INTERNET_PORT nServerPort;
+	DWORD dwFlags = 0;
+
+	if (bNormal)
+	{
+		strURL.Replace(_T("http://"), _T(""));
+		nServerPort = INTERNET_DEFAULT_HTTP_PORT;
+	}
+	else if (bSecure)
+	{
+		strURL.Replace(_T("https://"), _T(""));
+		nServerPort = INTERNET_DEFAULT_HTTPS_PORT;
+		dwFlags = WINHTTP_FLAG_SECURE;
+	}
+
 	if (strURL.Find(_T('/')) == -1)
 		strURL += _T("/");
 
@@ -299,12 +320,12 @@ inline bool URLToData(RString strURL, RArray<BYTE>& data, bool& bUTF8)
 	if (!hSession)
 		return false;
 
-	HINTERNET hConnect = WinHttpConnect(hSession, strServerName, INTERNET_DEFAULT_HTTP_PORT, 0);
+	HINTERNET hConnect = WinHttpConnect(hSession, strServerName, nServerPort, 0);
 	if (!hConnect)
 		return false;
 
 	HINTERNET hRequest = WinHttpOpenRequest(hConnect, L"GET", strObjectName, NULL, 
-			WINHTTP_NO_REFERER, WINHTTP_DEFAULT_ACCEPT_TYPES, 0);
+			WINHTTP_NO_REFERER, WINHTTP_DEFAULT_ACCEPT_TYPES, dwFlags);
 	if (!hRequest)
 		return false;
 

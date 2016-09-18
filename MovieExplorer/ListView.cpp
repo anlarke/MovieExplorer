@@ -3,6 +3,7 @@
 #include "ListView.h"
 #include "EditDlg.h"
 #include "ToolTip.h"
+#include "Resume.h"
 
 #define LV_SMALL_STAR_SIZE		16
 #define LV_LARGE_STAR_SIZE		24
@@ -23,6 +24,15 @@
 
 #define TOUCH_SCROLL_TIMER_ID	1
 
+bool IsValidId(RString id)
+{
+	if (!id.IsEmpty() && id != _T("unknown") &&
+		id != _T("scrapeError") && id != _T("connError"))
+		return true;
+	else
+		return false;
+}
+
 RString PrettyList(RString str)
 {
 	RString strResult;
@@ -39,6 +49,21 @@ RString PrettyList(RString str)
 	return strResult;
 }
 
+RString PrettyTime(int nTime)
+{
+	RString strReturn = _T("");
+	int nHours, nMinutes;
+
+	nHours = nTime / 60;
+	nMinutes = nTime % 60;
+
+	strReturn += (nHours > 0) ? (NumberToString(nHours) + _T("h ")) : (_T(""));
+	strReturn += (nMinutes > 0) ? (NumberToString(nMinutes) + _T("min")) : (_T(""));
+	return(strReturn);	
+}
+
+
+
 CListView::CListView() : m_nHoverMov(-1), m_bScrolling(false), m_bCaptureM(false)
 {
 }
@@ -46,6 +71,7 @@ CListView::CListView() : m_nHoverMov(-1), m_bScrolling(false), m_bCaptureM(false
 CListView::~CListView()
 {
 }
+
 
 void CListView::OnCommand(WORD id, WORD notifyCode, HWND hWndControl)
 {
@@ -59,79 +85,27 @@ void CListView::OnCommand(WORD id, WORD notifyCode, HWND hWndControl)
 	DBDIRECTORY& dir = *mov.pDirectory;
 	//DBCATEGORY& cat = *dir.pCategory;
 
+
 	if (hWndControl == m_btnPlay)
-	{
+	{ 
 		RString strFilePath = CorrectPath(dir.strPath + _T("\\") + mov.strFileName, true);
 		if (dir.strComputerName == GetComputerName())
 		{
 			// If it's a file open it. If it's a directory open the first video file inside
 			// with a valid extension not containing 'sample'. Otherwise open the directory
 			// so user can choose the file manually.
+			
+			if (m_bUseVlc)
+			{
+				resume.CloseVlc();
+				resume.ReadThread();
+			}
 
 			if (FileExists(strFilePath))
-				ShellExecute(HWND_DESKTOP, _T("open"), strFilePath, NULL, NULL, SW_SHOW);
-			else if (DirectoryExists(strFilePath))
 			{
-				// Create easy to search list of extensions
-
-				RString strIndexExtensions = GETPREFSTR(_T("Database"), _T("IndexExtensions"));
-				strIndexExtensions = _T("|") + strIndexExtensions + _T("|");
-
-				RString strPath = CorrectPath(strFilePath);
-				RObArray<FILEINFO> fileInfos = EnumFiles(strPath, _T("*"));
-
-				bool bFileFound = false;
-
-				// Check for exact filename matches with directory name first
-
-				foreach(fileInfos, fi)
-				{
-					// See if extension is in the list of valid ones
-
-					if (strIndexExtensions.FindNoCase(_T("|") + GetFileExt(fi.strName) + _T("|")) == -1)
-						continue;
-
-					if (fi.strName.FindNoCase(mov.strFileName) >= 0)
-					{
-						RString strMoviePath = CorrectPath(strFilePath + _T("\\") + fi.strName);
-						if (FileExists(strMoviePath))
-						{
-							ShellExecute(HWND_DESKTOP, _T("open"), strMoviePath, NULL, NULL, SW_SHOW);
-							bFileFound = true;
-							break;
-						}
-					}
-				}
-
-				if (!bFileFound)
-				{
-					// No exact matches so try all files with the correct extension not containing "sample".
-
-					foreach(fileInfos, fi)
-					{
-						// See if extension is in the list of valid ones
-
-						if (strIndexExtensions.FindNoCase(_T("|") + GetFileExt(fi.strName) + _T("|")) == -1)
-							continue;
-
-						// Make sure its not the 'sample' video
-
-						if (fi.strName.FindNoCase(_T("sample")) >= 0)
-							continue;
-
-						RString strMoviePath = CorrectPath(strFilePath + _T("\\") + fi.strName);
-						if (FileExists(strMoviePath))
-						{
-							ShellExecute(HWND_DESKTOP, _T("open"), strMoviePath, NULL, NULL, SW_SHOW);
-							bFileFound = true;
-							break;
-						}
-					}
-				}
-				
-				// We didn't find the movie in the directory so just open it
-
-				if (!bFileFound)
+				if (m_bUseVlc)
+					resume.LaunchVlc(strFilePath, mov.resumeTime);
+				else
 					ShellExecute(HWND_DESKTOP, _T("open"), strFilePath, NULL, NULL, SW_SHOW);
 			}
 		}
@@ -145,7 +119,7 @@ void CListView::OnCommand(WORD id, WORD notifyCode, HWND hWndControl)
 			// a file, open the directory the file is in.
 
 			RString strDirPath = CorrectPath(dir.strPath);
-			RString strFilePath = CorrectPath(dir.strPath + _T("\\") + mov.strFileName);
+			RString strFilePath = CorrectPath(dir.strPath + _T("\\") + GetDirectoryName(mov.strFileName));
 
 			if (DirectoryExists(strFilePath))
 				ShellExecute(HWND_DESKTOP, _T("open"), strFilePath, NULL, NULL, SW_SHOW);
@@ -183,7 +157,7 @@ void CListView::OnCommand(WORD id, WORD notifyCode, HWND hWndControl)
 		if (dir.strComputerName == GetComputerName())
 		{
 			RString strDirPath = CorrectPath(dir.strPath);
-			RString strFilePath = CorrectPath(dir.strPath + _T("\\") + mov.strFileName);
+			RString strFilePath = CorrectPath(dir.strPath + _T("\\") + GetDirectoryName(mov.strFileName));
 
 			if (FileExists(strFilePath))
 			{
@@ -448,8 +422,13 @@ void CListView::OnPrefChanged()
 
 	m_nTouchScrollElapse = GETPREFINT(_T("TouchScrollElapse"));
 	m_dTouchScrollCoeff = GETPREFFLOAT(_T("TouchScrollCoeff"));
+	
+	
+	//Advanced options
 
 	m_bHideUserCategories = GETPREFBOOL(_T("HideUserCategories"));
+	m_bUseVlc = GETPREFBOOL(_T("UseVlc"));
+
 
 	OnScaleChanged();
 }
@@ -530,16 +509,23 @@ bool CListView::OnSetCursor(HWND hWnd, WORD hitTest, WORD mouseMsg)
 	POINT pt;
 	GetCursorPos(&pt);
 	ScreenToClient(m_hWnd, &pt);
+	static bool wasOverLink = false;
+
 	foreach (m_links, link)
 	{
 		if (PtInRect(&link.rc, pt))
 		{
 			STATUS(link.strURL);  //display url in the status bar if we're over a link
 			SetCursor(LoadCursor(NULL, IDC_HAND));
+			wasOverLink = true;
 			return true;
 		}
 	}
-	STATUS(GETSTR(IDS_READY));		//no link url to display. set back to "Ready"
+
+	if (wasOverLink) {
+		STATUS(GETSTR(IDS_READY));		//no link url to display. set back to "Ready"
+		wasOverLink = false;
+	}
 	return RWindow::OnSetCursor(hWnd, hitTest, mouseMsg);
 }
 
@@ -792,7 +778,7 @@ void CListView::Draw()
 
 	for (INT_PTR i = nStart; i < GetDB()->m_movies && y < cy; ++i, y += SCY(LV_DETAILS_HEIGHT))
 	{
-		RECT rcItem = {0, y, cx, y + SCY(LV_DETAILS_HEIGHT)};
+		RECT rcItem = { 0, y, cx, y + SCY(LV_DETAILS_HEIGHT) };
 
 		if (i & 0x1)
 			DrawRect(m_mdc, 0, y, cx, SCY(LV_DETAILS_HEIGHT), m_clrBackgrAlt);
@@ -810,19 +796,19 @@ void CListView::Draw()
 			VERIFY(LoadImage(mov.posterData, mdcPoster, SCX(200), SCY(300)));
 			int cxImg, cyImg;
 			mdcPoster.GetDimensions(cxImg, cyImg);
-			m_sprShadow.Draw(m_mdc, SCX(15)-2*SCX(1), y + SCY(15)-2*SCY(1), 
-					cxImg+5*SCX(1), cyImg+5*SCY(1));
+			m_sprShadow.Draw(m_mdc, SCX(15) - 2 * SCX(1), y + SCY(15) - 2 * SCY(1),
+				cxImg + 5 * SCX(1), cyImg + 5 * SCY(1));
 			BitBlt(m_mdc, SCX(15), y + SCY(15), cxImg, cyImg, mdcPoster, 0, 0, SRCCOPY);
 		}
 		else
 		{
-			m_sprShadow.Draw(m_mdc, SCX(15)-2*SCX(1), y + SCY(15)-2*SCY(1), 
-					SCX(200)+5*SCX(1), SCY(300)+5*SCY(1));
+			m_sprShadow.Draw(m_mdc, SCX(15) - 2 * SCX(1), y + SCY(15) - 2 * SCY(1),
+				SCX(200) + 5 * SCX(1), SCY(300) + 5 * SCY(1));
 			FillSolidRect(m_mdc, SCX(15), y + SCY(15), SCX(200), SCX(300), m_clrBackgr);
 		}
 
 		// draw title and year
-		
+
 		hPrevFont = (HFONT)SelectObject(m_mdc, m_fntTitle);
 		SetTextColor(m_mdc, m_clrTitle);
 
@@ -831,7 +817,7 @@ void CListView::Draw()
 			strDate = mov.strAirDate;
 		else if (!mov.strYear.IsEmpty())
 			strDate = mov.strYear;
-		
+
 		if (mov.strEpisodeName.IsEmpty())
 		{
 			strTitle = (mov.strTitle.IsEmpty() ? mov.strFileName : (mov.strTitle +
@@ -850,33 +836,55 @@ void CListView::Draw()
 
 			str.Empty();
 			if (mov.nSeason >= 0)
-				str =  _T("Season ") + NumberToString(mov.nSeason);
+				str = _T("Season ") + NumberToString(mov.nSeason);
 			if (mov.nEpisode >= 0)
 				str = str + _T(" Episode ") + NumberToString(mov.nEpisode) + _T(": ");
-			str = str +  _T("\"") + mov.strEpisodeName + _T("\"");
+			str = str + _T("\"") + mov.strEpisodeName + _T("\"");
 
 			hPrevFont = (HFONT)SelectObject(m_mdc, m_fntTextBold);
 			SetTextColor(m_mdc, m_clrTitle);
-			
+
 			TextOut(m_mdc, SCX(200) + SCX(35), y + SCY(40), str);
 			SelectObject(m_mdc, hPrevFont);
-			
+
 		}
 
-		// draw genres, countries and runtime
+		// draw genres, countries and content rating
 
 		mov.strCountries.Replace(_T("|"), _T("/"));
 		mov.strGenres.Replace(_T("|"), _T("/"));
-		mov.strRuntime.Replace(_T("|"), _T("/"));
-		
+
 		hPrevFont = (HFONT)SelectObject(m_mdc, m_fntText);
 		SetTextColor(m_mdc, m_clrText);
 		if (mov.nSeason < 0)
 			TextOut(m_mdc, SCX(200) + SCX(35), y + SCY(48), mov.strCountries);
 		TextOut(m_mdc, SCX(200) + SCX(35), y + SCY(66), mov.strGenres);
-		TextOut(m_mdc, SCX(200) + SCX(35), y + SCY(84), mov.strRuntime);
-		SelectObject(m_mdc, hPrevFont);
 
+		SIZE szT;
+		int nOffsetT = 0;
+		if (mov.nRuntime > 0)
+		{
+			RString strPrettyTime = PrettyTime(mov.nRuntime);
+			GetTextExtentPoint32(m_mdc, strPrettyTime, &szT);
+			TextOut(m_mdc, SCX(200) + SCX(35), y + SCY(84), strPrettyTime);
+			nOffsetT = szT.cx + SCX(10);
+		}
+
+		if (!mov.strContentRating.IsEmpty() && mov.strContentRating != _T("NOT RATED"))
+		{
+			GetTextExtentPoint32(m_mdc, mov.strContentRating, &szT);
+			TextOut(m_mdc, SCX(200) + SCX(35) + nOffsetT, y + SCY(84), mov.strContentRating);
+			nOffsetT += szT.cx + SCX(10);
+		}
+
+		// draw % of movie seen if not 0. Returns to 0 when finished.
+		if (m_bUseVlc)
+		{
+			if (mov.nRuntime != 0 && mov.resumeTime > 0)
+				TextOut(m_mdc, SCX(200) + SCX(35) + nOffsetT, y + SCY(84),
+					NumberToString((INT64)((double)mov.resumeTime / ((double)mov.nRuntime * 60.0) * 100.0)) + _T("%"));
+			SelectObject(m_mdc, hPrevFont);
+		}
 		// draw storyline
 
 		hPrevFont = (HFONT)SelectObject(m_mdc, m_fntText);
@@ -978,7 +986,8 @@ void CListView::Draw()
 						VERIFY(LoadImage(*mov.actorImageData[i], mdcThumb, SCX(32), SCY(44)));
 						mdcThumb.GetDimensions(cxImg, cyImg);
 						BitBlt(m_mdc, nX, nY, cxImg, cyImg, mdcThumb, 0, 0, SRCCOPY);
-						MakeLink(_T(""), _T("http://www.imdb.com/name/") + mov.strActorId[i], nX, cxImg, nY, cyImg, pt);
+						if(!mov.strActorId[i].IsEmpty())
+							MakeLink(_T(""), _T("http://www.imdb.com/name/") + mov.strActorId[i], nX, cxImg, nY, cyImg, pt);
 						nX += SCX(32);
 					}
 				
@@ -1017,7 +1026,7 @@ void CListView::Draw()
 		SetTextColor(m_mdc, m_clrText);
 		GetTextExtentPoint32(m_mdc, GETSTR(IDS_FILE) + _T(":"), &sz);
 		int nOffset = sz.cx;
-		RString strPrintFileName = mov.strFileName +
+		RString strPrintFileName = GetFileName(mov.strFileName) +
 			(mov.fileSize != 0 ? _T(" [") + SizeToString(mov.fileSize) +
 			_T("]") : _T(""));
 		TextOut(m_mdc, SCX(200) + SCX(35) + m_nColumnWidth + SCX(10),
@@ -1053,7 +1062,9 @@ void CListView::Draw()
 
 		// draw rating
 
-		if (mov.fRating != 0.0f)
+		//if (mov.fRating != 0.0f)
+		if( (m_strRatingServ == _T("imdb.com") && IsValidId(mov.strIMDbID)) ||
+			(m_strRatingServ == _T("moviemeter.nl") && IsValidId(mov.strMovieMeterID)))
 		{
 			float fRating = mov.fRating;
 			float fRatingMax = mov.fRatingMax;
@@ -1119,18 +1130,21 @@ void CListView::Draw()
 			TextOut(m_mdc, x, y + SCY(48), str);
 			SelectObject(m_mdc, hPrevFont);
 
-			if (fRatingMax <= 5.0f)
-				_stprintf(str.GetBuffer(32), _T("%.2f"), fRating);
-			else
-				_stprintf(str.GetBuffer(32), _T("%.1f"), fRating);
-			str.ReleaseBuffer();
-			str.Replace(_T("."), GetDecimalSep());
-			hPrevFont = (HFONT)SelectObject(m_mdc, m_fntTextBold);
-			GetTextExtentPoint32(m_mdc, str, &sz);
-			x -= sz.cx;
-			SetTextColor(m_mdc, m_clrText);
-			TextOut(m_mdc, x, y + SCY(48), str);
-			SelectObject(m_mdc, hPrevFont);
+			if (!(mov.nVotes == 0 && mov.fRating == 0 ))
+			{
+				if (fRatingMax <= 5.0f)
+					_stprintf(str.GetBuffer(32), _T("%.2f"), fRating);
+				else
+					_stprintf(str.GetBuffer(32), _T("%.1f"), fRating);
+				str.ReleaseBuffer();
+				str.Replace(_T("."), GetDecimalSep());
+				hPrevFont = (HFONT)SelectObject(m_mdc, m_fntTextBold);
+				GetTextExtentPoint32(m_mdc, str, &sz);
+				x -= sz.cx;
+				SetTextColor(m_mdc, m_clrText);
+				TextOut(m_mdc, x, y + SCY(48), str);
+				SelectObject(m_mdc, hPrevFont);
+			}
 
 			str = _T(": ");
 			hPrevFont = (HFONT)SelectObject(m_mdc, m_fntText);

@@ -9,6 +9,62 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // General functions
 
+RString GetFileNameFromDirectory(RString strDirectory, RString strFileName)
+{
+	// Return the name of the first video file inside
+	// with a valid extension not containing 'sample'.
+
+
+	// Create easy to search list of extensions
+
+	RString strIndexExtensions = GETPREFSTR(_T("Database"), _T("IndexExtensions"));
+	strIndexExtensions = _T("|") + strIndexExtensions + _T("|");
+
+	RString strPath = CorrectPath(strDirectory);
+	RObArray<FILEINFO> fileInfos = EnumFiles(strPath, _T("*"));
+
+
+	// Check for exact filename matches with directory name first
+
+	foreach(fileInfos, fi)
+	{
+		// See if extension is in the list of valid ones
+
+		if (strIndexExtensions.FindNoCase(_T("|") + GetFileExt(fi.strName) + _T("|")) == -1)
+			continue;
+
+		if (fi.strName.FindNoCase(strFileName) >= 0)
+		{
+			RString strMoviePath = CorrectPath(strDirectory + _T("\\") + fi.strName);
+			if (FileExists(strMoviePath))
+				return(fi.strName);
+		}
+	}
+
+	// No exact matches so try all files with the correct extension not containing "sample".
+
+	foreach(fileInfos, fi)
+	{
+		// See if extension is in the list of valid ones
+
+		if (strIndexExtensions.FindNoCase(_T("|") + GetFileExt(fi.strName) + _T("|")) == -1)
+			continue;
+
+		// Make sure its not the 'sample' video
+
+		if (fi.strName.FindNoCase(_T("sample")) >= 0)
+			continue;
+
+		RString strMoviePath = CorrectPath(strDirectory + _T("\\") + fi.strName);
+		if (FileExists(strMoviePath))
+			return fi.strName;
+	}
+
+	// We didn't find the movie in the directory so return NULL
+
+	return NULL;
+}
+
 void ClearInfo(DBINFO *pInfo)
 {
 	ASSERT(pInfo);
@@ -24,6 +80,7 @@ void ClearInfo(DBINFO *pInfo)
 	pInfo->bType = DB_TYPE_UNKNOWN;
 	pInfo->nVotes = 0;
 	pInfo->nIMDbVotes = 0;
+	pInfo->nRuntime = 0;
 	pInfo->posterData.SetSize(0);
 	for (int i = 0; i < DBI_STAR_NUMBER; i++)
 	{
@@ -35,9 +92,9 @@ void ClearInfo(DBINFO *pInfo)
 	pInfo->strDirectors.Empty();
 	pInfo->strFileName.Empty();
 	pInfo->strGenres.Empty();
+	pInfo->strContentRating.Empty();
 	pInfo->strID.Empty();
 	pInfo->strIMDbID.Empty();
-	pInfo->strRuntime.Empty();
 	pInfo->strSearchTitle.Empty();
 	pInfo->strSearchYear.Empty();
 	pInfo->strServiceName.Empty();
@@ -57,6 +114,7 @@ void ClearMovie(DBMOVIE *pMovie)
 	pMovie->bUpdated = false;
 	pMovie->fileSize = 0;
 	pMovie->fileTime = 0;
+	pMovie->resumeTime = 0;
 	pMovie->fIMDbRating = 0.0f;
 	pMovie->fIMDbRatingMax = 0.0f;
 	pMovie->fRating = 0.0f;
@@ -81,9 +139,10 @@ void ClearMovie(DBMOVIE *pMovie)
 	pMovie->strDirectors.Empty();
 	pMovie->strFileName.Empty();
 	pMovie->strGenres.Empty();
+	pMovie->strContentRating.Empty();
 	pMovie->strIMDbID.Empty();
 	pMovie->strMovieMeterID.Empty();
-	pMovie->strRuntime.Empty();
+	pMovie->nRuntime = 0;
 	pMovie->strStars.Empty();
 	pMovie->strStoryline.Empty();
 	pMovie->strTitle.Empty();
@@ -99,8 +158,9 @@ void TagToInfo(RXMLTag *pTag, DBINFO *pInfo)
 	pInfo->strTitle = pTag->GetChildContent(_T("Title"));
 	pInfo->strYear = pTag->GetChildContent(_T("Year"));
 	pInfo->strGenres = pTag->GetChildContent(_T("Genres"));
+	pInfo->strContentRating = pTag->GetChildContent(_T("ContentRating"));
 	pInfo->strCountries = pTag->GetChildContent(_T("Countries"));
-	pInfo->strRuntime = pTag->GetChildContent(_T("Runtime"));
+	pInfo->nRuntime = StringToNumber(pTag->GetChildContent(_T("Runtime")));
 	pInfo->strStoryline = pTag->GetChildContent(_T("Storyline"));
 	pInfo->strDirectors = pTag->GetChildContent(_T("Directors"));
 	pInfo->strWriters = pTag->GetChildContent(_T("Writers"));
@@ -134,8 +194,9 @@ void InfoToTag(DBINFO *pInfo, RXMLTag *pTag)
 	pTag->AddChild(_T("Title"))->SetContent(pInfo->strTitle);
 	pTag->AddChild(_T("Year"))->SetContent(pInfo->strYear);
 	pTag->AddChild(_T("Genres"))->SetContent(pInfo->strGenres);
+	pTag->AddChild(_T("ContentRating"))->SetContent(pInfo->strContentRating);
 	pTag->AddChild(_T("Countries"))->SetContent(pInfo->strCountries);
-	pTag->AddChild(_T("Runtime"))->SetContent(pInfo->strRuntime);
+	pTag->AddChild(_T("Runtime"))->SetContent(NumberToString(pInfo->nRuntime));
 	pTag->AddChild(_T("Storyline"))->SetContent(pInfo->strStoryline);
 	pTag->AddChild(_T("Directors"))->SetContent(pInfo->strDirectors);
 	pTag->AddChild(_T("Writers"))->SetContent(pInfo->strWriters);
@@ -360,6 +421,7 @@ bool CDatabase::Load(RString_ strFilePath)
 				pMov->strFileName = lpsz;
 				pMov->fileSize = StringToNumber64(pFileTag->GetProperty(_T("size")));
 				pMov->fileTime = StringToNumber64(pFileTag->GetProperty(_T("time")));
+				pMov->resumeTime = StringToNumber64(pFileTag->GetProperty(_T("resumeTime")));
 				pMov->bHide = ((RString)pFileTag->GetProperty(_T("hide")) == _T("true"));
 				pMov->bSeen = ((RString)pFileTag->GetProperty(_T("seen")) == _T("true"));
 				pMov->strIMDbID = pFileTag->GetProperty(_T("imdb.com"));
@@ -449,6 +511,8 @@ bool CDatabase::Save()
 					pFileTag->SetProperty(_T("size"), NumberToString((INT64)mov.fileSize));
 				if (mov.fileTime != 0)
 					pFileTag->SetProperty(_T("time"), NumberToString((INT64)mov.fileTime));
+				if (mov.resumeTime >= 0)
+					pFileTag->SetProperty(_T("resumeTime"), NumberToString((INT64)mov.resumeTime));
 				if (mov.bSeen)
 					pFileTag->SetProperty(_T("seen"), _T("true"));
 				if (mov.bHide)
@@ -540,7 +604,7 @@ void CDatabase::SyncAndUpdate()
 
 					pMov = NULL;
 					foreach (dir.movies, mov)
-						if (_tcsicmp(mov.strFileName, fi.strName) == 0)
+						if (_tcsicmp(GetDirectoryName(mov.strFileName), fi.strName) == 0)
 							pMov = &mov;
 
 					if (!pMov)
@@ -550,10 +614,37 @@ void CDatabase::SyncAndUpdate()
 						pMov->pDirectory = &dir;
 						++nAdded;
 					}
+					
+					// If it's a directory get the actual filename in the directory. 
+				
+					if (fi.bDirectory)
+					{
+						RString strFilePath = CorrectPath(dir.strPath + _T("\\") + fi.strName);
+						RString strFileName = GetFileNameFromDirectory(strFilePath, fi.strName);
+						if (strFileName && !strFileName.IsEmpty())
+						{
+							pMov->strFileName = fi.strName + _T("\\") + strFileName;
+							pMov->fileSize = FileSize(strFilePath + _T("\\") + strFileName);
+							pMov->fileTime = fi.lastWriteTime;
+						}
+						else
+						{
 
-					pMov->strFileName = fi.strName;
-					pMov->fileSize = fi.size;
-					pMov->fileTime = fi.lastWriteTime;
+							//If we can't find a filename just use the directory
+
+							pMov->strFileName = fi.strName;
+							pMov->fileSize = fi.size;
+							pMov->fileTime = fi.lastWriteTime;
+						}
+
+					}
+					else
+					{
+						pMov->strFileName = fi.strName;
+						pMov->fileSize = fi.size;
+						pMov->fileTime = fi.lastWriteTime;
+					}
+					
 				}
 			}
 			else if (FileExists(strPath)) // it's a movie list
@@ -624,6 +715,29 @@ void CDatabase::SyncAndUpdate()
 
 	Filter();
 	Update();
+}
+
+void CDatabase::UpdateResumeTime(RString strFilePath, UINT64 resumeTime)
+//takes an input file path and resumeTime.
+//finds the database movie record corresponding to that file path and
+//updates its resumeTime.
+{
+	foreach(m_categories, cat)
+	{
+		foreach(cat.directories, dir)
+		{
+			foreach(dir.movies, mov)
+			{
+				RString strPath = CorrectPath(dir.strPath + _T("\\") + mov.strFileName);
+				if (strPath == strFilePath)
+				{
+					//Path match
+					mov.resumeTime = resumeTime;
+					return;
+				}
+			}
+		}
+	}
 }
 
 void CDatabase::Update()
@@ -860,6 +974,7 @@ void CDatabase::Filter()
 								mov.strEpisodeName.FindNoCase(strKeyword) != -1 ||
 								mov.strYear.FindNoCase(strKeyword) != -1 ||
 								mov.strGenres.FindNoCase(strKeyword) != -1 ||
+								mov.strContentRating.FindNoCase(strKeyword) != -1 ||
 								mov.strCountries.FindNoCase(strKeyword) != -1 ||
 								mov.strDirectors.FindNoCase(strKeyword) != -1 ||
 								mov.strWriters.FindNoCase(strKeyword) != -1 ||
@@ -892,6 +1007,7 @@ void CDatabase::Filter()
 						foreach (m_filterKeywords, strKeyword)
 						{
 							if (mov.strGenres.FindNoCase(strKeyword) != -1 ||
+									mov.strContentRating.FindNoCase(strKeyword) != -1 ||
 									mov.strAirDate.FindNoCase(strKeyword) != -1 ||
 									mov.strCountries.FindNoCase(strKeyword) != -1 ||
 									mov.strDirectors.FindNoCase(strKeyword) != -1 ||

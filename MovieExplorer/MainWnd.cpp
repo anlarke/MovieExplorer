@@ -3,6 +3,7 @@
 #include "MainWnd.h"
 #include "OptionsDlg.h"
 
+
 CMainWnd::CMainWnd() : m_bShowStatusBar(false), m_bShowLog(false), m_bSizingLog(false), 
 		m_nLogHeight(0), m_hFocusWnd(NULL), m_hbrBackgr(NULL), m_bListView(true)
 {
@@ -118,6 +119,14 @@ LRESULT CMainWnd::WndProc(UINT Msg, WPARAM wParam, LPARAM lParam)
 void CMainWnd::OnActivateApp(BOOL bActive, DWORD dwThreadID)
 {
 	UNREFERENCED_PARAMETER(dwThreadID);
+
+	
+	if (GETPREFBOOL(_T("UseVlc")))
+	{
+		Resume resume;
+		resume.ReadThread();
+	}
+
 	if (bActive && GetDB())
 	{
 		LOG(_T("Refreshing Database...\n"));

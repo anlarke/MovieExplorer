@@ -762,6 +762,25 @@ inline RString GetFileName(RString strFilePath)
 	return strFilePath;
 }
 
+inline RString GetDirectoryName(RString strName)
+{
+	RString strDirName = strName;
+	INT_PTR n = strName.ReverseFind(_T('\\'));
+	if (n != -1)
+		strDirName = strName.Left(n);
+	//OutputDebugString(strDirName + _T("\n"));
+	return strDirName;
+}
+
+inline __int64 FileSize(RString name)
+{
+	__stat64 buf;
+	if (_wstat64(name, &buf) != 0)
+		return -1; // error, could use errno to find out more
+
+	return buf.st_size;
+}
+
 inline RString GetFileExt(RString_ strFilePath)
 {
 	// NOTE: It could also be a directory with a dot in its name.

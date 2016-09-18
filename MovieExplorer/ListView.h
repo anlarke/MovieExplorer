@@ -2,6 +2,7 @@
 
 #include "ScrollBar.h"
 #include "ToolBarButton.h"
+#include "Resume.h"
 
 class CListView : public RWindow
 {
@@ -54,6 +55,9 @@ protected:
 	double m_dTouchScrollCoeff;
 
 	bool m_bHideUserCategories;
+	bool m_bUseVlc;
+
+	Resume resume;
 
 	LINK* MakeLink(RString strText, RString strUrl, INT_PTR x, int cx, INT_PTR cy, int y, POINT pt);
 

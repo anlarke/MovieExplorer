@@ -239,7 +239,7 @@ UINT CALLBACK UpdateThread(void *pParam)
 				if (strGenresServ == strServ)
 					mov.strGenres = info.strGenres;
 				if (strRuntimeServ == strServ)
-					mov.strRuntime = info.strRuntime;
+					mov.nRuntime = info.nRuntime;
 				if (strStorylineServ == strServ)
 					mov.strStoryline = info.strStoryline;
 				if (strDirectorsServ == strServ)
@@ -272,6 +272,7 @@ UINT CALLBACK UpdateThread(void *pParam)
 
 				if (strServ == _T("imdb.com"))
 				{
+					mov.strContentRating = info.strContentRating;
 					mov.nSeason = info.nSeason;
 					mov.nEpisode = info.nEpisode;
 					mov.strEpisodeName = info.strEpisodeName;

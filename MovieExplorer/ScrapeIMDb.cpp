@@ -243,22 +243,20 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 
 	if (_tcsicmp(GETPREFSTR(_T("InfoService"), _T("Poster")), _T("imdb.com")) == 0)
 	{
-		if (GetFirstMatch(str, _T("title=\"[^\"]*?Poster\"[^>]*?(http://ia\\.media-imdb\\.com/images/M/[^\"]+?_V1\\.?_[^\"]*?)\\.([^\"]+?)\""),
-				&strTemp, &strTemp2, NULL))
+		if (GetFirstMatch(str, _T("title=\"[^\"]*?Poster\"[^\"]*?\"(https://[^\"]+?)\""),
+				&strTemp, NULL))
 		{
-			strTemp = strTemp + _T(".") + strTemp2; // take the server's default cropping and resizing
-			URLToData(strTemp, pInfo->posterData);
+			URLToData(strTemp, pInfo->posterData);  // take the server's default cropping and resizing
 		}
 		else
 		{
 			//didn't find a poster, so if it's a tv show check original show page also
 			if (pInfo->bType == DB_TYPE_TV && !strOriginal.IsEmpty())
 			{
-				if (GetFirstMatch(strOriginal, _T("title=\"[^\"]*?Poster\"[^>]*?(http://ia\\.media-imdb\\.com/images/M/[^\"]+?_V1\\.?_[^\"]*?)\\.([^\"]+?)\""),
-					&strTemp, &strTemp2, NULL))
+				if (GetFirstMatch(strOriginal, _T("title=\"[^\"]*?Poster\"[^\"]*?\"(https://[^\"]+?)\""),
+					&strTemp, NULL))
 				{
-					strTemp = strTemp + _T(".") + strTemp2; // take the server's default cropping and resizing
-					URLToData(strTemp, pInfo->posterData);
+					URLToData(strTemp, pInfo->posterData); // take the server's default cropping and resizing
 				}
 			}
 		}
@@ -325,7 +323,10 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 
 	// Get runtime
 
-	GetFirstMatch(str, _T("(\\d+ min\\b)"), &pInfo->strRuntime, NULL);
+	//GetFirstMatch(str, _T("(\\d+ min\\b)"), &pInfo->strRuntime, NULL);
+	RString strRuntime;
+	GetFirstMatch(str, _T("datetime=\"PT(\\d+)M"), &strRuntime, NULL);
+	pInfo->nRuntime = StringToNumber(strRuntime);
 
 	// Get directors
 
@@ -368,13 +369,14 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 	}
 
 
-	// Get storyline
+	// Get storyline (using top summary storyline)
 
-	if (GetFirstMatch(str, _T("<h2>Storyline</h2>.*?<p>(.*?) *(?:<em class=\"nobr\">|</p>)"), &strTemp, NULL))
+	//if (GetFirstMatch(str, _T("<h2>Storyline</h2>.*?<p>(.*?) *(?:<em class=\"nobr\">|</p>)"), &strTemp, NULL))
+	if (GetFirstMatch(str, _T("itemprop=\"description\">$[\\s\\t]*([^<]+?)<"), &strTemp, NULL))
 	{
-		VERIFY(regex.Create(_T("<[^>]+>")));
-		pInfo->strStoryline = regex.Replace(strTemp, _T(""));
-		pInfo->strStoryline = FixLineEnds(pInfo->strStoryline, _T(""));
+		//VERIFY(regex.Create(_T("<[^>]+>")));
+		//pInfo->strStoryline = regex.Replace(strTemp, _T(""));
+		pInfo->strStoryline = FixLineEnds(strTemp, _T(""));
 	}
 
 	// Get genres
@@ -387,6 +389,10 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 			pInfo->strGenres += regex.GetMatch(1) + _T("|");
 		pInfo->strGenres.Trim(_T("|"));
 	}
+
+	// Get content rating
+
+	GetFirstMatch(str, _T("\"contentRating\" content=\"([^\"]*?)\""), &pInfo->strContentRating);
 
 	// Get countries
 	
