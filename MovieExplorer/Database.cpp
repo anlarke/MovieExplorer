@@ -627,11 +627,19 @@ void CDatabase::SyncAndUpdate()
 							pMov->fileSize = FileSize(strFilePath + _T("\\") + strFileName);
 							pMov->fileTime = fi.lastWriteTime;
 						}
+						else
+						{
+
+							//If we can't find a filename just use the directory
+
+							pMov->strFileName = fi.strName;
+							pMov->fileSize = fi.size;
+							pMov->fileTime = fi.lastWriteTime;
+						}
 
 					}
 					else
 					{
-
 						pMov->strFileName = fi.strName;
 						pMov->fileSize = fi.size;
 						pMov->fileTime = fi.lastWriteTime;

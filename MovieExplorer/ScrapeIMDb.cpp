@@ -243,22 +243,20 @@ DWORD ScrapeIMDb(DBINFO *pInfo)
 
 	if (_tcsicmp(GETPREFSTR(_T("InfoService"), _T("Poster")), _T("imdb.com")) == 0)
 	{
-		if (GetFirstMatch(str, _T("title=\"[^\"]*?Poster\"[^>]*?(http://ia\\.media-imdb\\.com/images/M/[^\"]+?_V1\\.?_[^\"]*?)\\.([^\"]+?)\""),
-				&strTemp, &strTemp2, NULL))
+		if (GetFirstMatch(str, _T("title=\"[^\"]*?Poster\"[^\"]*?\"(https://[^\"]+?)\""),
+				&strTemp, NULL))
 		{
-			strTemp = strTemp + _T(".") + strTemp2; // take the server's default cropping and resizing
-			URLToData(strTemp, pInfo->posterData);
+			URLToData(strTemp, pInfo->posterData);  // take the server's default cropping and resizing
 		}
 		else
 		{
 			//didn't find a poster, so if it's a tv show check original show page also
 			if (pInfo->bType == DB_TYPE_TV && !strOriginal.IsEmpty())
 			{
-				if (GetFirstMatch(strOriginal, _T("title=\"[^\"]*?Poster\"[^>]*?(http://ia\\.media-imdb\\.com/images/M/[^\"]+?_V1\\.?_[^\"]*?)\\.([^\"]+?)\""),
-					&strTemp, &strTemp2, NULL))
+				if (GetFirstMatch(strOriginal, _T("title=\"[^\"]*?Poster\"[^\"]*?\"(https://[^\"]+?)\""),
+					&strTemp, NULL))
 				{
-					strTemp = strTemp + _T(".") + strTemp2; // take the server's default cropping and resizing
-					URLToData(strTemp, pInfo->posterData);
+					URLToData(strTemp, pInfo->posterData); // take the server's default cropping and resizing
 				}
 			}
 		}
